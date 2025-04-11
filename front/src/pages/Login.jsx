@@ -1,36 +1,49 @@
-import { useState } from "react";
-import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useState, useContext } from "react";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { auth, googleProvider } from "../firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { UserContext } from "../../context/userContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
   const [data, setData] = useState({
-    email: '',
-    contraseña: '',
+    email: "",
+    contraseña: "",
   });
 
+  // Login with email and password using Firebase
   const loginUser = async (e) => {
     e.preventDefault();
     const { email, contraseña } = data;
     try {
-      const { data } = await axios.post('/login', {
-        email,
-        contraseña
-      });
-      if (data.error) {
-        toast.error(data.error);
-      } else {
-        setData({ email: '', contraseña: '' });
-        navigate('/Dashboard');
-      }
+      const result = await signInWithEmailAndPassword(auth, email, contraseña);
+      setUser(result.user); // Update user context with Firebase user
+      toast.success("Inicio de sesión exitoso");
+      setData({ email: "", contraseña: "" });
+      navigate("/dashboard"); // Redirect to the dashboard
     } catch (error) {
-      toast.error('Ocurrió un error. Por favor, intenta de nuevo.');
+      console.error("Error al iniciar sesión:", error);
+      toast.error("Error al iniciar sesión. Verifique sus credenciales.");
+    }
+  };
+
+  // Login with Google using Firebase
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      setUser(result.user); // Update user context with Firebase user
+      toast.success("Inicio de sesión exitoso");
+      navigate("/dashboard"); // Redirect to the dashboard
+    } catch (error) {
+      console.error("Error al iniciar sesión con Google:", error);
+      toast.error("Error al iniciar sesión con Google.");
     }
   };
 
   return (
-    <div className="min-h-screen pt-20 flex justify-center items-center"> {/* Aquí se eliminó el fondo verde */}
+    <div className="min-h-screen pt-20 flex justify-center items-center">
       <form onSubmit={loginUser} className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Iniciar sesión</h2>
 
@@ -63,8 +76,12 @@ export default function Login() {
           Iniciar sesión
         </button>
       </form>
-      
+      <button
+        onClick={handleGoogleLogin}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition duration-300 mt-4"
+      >
+        Iniciar sesión con Google
+      </button>
     </div>
-    
   );
 }
