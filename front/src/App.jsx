@@ -7,7 +7,7 @@ import Login from '../src/pages/Login.jsx';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast'
 import { UserContextProvider } from '../context/userContext.jsx';
-import Dashboard from './pages/Dashboard.jsx';
+import WelcomeEgresado from './pages/WelcomeEgresado.jsx';
 import Beneficios from './pages/Beneficios.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Membresia from './pages/Membresia.jsx';
@@ -27,10 +27,10 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register/>} />
           <Route path='/login' element={<Login />} />
-          <Route path='/dashboard' element={<PrivateRoute><Dashboard/></PrivateRoute>} />
-          <Route path='/perfil' element={<PrivateRoute><Perfil/></PrivateRoute>} />          
           <Route path='/beneficios' element={<Beneficios/>} />  
           <Route path='/membresia' element={<Membresia/>} />  
+          <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
+          <Route path='/perfil' element={<PrivateRoute><Perfil/></PrivateRoute>} />          
           <Route path='/perfilegresado' element={<PrivateRoute><PerfilEgresado/></PrivateRoute>} />  
         </Routes>
       </UserContextProvider>
