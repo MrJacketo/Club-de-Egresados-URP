@@ -23,7 +23,10 @@ export default function Navbar() {
       <div className="max-w-full mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <img src="/logo.png" alt="Logo URP" className="w-12 h-12 mr-2" />
-          <Link to="/" className="text-white font-bold text-xl hover:text-teal-300 transition">
+          <Link
+            to="/"
+            className="text-white font-bold text-xl hover:text-teal-300 transition"
+          >
             URPex
           </Link>
         </div>
@@ -31,7 +34,9 @@ export default function Navbar() {
         <div className="space-x-6">
           {user ? (
             <>
-              <span className="text-gray-200">Hola, {user.displayName || "Usuario"}</span>
+              <span className="text-gray-200">
+                Hola, {user.displayName || "Usuario"}
+              </span>
               <button
                 onClick={handleLogout}
                 className="text-gray-200 hover:text-teal-300 transition"
@@ -41,10 +46,16 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              {/* 
               <Link to="/register" className="text-gray-200 hover:text-teal-300 transition">
                 Register
-              </Link>
-              <Link to="/login" className="text-gray-200 hover:text-teal-300 transition">
+              </Link> 
+              */}
+
+              <Link
+                to="/login"
+                className="text-gray-200 hover:text-teal-300 transition"
+              >
                 Login
               </Link>
             </>
