@@ -3,7 +3,8 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
+import { getGraduateProfileRequest } from "../api/perfilEgresadoApi";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,8 +15,15 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user); // Update user context with Firebase user
-      toast.success("Inicio de sesión exitoso");
-      navigate("/welcome-egresado"); // Redirect to the Welcome page
+
+      const profileResponse = await getGraduateProfileRequest();
+
+      if (profileResponse) {
+        navigate("/welcome-egresado"); // Redirect to welcome page if profile exists
+        toast.success("Inicio de sesión exitoso");
+      } else {
+        navigate("/perfil-egresado-form"); // Redirect to profile form
+      }
     } catch (error) {
       console.error("Error al iniciar sesión con Google:", error);
       toast.error("Error al iniciar sesión con Google.");
@@ -26,8 +34,8 @@ export default function Login() {
     <div className="flex justify-center items-center min-h-screen">
       <div className="w-[90%] md:w-[80%] max-w-6xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden bg-white z-10 relative h-[350px] md:h-[450px]">
         {/* Left Column: Google Login */}
-        <div className="w-full md:w-1/2 p-6 md:p-10">
-          <div className="text-center mb-8">
+        <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-6 md:p-10">
+          <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
               Bienvenido
             </h2>

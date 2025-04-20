@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
 import { Link } from "react-router-dom";
-import apiClient from "../apiClient"; // Axios instance to fetch user data
+import apiClient from "../api/apiClient"; // Axios instance to fetch user data
 
 export default function Dashboard() {
   const { user } = useContext(UserContext); // Firebase user from context
@@ -54,10 +54,10 @@ export default function Dashboard() {
               Ver beneficios
             </Link>
             <Link
-              to="/perfil"
+              to="/perfil-egresado-form"
               className="bg-white border border-green-500 text-green-600 hover:bg-green-100 px-5 py-2 rounded-full font-medium transition duration-300"
             >
-              Ver mi perfil
+              Editar mi perfil
             </Link>
           </div>
         </div>
