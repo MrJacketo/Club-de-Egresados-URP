@@ -13,20 +13,35 @@ export default function Login() {
   // Login with Google using Firebase
   const handleGoogleLogin = async () => {
     try {
+      // Sign in with Google
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user); // Update user context with Firebase user
-
-      const profileResponse = await getGraduateProfileRequest();
-
-      if (profileResponse) {
-        navigate("/welcome-egresado"); // Redirect to welcome page if profile exists
-        toast.success("Inicio de sesión exitoso");
+  
+      // Wait for the Firebase ID token
+      const token = await auth.currentUser.getIdToken(true); // Force refresh the token
+      console.log("Firebase ID Token:", token); // Debug the token
+  
+      // Check if the user's profile exists
+      const profileResponse = await getGraduateProfileRequest(token); // Pass the token to the API request
+  
+      if (!profileResponse) {
+        // If the profile doesn't exist, navigate to the profile creation form
+        navigate("/perfil-egresado-form");
+        toast("Por favor, completa tu perfil.");
       } else {
-        navigate("/perfil-egresado-form"); // Redirect to profile form
+        // If the profile exists, navigate to the welcome page
+        navigate("/welcome-egresado");
+        toast.success("Inicio de sesión exitoso");
       }
     } catch (error) {
       console.error("Error al iniciar sesión con Google:", error);
-      toast.error("Error al iniciar sesión con Google.");
+  
+      // Handle specific errors
+      if (error.code === "auth/unauthorized-domain") {
+        toast.error("El dominio no está autorizado. Contacta al administrador.");
+      } else {
+        toast.error("Error al iniciar sesión con Google.");
+      }
     }
   };
 

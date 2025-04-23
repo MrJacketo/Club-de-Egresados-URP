@@ -1,12 +1,25 @@
 import apiClient from "./apiClient";
+import { auth } from "../firebase";
 
 export const getGraduateProfileRequest = async () => {
   try {
-    const response = await apiClient.get("/api/get-perfil-egresado");
-    return response.data;
+    // Get the current user's ID token
+    const token = await auth.currentUser.getIdToken();
+    console.log("Firebase ID Token:", token); // Debug the token
+
+    // Make the API request with the token in the Authorization header
+    const response = await apiClient.get("/api/get-perfil-egresado", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data; // Return the profile data if it exists
   } catch (error) {
-    console.error("Perfil no encontrado:", error.response?.data || error.message);
-    throw error;
+    if (error.response?.status === 404) {
+      return null; // Return null if the profile doesn't exist
+    }
+    throw error; // Re-throw other errors
   }
 };
 

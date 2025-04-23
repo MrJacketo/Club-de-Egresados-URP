@@ -3,11 +3,13 @@ const User = require("../models/User"); // MongoDB User model
 
 // Middleware to verify Firebase token and sync with MongoDB
 const verifyFirebaseToken = async (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1]; // Extract token from Authorization header
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({ error: "No token provided" });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized: No token provided" });
   }
+
+  const token = authHeader.split(" ")[1];
 
   try {
     // Verify Firebase token

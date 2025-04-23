@@ -29,10 +29,11 @@ const createOrUpdatePerfil = async (req, res) => {
 
 // Get graduate profile
 const getPerfil = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
-
+  
   try {
-    const profile = await PerfilEgresado.findOne({ firebaseUid });
+    const userId = req.user.uid; // Extract the user's UID from the token
+    const profile = await PerfilEgresado.findOne({ firebaseUid: userId });
+
     if (!profile) {
       return res.status(404).json({ error: "Perfil no encontrado" });
     }
