@@ -19,7 +19,6 @@ export default function Login() {
   
       // Wait for the Firebase ID token
       const token = await auth.currentUser.getIdToken(true); // Force refresh the token
-      console.log("Firebase ID Token:", token); // Debug the token
   
       // Check if the user's profile exists
       const profileResponse = await getGraduateProfileRequest(token); // Pass the token to the API request
