@@ -16,14 +16,13 @@ export default function Login() {
       // Sign in with Google
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user); // Update user context with Firebase user
-  
+
       // Wait for the Firebase ID token
       const token = await auth.currentUser.getIdToken(true); // Force refresh the token
-      console.log("Firebase ID Token:", token); // Debug the token
-  
+
       // Check if the user's profile exists
       const profileResponse = await getGraduateProfileRequest(token); // Pass the token to the API request
-  
+
       if (!profileResponse) {
         // If the profile doesn't exist, navigate to the profile creation form
         navigate("/perfil-egresado-form");
@@ -35,10 +34,12 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Error al iniciar sesión con Google:", error);
-  
+
       // Handle specific errors
       if (error.code === "auth/unauthorized-domain") {
         toast.error("El dominio no está autorizado. Contacta al administrador.");
+      } else if (error.message.includes("Failed to fetch profile")) {
+        toast.error("No se pudo obtener el perfil. Intenta nuevamente.");
       } else {
         toast.error("Error al iniciar sesión con Google.");
       }

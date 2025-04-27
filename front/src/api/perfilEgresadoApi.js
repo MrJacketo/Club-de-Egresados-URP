@@ -5,7 +5,6 @@ export const getGraduateProfileRequest = async () => {
   try {
     // Get the current user's ID token
     const token = await auth.currentUser.getIdToken();
-    console.log("Firebase ID Token:", token); // Debug the token
 
     // Make the API request with the token in the Authorization header
     const response = await apiClient.get("/api/get-perfil-egresado", {
