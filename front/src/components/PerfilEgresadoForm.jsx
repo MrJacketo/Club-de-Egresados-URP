@@ -55,17 +55,22 @@ export default function PerfilEgresadoForm() {
         // Fetch options for dropdowns
         const optionsData = await OptionsRequest();
         setOptions(optionsData);
-
+  
         // Fetch existing profile
         const profileResponse = await getGraduateProfileRequest();
-        setProfile(profileResponse);
+        if (profileResponse) {
+          setProfile(profileResponse); // Set profile if it exists
+        }
       } catch (error) {
-        if (error.response?.status !== 404) {
+        if (error.response?.status === 404) {
+          // Profile not found, allow user to create a new one
+          console.warn("No profile found. User can create a new profile.");
+        } else {
           console.error("Error fetching profile or options:", error);
         }
       }
     };
-
+  
     fetchProfileAndOptions();
   }, []);
 
