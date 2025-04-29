@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Stack } from "@mui/material";
 import {
   AREAS_LABORALES,
   MODALIDAD,
@@ -82,7 +81,7 @@ function OfertaLaboralForm() {
       };
 
       if (id) {
-        console.log(id)
+        console.log(id);
         ofertaData.id = id; // Asegura que el ID esté en la data para actualizar
       }
 
@@ -104,25 +103,25 @@ function OfertaLaboralForm() {
           Guardar Oferta Laboral
         </h2>
       </div>
-      <Stack spacing={2}>
-        <Stack direction={"row"} spacing={3}>
+
+      <div className="space-y-6">
+        <div className="flex gap-6">
           <InputField
             name="cargo"
             label="Titulo del empleo"
             register={register}
             errors={errors}
-            sx={{ flex: 1 }}
+            type="text"
           />
           <InputField
             name="empresa"
             label="Nombre Empresa"
             register={register}
             errors={errors}
-            sx={{ flex: 1 }}
           />
-        </Stack>
+        </div>
 
-        <Stack direction={"row"} spacing={3}>
+        <div className="flex gap-6">
           <SelectField
             name="modalidad"
             label="Modalidad de empleo"
@@ -130,17 +129,15 @@ function OfertaLaboralForm() {
             errors={errors}
             options={MODALIDAD}
           />
-
           <InputField
             name="ubicacion"
             label="Ubicacion del empleo"
             register={register}
             errors={errors}
-            sx={{ flex: 1 }}
           />
-        </Stack>
+        </div>
 
-        <Stack direction={"row"} spacing={3}>
+        <div className="flex gap-6">
           <SelectField
             name="tipoContrato"
             label="Tipo de contrato"
@@ -148,28 +145,26 @@ function OfertaLaboralForm() {
             errors={errors}
             options={TIPOS_CONTRATO}
           />
-
           <SelectField
             name="requisitos"
-            label="Tipo de contrato"
+            label="Experiencia laboral"
             control={control}
             errors={errors}
             options={REQUISITOS}
           />
-        </Stack>
+        </div>
 
-        <Stack direction={"row"}>
+        <div>
           <TextArea
             name="descripcion"
             label="Descripción del empleo"
             register={register}
             errors={errors}
-            rows={6} // El área de texto será más grande
-            sx={{ backgroundColor: "#f7f7f7" }} // Fondo ligeramente gris
+            rows={6}
           />
-        </Stack>
+        </div>
 
-        <Stack direction={"row"} spacing={3}>
+        <div className="flex gap-6">
           <SelectField
             name="area"
             label="Area de empleo"
@@ -177,33 +172,29 @@ function OfertaLaboralForm() {
             errors={errors}
             options={AREAS_LABORALES}
           />
-
           <InputField
             name="linkEmpresa"
             label="Sitio/Correo de la empresa"
             register={register}
             errors={errors}
-            sx={{ flex: 1 }}
           />
-        </Stack>
+        </div>
 
-        <Stack direction={"row"} spacing={3}>
+        <div className="flex gap-6">
           <InputField
             name="salario"
             label="Salario estimado"
             register={register}
             errors={errors}
-            sx={{ flex: 1 }}
           />
-
           <DateField
             name="fechaCierre"
             label="Fecha cierre de la oferta"
             register={register}
             errors={errors}
           />
-        </Stack>
-      </Stack>
+        </div>
+      </div>
 
       <input
         type="submit"

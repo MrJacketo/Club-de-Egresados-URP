@@ -1,52 +1,25 @@
-import { TextField, Typography } from "@mui/material";
-
-function DateField({ name, label, register, errors, sx = {}, ...props }) {
+function DateField({ name, label, register, errors, ...props }) {
   return (
     <div className="w-full">
-      <Typography
-        variant="subtitle2"
-        sx={{
-          marginBottom: '5px',
-          fontWeight: 600,
-          textAlign: 'left',
-          color: '#333',
-          fontSize: '17px',
-          fontFamily: 'sans-serif',
-        }}
-      >
+      <label className="block mb-1 text-left text-[17px] font-semibold text-[#333]">
         {label}
-      </Typography>
+      </label>
 
-      <TextField
-        type="date" // Tipo de input para fecha
-        variant="outlined"
-        {...register(name)} // Conectar con React Hook Form
-        error={!!errors?.[name]} // Mostrar error si existe
-        helperText={errors?.[name]?.message} // Mostrar mensaje de error
-        fullWidth
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '8px',
-            backgroundColor: '#fff',
-            padding: '8px',
-            alignItems: 'center',
-            '& input': {
-              padding: '8px 10px', // Padding del texto
-              fontFamily: 'sans-serif',
-              fontSize: '15px',
-              textAlign: 'left',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: '#25BF7B', // Borde cuando está en focus
-              borderWidth: '2px',
-            },
-            '&:hover fieldset': {
-              borderColor: '#555', // Borde al pasar el mouse
-            },
-          },
-        }}
+      <input
+        type="date"
+        {...register(name)}
         {...props}
+        className={`w-full text-[#111] transition-all duration-200
+          hover:border-gray-600 rounded-md bg-white border px-4 py-2 text-[15px] font-sans focus:outline-none focus:ring-1 focus:ring-[#25BF7B] ${
+          errors?.[name]
+            ? "border-red-500"
+            : "border-gray-300 focus:border-[#25BF7B]"
+        }`}
       />
+
+      {errors?.[name] && (
+        <p className="text-red-500 text-sm mt-1">{errors[name].message}</p>
+      )}
     </div>
   );
 }
