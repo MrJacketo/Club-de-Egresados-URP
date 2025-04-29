@@ -1,72 +1,40 @@
-import { TextField, MenuItem, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
 
-function SelectField({ name, label, control, errors, options = [], sx = {}, ...props }) {
+function SelectField({ name, label, control, errors, options = [], ...props }) {
   return (
     <div className="w-full">
-      <Typography
-        variant="subtitle2"
-        sx={{
-          marginBottom: '1px',
-          fontWeight: 600,
-          textAlign: 'left',
-          color: '#333',
-          fontSize: '17px',
-          fontFamily: 'sans-serif',
-        }}
-      >
+      <label className="block mb-1 text-left text-[17px] font-semibold text-[#333]">
         {label}
-      </Typography>
+      </label>
 
       <Controller
         name={name}
         control={control}
         render={({ field }) => (
-          <TextField
-            select
-            variant="outlined"
-            {...field} 
-            error={!!errors?.[name]}
-            helperText={errors?.[name]?.message}
-            fullWidth
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-                backgroundColor: '#fff',
-                padding: '0',
-                alignItems: 'center',
-
-                '& select': {
-                  padding: '6px 8px',
-                  fontFamily: 'sans-serif',
-                  fontSize: '15px',
-                  textAlign: 'left',
-                },
-
-                '&.Mui-focused fieldset': {
-                  borderColor: '#25BF7B',
-                  borderWidth: '2px',
-                },
-
-                '&:hover fieldset': {
-                  borderColor: '#555',
-                },
-              },
-
-              '& .MuiSelect-select': {
-                display: 'flex',
-                alignItems: 'center',
-              },
-              ...sx,
-            }}
-            {...props}
-          >
-            {options.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
+          <>
+            <select
+              {...field}
+              {...props}
+              className={`w-full transition-all duration-200
+          hover:border-gray-600 rounded-md text-[#111] bg-white border px-4 py-2 text-[15px] font-sans focus:outline-none focus:ring-1 focus:ring-[#25BF7B] ${
+            errors?.[name]
+              ? "border-red-500"
+              : "border-gray-300 focus:border-[#25BF7B]"
+          }`}
+            >
+              <option value="">Selecciona una opción</option>
+              {options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {errors?.[name] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors[name].message}
+              </p>
+            )}
+          </>
         )}
       />
     </div>

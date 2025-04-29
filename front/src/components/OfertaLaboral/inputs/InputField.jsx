@@ -1,54 +1,32 @@
-import { TextField, Typography } from "@mui/material";
+import React from "react";
 
-function InputField({ name, label, register, errors, type = "text", sx = {}, ...props }) {
+function InputField({ name, label, register, errors, type = "text", ...props }) {
   return (
     <div className="w-full">
-      <Typography
-        variant="subtitle2" // subtítulo pequeño
-        sx={{
-          marginBottom: '4px',
-          fontWeight: 600,
-          textAlign: 'left', 
-          color: '#333', // Color del título
-          fontSize: '17px',
-          fontFamily: 'sans-serif'
-        }}
+      <label
+        htmlFor={name}
+        className="block mb-1 font-semibold text-left text-[#333] text-[17px] font-sans"
       >
         {label}
-      </Typography>
+      </label>
 
-      <TextField
-        variant="outlined"
+      <input
+        id={name}
         type={type}
         {...register(name)}
-        error={!!errors?.[name]}
-        helperText={errors?.[name]?.message}
-        fullWidth
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '8px', // Bordes redondeados
-            backgroundColor: '#fff', // Fondo blanco
-            padding: '5.5px', // Elimina el padding extra del contenedor
-      
-            '& input': {
-              padding: '10px 14px', // Padding del texto interno
-              fontFamily: 'sans-serif',
-              fontSize: '16px',
-            },
-      
-            '&:hover fieldset': {
-              borderColor: '#555', // Borde al pasar el mouse
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: '#25BF7B', // Borde azul cuando haces focus
-              borderWidth: '2px', // Más grueso en focus
-            },
-          },
-        }}
+        className={`w-full rounded-lg text-black bg-white px-4 py-2 text-[15px] font-sans border focus:outline-none transition-all duration-200
+          ${errors?.[name] ? "border-red-500" : "border-gray-300"}
+          focus:border-[#25BF7B] focus:border-2
+          hover:border-gray-600`}
         {...props}
       />
+
+      {errors?.[name] && (
+        <p className="text-sm text-red-500 mt-1">{errors[name].message}</p>
+      )}
     </div>
   );
 }
 
 export default InputField;
+
