@@ -56,19 +56,26 @@ const getOfertas = async (req, res) => {
 
 // Deshabilitar una oferta laboral (cambiar el estado a "Inactivo")
 const disableOferta = async (req, res) => {
-    const { id } = req.params;  // ID de la oferta laboral a deshabilitar
-  
-    try {
-      const oferta = await OfertaLaboral.findByIdAndUpdate(id, { estado: 'Inactivo' }, { new: true });
-      if (!oferta) {
-        return res.status(404).json({ error: 'Oferta laboral no encontrada' });
-      }
-      res.json({ message: 'Oferta laboral deshabilitada exitosamente', oferta });
-    } catch (error) {
-      console.error('Error deshabilitando la oferta laboral:', error);
-      res.status(500).json({ error: 'Error interno del servidor' });
+  const { id } = req.params;
+
+  try {
+    const oferta = await OfertaLaboral.findById(id);
+    
+    if (!oferta) {
+      return res.status(404).json({ error: 'Oferta laboral no encontrada' });
     }
-  };
+
+    const nuevoEstado = oferta.estado === 'Activo' ? 'Inactivo' : 'Activo';
+    
+    const updatedOferta = await OfertaLaboral.findByIdAndUpdate(id, { estado: nuevoEstado }, { new: true });
+
+    res.json({ message: `Oferta laboral ${nuevoEstado} exitosamente`, estado: updatedOferta.estado });
+  } catch (error) {
+    console.error('Error al cambiar el estado de la oferta laboral:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 
 // Eliminar una oferta laboral por ID
 const deleteOferta = async (req, res) => {

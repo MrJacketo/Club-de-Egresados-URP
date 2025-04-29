@@ -8,11 +8,12 @@ const { createOrUpdateOferta,
     getOptions } = require("../controllers/ofertaController");
 const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 
-router.post("/oferta", createOrUpdateOferta);
-router.get("/oferta/:id", verifyFirebaseToken, getOferta);
-router.get("/ofertas", verifyFirebaseToken, getOfertas);
-router.patch("/oferta/:id/deshabilitar", verifyFirebaseToken, disableOferta);
+router.post("/oferta", verifyFirebaseToken, createOrUpdateOferta);
+router.put("/oferta/:id", verifyFirebaseToken, createOrUpdateOferta);
+router.get("/oferta/:id",verifyFirebaseToken, getOferta);
+router.get("/ofertas",verifyFirebaseToken, getOfertas);
+router.patch("/oferta/:id/deshabilitar",verifyFirebaseToken, disableOferta);
 router.delete("/oferta/:id", verifyFirebaseToken, deleteOferta);
-router.get("/options", getOptions);
+router.get("/oferta/options",verifyFirebaseToken, getOptions);
 
 module.exports = router;
