@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
 import { auth } from "../firebase"; // Import Firebase auth
 import { signOut } from "firebase/auth";
 
@@ -35,8 +35,14 @@ export default function Navbar() {
           {user ? (
             <>
               <span className="text-gray-200">
-                Hola, {user.displayName || "Usuario"}
+                Hola, {user.displayName || "Usuario"} !
               </span>
+              <button
+                onClick={() => navigate("/welcome-egresado")}
+                className="text-gray-200 hover:text-teal-300 transition"
+              >
+                Inicio
+              </button>
               <button
                 onClick={handleLogout}
                 className="text-gray-200 hover:text-teal-300 transition"
@@ -52,12 +58,12 @@ export default function Navbar() {
               </Link> 
               */}
 
-              <Link
-                to="/login"
+              <button
+                onClick={() => navigate("/login")}
                 className="text-gray-200 hover:text-teal-300 transition"
               >
                 Login
-              </Link>
+              </button>
             </>
           )}
         </div>

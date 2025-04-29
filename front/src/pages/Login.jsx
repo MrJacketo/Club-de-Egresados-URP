@@ -3,7 +3,8 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
+import { getGraduateProfileRequest } from "../api/perfilEgresadoApi";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,13 +13,36 @@ export default function Login() {
   // Login with Google using Firebase
   const handleGoogleLogin = async () => {
     try {
+      // Sign in with Google
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user); // Update user context with Firebase user
-      toast.success("Inicio de sesión exitoso");
-      navigate("/welcome-egresado"); // Redirect to the Welcome page
+
+      // Wait for the Firebase ID token
+      const token = await auth.currentUser.getIdToken(true); // Force refresh the token
+
+      // Check if the user's profile exists
+      const profileResponse = await getGraduateProfileRequest(token); // Pass the token to the API request
+
+      if (!profileResponse) {
+        // If the profile doesn't exist, navigate to the profile creation form
+        navigate("/perfil-egresado-form");
+        toast("Por favor, completa tu perfil.");
+      } else {
+        // If the profile exists, navigate to the welcome page
+        navigate("/welcome-egresado");
+        toast.success("Inicio de sesión exitoso");
+      }
     } catch (error) {
       console.error("Error al iniciar sesión con Google:", error);
-      toast.error("Error al iniciar sesión con Google.");
+
+      // Handle specific errors
+      if (error.code === "auth/unauthorized-domain") {
+        toast.error("El dominio no está autorizado. Contacta al administrador.");
+      } else if (error.message.includes("Failed to fetch profile")) {
+        toast.error("No se pudo obtener el perfil. Intenta nuevamente.");
+      } else {
+        toast.error("Error al iniciar sesión con Google.");
+      }
     }
   };
 
@@ -26,8 +50,8 @@ export default function Login() {
     <div className="flex justify-center items-center min-h-screen">
       <div className="w-[90%] md:w-[80%] max-w-6xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden bg-white z-10 relative h-[350px] md:h-[450px]">
         {/* Left Column: Google Login */}
-        <div className="w-full md:w-1/2 p-6 md:p-10">
-          <div className="text-center mb-8">
+        <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-6 md:p-10">
+          <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
               Bienvenido
             </h2>
