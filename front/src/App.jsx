@@ -31,8 +31,7 @@ function App() {
           <Route path='/membresia' element={<Membresia/>} />  
           <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
           <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />    
-          <Route path="/VerMembresia" element={<GestionarMembresia />} />
-         embresia
+          <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia/></PrivateRoute>} />
         </Routes>
       </UserContextProvider>
   )

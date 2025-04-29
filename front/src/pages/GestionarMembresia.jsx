@@ -1,9 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
+import { auth } from "../firebase"; // Import Firebase auth
+import { signOut } from "firebase/auth";
+import { useState } from "react";
 import {
   Calendar,
-  Clock,
+  Clock, 
   Award,
   CheckCircle,
   ChevronDown,
@@ -14,12 +19,14 @@ import {
   User,
 } from "lucide-react"
 
-const GestionarMembresia = () => {
+export default function GestionarMembresiaForm(){
+  const navigate = useNavigate();
+  const user = useContext(UserContext)
   const [beneficiosAbiertos, setBeneficiosAbiertos] = useState(true)
 
   // Datos simulados de membresía
   const membresia = {
-    nombre: "Gabriel Fernández",
+    nombre: user.userName,
     tipo: "Premium",
     inicio: "01/04/2025",
     vencimiento: "01/07/2025",
@@ -194,5 +201,3 @@ const GestionarMembresia = () => {
     </div>
   )
 }
-
-export default GestionarMembresia
