@@ -48,12 +48,11 @@ const GestionarMembresia = () => {
   const porcentajeCompletado = 100 - Math.min(100, Math.round((diasRestantes / 90) * 100))
 
   return (
-    <div className="min-h-screen w-full flex flex-col">
+    <div className="h-screen w-full flex flex-col overflow-hidden">
       {/* Cabecera */}
       <header className="w-full py-8 px-6 mt-10 text-white">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2">Mi Membresía</h1>
-          <p className="opacity-80">Gestiona tu membresía y beneficios</p>
+          <h1 className="text-3xl font-bold mb-1">Mi Membresía</h1>
         </div>
       </header>
 
@@ -61,7 +60,7 @@ const GestionarMembresia = () => {
       <main className="flex-1 w-full px-4 pb-12">
         <div className="max-w-4xl mx-auto">
           {/* Información del usuario */}
-          <div className="bg-white/25 backdrop-blur-md rounded-lg p-6 mb-6 text-white shadow-lg">
+          <div className="bg-white/100 backdrop-blur-md rounded-3xl p-6 mb-6 text-black shadow-lg">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 p-3 rounded-full">
@@ -98,7 +97,7 @@ const GestionarMembresia = () => {
           {/* Secciones de información */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Fechas y progreso */}
-            <div className="bg-white/25 backdrop-blur-md rounded-lg p-6 text-white shadow-lg">
+            <div className="bg-white/100 backdrop-blur-md rounded-3xl p-6 text-black shadow-lg">
               <h3 className="text-xl font-semibold mb-4">Detalles de membresía</h3>
 
               {/* Información de fechas */}
@@ -123,8 +122,8 @@ const GestionarMembresia = () => {
                   <span className="opacity-70">Progreso de membresía</span>
                   <span className="font-medium">{porcentajeCompletado}%</span>
                 </div>
-                <div className="w-full bg-white/20 rounded-full h-3">
-                  <div className="bg-white h-3 rounded-full" style={{ width: `${porcentajeCompletado}%` }}></div>
+                <div className="w-full bg-black/20 rounded-full h-3">
+                  <div className="bg-green-800 h-3 rounded-full" style={{ width: `${porcentajeCompletado}%` }}></div>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm opacity-70 flex items-center">
@@ -141,7 +140,7 @@ const GestionarMembresia = () => {
             </div>
 
             {/* Sección de beneficios */}
-            <div className="bg-white/25 backdrop-blur-md rounded-lg p-6 text-white shadow-lg">
+            <div className="bg-white/100 backdrop-blur-md rounded-3xl p-6 text-white shadow-lg">
               <button
                 className="flex justify-between items-center w-full font-semibold text-xl mb-4"
                 onClick={() => setBeneficiosAbiertos(!beneficiosAbiertos)}
@@ -156,8 +155,8 @@ const GestionarMembresia = () => {
               {beneficiosAbiertos && (
                 <ul className="space-y-3">
                   {membresia.beneficios.map((beneficio, index) => (
-                    <li key={index} className="flex items-start gap-3 bg-white/5 p-3 rounded-lg">
-                      <CheckCircle size={18} className="text-white mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-3 bg-black/40 p-3 rounded-lg">
+                      <CheckCircle size={18} className="text-black mt-0.5 flex-shrink-0" />
                       <span>{beneficio}</span>
                     </li>
                   ))}
@@ -172,7 +171,7 @@ const GestionarMembresia = () => {
           </div>
 
           {/* Acciones adicionales */}
-          <div className="bg-white/25 backdrop-blur-md rounded-lg p-6 mt-6 text-white shadow-lg">
+          <div className="bg-white/100 backdrop-blur-md rounded-3xl p-6 mt-6 text-black shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Acciones rápidas</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <button className="bg-white/20 hover:bg-white/30 text-white h-auto py-4 flex flex-col items-center justify-center">
