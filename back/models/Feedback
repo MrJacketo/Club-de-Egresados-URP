@@ -1,0 +1,52 @@
+const mongoose = require('mongoose');
+
+const feedbackSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true
+  },
+  nombreUsuario: {
+    type: String,
+    required: false, 
+    trim: true
+  },
+  emailUsuario: {
+    type: String,
+    required: false, 
+    trim: true
+  },
+  beneficioDeseado: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  comentariosAdicionales: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  estado: {
+    type: String,
+    enum: ['pendiente', 'revisado', 'rechazado'],
+    default: 'pendiente'
+  },
+  prioridad: {
+    type: String,
+    enum: ['alta', 'media', 'baja'],
+    default: 'media'
+  },
+  respuestaAdministrador: {
+    type: String,
+    default: ''
+  },
+  fechaCreacion: {
+    type: Date,
+    default: Date.now
+  },
+  ultimaActualizacion: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model('Feedback', feedbackSchema);
