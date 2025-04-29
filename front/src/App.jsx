@@ -10,8 +10,13 @@ import { UserContextProvider } from './context/userContext.jsx';
 import WelcomeEgresado from './pages/WelcomeEgresado.jsx';
 import Beneficios from './pages/Beneficios.jsx';
 import Membresia from './pages/Membresia.jsx';
+import GuardarOferta from './pages/OfertaLaboral/GuardarOferta.jsx';
+import GestionOfertas from './pages/OfertaLaboral/GestionOfertas.jsx'
 import PerfilEgresadoForm from './components/PerfilEgresadoForm.jsx';
+
+
 import PrivateRoute from "./components/PrivateRoute";
+
 
 axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.withCredentials= true;
@@ -30,6 +35,9 @@ function App() {
           <Route path='/membresia' element={<Membresia/>} />  
           <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
           <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />             
+          <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta/></PrivateRoute>} />
+          <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas/></PrivateRoute>} />
+        
         </Routes>
       </UserContextProvider>
   )
