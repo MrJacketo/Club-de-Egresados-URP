@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/userContext";
-import { auth } from "../firebase";
 import {
   Calendar,
   Clock, 
@@ -10,7 +9,6 @@ import {
   ChevronUp,
   Gift,
   RefreshCw,
-  ArrowUpRight,
   User,
 } from "lucide-react";
 import { getMembresiaRequest, activateMembresiaRequest } from "../api/membresiaApi";
@@ -188,22 +186,37 @@ export default function GestionarMembresiaForm() {
               <button
                 className="flex justify-between items-center w-full font-semibold text-xl mb-4"
                 onClick={() => setBeneficiosAbiertos(!beneficiosAbiertos)}
-              >
-                <span className="flex items-center">
-                  <Award size={20} className="mr-2" />
-                  Beneficios incluidos si activa su membresia:
-                </span>
-                {beneficiosAbiertos ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-
+                >
+                  <span className="flex items-center">
+                    <Award size={20} className="mr-2" />
+                    {membresia.estado === "activa" 
+                      ? "Beneficios actuales con su membresía:" 
+                      : "Beneficios incluidos si activa su membresía:"}
+                  </span>
+                  {beneficiosAbiertos ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+            
               {beneficiosAbiertos && (
                 <ul className="space-y-3">
-                  {membresia.beneficios.map((beneficio, index) => (
-                    <li key={index} className="flex items-start gap-3 bg-white/5 p-3 rounded-lg">
-                      <CheckCircle size={18} className="text-white mt-0.5 flex-shrink-0" />
-                      <span>{beneficio}</span>
-                    </li>
-                  ))}
+                  {/* Si la membresía está activa, mostrar los beneficios de membresía */}
+                  {membresia.estado === "activa"
+                    ? membresia.beneficios.map((beneficio, index) => (
+                        <li key={index} className="flex items-start gap-3 bg-white/5 p-3 rounded-lg">
+                          <CheckCircle size={18} className="text-white mt-0.5 flex-shrink-0" />
+                          <span>{beneficio}</span>
+                        </li>
+                      ))
+                    :
+                      [
+                        "Acceso a la bolsa exclusiva de URPex",
+                        "Conferencias gratuitas",
+                        "Descuento en diferentes paquetes de cursos",
+                      ].map((beneficio, index) => (
+                        <li key={index} className="flex items-start gap-3 bg-white/5 p-3 rounded-lg">
+                          <CheckCircle size={18} className="text-white mt-0.5 flex-shrink-0" />
+                          <span>{beneficio}</span>
+                        </li>
+                      ))}
                 </ul>
               )}
 

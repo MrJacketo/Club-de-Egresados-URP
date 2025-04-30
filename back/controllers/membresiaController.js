@@ -10,21 +10,14 @@ const getMembresia = async (req, res) => {
       console.log("No se encontró membresía, devolviendo defaults");
       return res.status(200).json({
         estado: "inactiva",
-        beneficios: [
-          "Acceso a la bolsa exclusiva de URPex",
-          "Conferencias gratuitas",
-          "Descuento en diferentes paquetes de cursos"
-        ],
+        beneficios: [],
         fechaActivacion: null,
         fechaVencimiento: null
       });
     }
-
-    console.log("Membresía encontrada:", membresia); // Debug
     res.status(200).json(membresia);
 
   } catch (error) {
-    console.error("Error en getMembresia:", error);
     res.status(500).json({ 
       error: "Error interno del servidor",
       details: error.message 
@@ -42,6 +35,12 @@ const activateMembresia = async (req, res) => {
       { firebaseUid },
       {
         estado: "activa",
+        beneficios: [
+          "Acceso a la bolsa exclusiva de URPex",
+          "Conferencias gratuitas",
+          "Descuento en diferentes paquetes de cursos",
+          "Beneficios extra"
+        ],
         fechaActivacion: new Date(),
         fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) // 1 año de membresía
       },
@@ -54,7 +53,6 @@ const activateMembresia = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error en el backend al activar:", error);
     res.status(500).json({ 
       success: false,
       error: "Error interno al activar membresía" 
