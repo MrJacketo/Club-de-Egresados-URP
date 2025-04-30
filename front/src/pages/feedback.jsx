@@ -2,7 +2,6 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { UserContext } from "../../context/userContext";
-import apiClient from "../../apiClient"; // Usamos apiClient para la comunicación con el backend
 
 export default function Feedback() {
   const navigate = useNavigate();
@@ -34,10 +33,11 @@ export default function Feedback() {
     }
 
     try {
+      // Usamos la URL correcta del backend
       const response = await apiClient.post(
-        "/feedback-feedbacks", // Asegúrate de que la URL sea correcta
+        "http://localhost:8000/api/feedback/feedback-beneficios",  // URL completa
         {
-          userId: user.uid,  // Usamos el userId de Firebase
+          userId: user.uid,
           ...feedback,
         }
       );
