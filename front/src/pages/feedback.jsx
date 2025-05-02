@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { UserContext } from "../../context/userContext";
+import axios from "axios";  // Importamos axios directamente
 
 export default function Feedback() {
   const navigate = useNavigate();
@@ -27,17 +28,33 @@ export default function Feedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validaciones para asegurar que los campos no estén vacíos o nulos
     if (!user) {
       toast.error("Por favor, inicia sesión para enviar tu feedback.");
       return;
     }
 
+    if (!feedback.beneficioDeseado || feedback.beneficioDeseado.trim() === "") {
+      toast.error("El beneficio deseado es obligatorio.");
+      return;
+    }
+
+    if (feedback.comentariosAdicionales && feedback.comentariosAdicionales.length > 300) {
+      toast.error("Los comentarios no pueden exceder los 300 caracteres.");
+      return;
+    }
+
+    if (!feedback.nombreUsuario || !feedback.emailUsuario) {
+      toast.error("Por favor, ingresa tu nombre y email.");
+      return;
+    }
+
     try {
-      // Usamos la URL correcta del backend
-      const response = await apiClient.post(
+      // Usamos axios directamente para hacer la solicitud al backend
+      const response = await axios.post(
         "http://localhost:8000/api/feedback/feedback-beneficios",  // URL completa
         {
-          userId: user.uid,
+          userId: user.uid, // Usamos el userId de Firebase
           ...feedback,
         }
       );
@@ -50,7 +67,7 @@ export default function Feedback() {
         nombreUsuario: "",
         emailUsuario: "",
       });  // Limpiar el formulario
-      navigate("/feedback-exito"); // Redirige al usuario después de enviar el feedback
+      navigate("/feedback"); // Redirige al usuario después de enviar el feedback
 
     } catch (error) {
       toast.error(error.response?.data?.mensaje || "Hubo un error al enviar el feedback.");

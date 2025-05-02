@@ -29,10 +29,11 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/beneficios' element={<Beneficios />} />
         <Route path='/membresia' element={<Membresia />} />
+        <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
         <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado /></PrivateRoute>} />
         <Route path='/perfil' element={<PrivateRoute><Perfil /></PrivateRoute>} />
         <Route path='/perfilegresado' element={<PrivateRoute><PerfilEgresado /></PrivateRoute>} />
-        <Route path="/feedback" element={<Feedback />} />
+
       </Routes>
     </UserContextProvider>
   );
