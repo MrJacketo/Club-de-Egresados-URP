@@ -52,7 +52,7 @@ export default function CardOfertaLaboral(props) {
   };
 
   return (
-    <div className="bg-white w-full hover:cursor-pointer text-[#1e1e1e] flex flex-col lg:flex-row justify-between m-auto mt-4 px-6 sm:px-10 lg:px-14 py-6 sm:py-8 rounded-3xl shadow-md gap-4">
+    <div className="bg-white w-full transition-all duration-500 hover:scale-102 hover:cursor-pointer text-[#1e1e1e] flex flex-col lg:flex-row justify-between m-auto mt-4 px-6 sm:px-10 lg:px-14 py-6 sm:py-8 rounded-3xl shadow-md gap-4">
       <div className="flex flex-col gap-2 justify-around items-start">
         <h2 className="text-lg font-bold">{cargo}</h2>
 

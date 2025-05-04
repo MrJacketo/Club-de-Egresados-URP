@@ -28,23 +28,23 @@ export default function FiltrosOferta({ filtros, agregarFiltro, quitarFiltro }) 
     filtros[tipo].map((item) => (
       <div
         key={item}
-        className="bg-[#31CD7F] text-white font-semibold py-1 px-4 rounded-full flex items-center gap-2"
+        className="bg-[#146e44a2] text-white font-semibold py-1 px-4 rounded-full flex items-center gap-2"
       >
         {item}
-        <button onClick={() => quitarFiltro(tipo, item)} className="text-sm font-bold">
+        <div onClick={() => quitarFiltro(tipo, item)} className="text-sm font-bold cursor-pointer hover:text-[#222] transition-all">
           ✕
-        </button>
+        </div>
       </div>
     ));
 
   return (
-    <div className="w-full flex flex-col gap-4 mb-6">
-      <div className="flex flex-col md:flex-row gap-4">
+    <div className="w-full flex flex-col gap-4 mb-3">
+      <div className="flex flex-col md:flex-row gap-3">
         {renderSelect("area", AREAS_LABORALES, "Seleccionar área")}
         {renderSelect("modalidad", MODALIDAD, "Seleccionar modalidad")}
         {renderSelect("tipoContrato", TIPOS_CONTRATO, "Tipo de Contrato")}
       </div>
-      <div className="flex flex-wrap gap-3 mt-2">
+      <div className="flex flex-wrap gap-3">
         {renderChips("area")}
         {renderChips("modalidad")}
         {renderChips("tipoContrato")}

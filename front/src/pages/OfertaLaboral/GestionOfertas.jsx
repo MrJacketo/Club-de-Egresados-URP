@@ -37,13 +37,13 @@ export default function OfertaLaboral() {
         agregarFiltro={agregarFiltro}
         quitarFiltro={quitarFiltro}
       />
-
       <Link
         to="/guardar-oferta"
-        className="bg-[#1A1A1A] w-full md:w-[60%] hover:bg-[#2d2d2d] hover:cursor-pointer text-[16px] text-white font-semibold py-4 px-5 rounded-xl transition-all duration-300 ease-in-out text-center mb-6"
+        className="bg-[#1A1A1A] w-full md:w-[20%] hover:bg-[#2d2d2d] hover:text-white hover:cursor-pointer text-[16px] text-white font-semibold py-3  rounded-xl transition-all duration-300 ease-in-out text-center mb-1"
       >
         Añadir Oferta
       </Link>
+
 
       {ofertasFiltradas.length > 0 ? (
         ofertasFiltradas.map((oferta) => (
