@@ -5,27 +5,30 @@ export default function Membresia() {
     {
       icon: <Briefcase className="w-6 h-6 text-teal-600" />,
       titulo: "Acceso a Bolsa Laboral Premium",
-      descripcion:"Ofertas exclusivas para egresados URP",
+      descripcion: "Ofertas exclusivas para egresados de la URP",
+
     },
     {
       icon: <Award className="w-6 h-6 text-teal-600" />,
-      titulo:"Certificaciones Profesionales",
-      descripcion:"Descuentos en certificaciones",
+      titulo: "Certificaciones Profesionales",
+      descripcion: "Descuento en certificaciones",
     },
     {
       icon: <Users className="w-6 h-6 text-teal-600" />,
       titulo: "Networking Profesional",
-      descripcion: "Eventos con empleadores y alumni",
+      descripcion: "Eventos con empleadores y alumnos",
+
     },
     {
       icon: <BookOpen className="w-6 h-6 text-teal-600" />,
       titulo: "Cursos de Especialización",
-      descripcion: "Acceso a cursos profesionales",
+      descripcion: "Acesso a cursos profesionales",
+
     },
     {
       icon: <Calendar className="w-6 h-6 text-teal-600" />,
       titulo: "Asesorías Personalizadas",
-      descripcion: "Optimización de CV y LinkedIn",
+      descripcion: "Optimizacion de CV y Linkendl",
     },
   ]
 
@@ -62,11 +65,13 @@ export default function Membresia() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {beneficios.map((beneficio, idx) => (
-                <div key={idx} className="flex items-start gap-3">
+                <div key={idx} className="flex items-start gap-3 text-left">
                   <div className="flex-shrink-0 w-8">{beneficio.icon}</div>
                   <div>
                     <h4 className="font-semibold text-gray-800 text-base">{beneficio.titulo}</h4>
-                    <p className="text-gray-600 text-sm">{beneficio.descripcion}</p>
+                    {beneficio.descripcion?.trim() !== "" && (
+                      <p className="text-gray-600 text-sm">{beneficio.descripcion}</p>
+                    )}
                   </div>
                 </div>
               ))}
