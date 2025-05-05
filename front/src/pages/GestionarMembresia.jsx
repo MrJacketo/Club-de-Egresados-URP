@@ -180,7 +180,7 @@ export default function GestionarMembresiaForm() {
               </div>
             </div>
 
-            <div className="bg-white/100 backdrop-blur-md rounded-lg p-6 text-black shadow-lg">
+            <div className="bg-white/100 backdrop-blur-md rounded-lg p-6 text-white shadow-lg">
               <button
                 className="flex justify-between items-center w-full font-semibold text-xl mb-4"
                 onClick={() => setBeneficiosAbiertos(!beneficiosAbiertos)}
@@ -199,8 +199,8 @@ export default function GestionarMembresiaForm() {
                   {/* Si la membresía está activa, mostrar los beneficios de membresía */}
                   {membresia.estado === "activa"
                     ? membresia.beneficios.map((beneficio, index) => (
-                        <li key={index} className="flex items-start gap-3 bg-gray-100 p-3 rounded-lg">
-                          <CheckCircle size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
+                        <li key={index} className="flex items-start gap-3 bg-black/40 p-3 rounded-lg">
+                          <CheckCircle size={18} className="text-white-600 mt-0.5 flex-shrink-0" />
                           <span>{beneficio}</span>
                         </li>
                       ))
