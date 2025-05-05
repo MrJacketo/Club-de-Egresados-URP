@@ -12,16 +12,18 @@ import Beneficios from './pages/Beneficios.jsx';
 import Membresia from './pages/Membresia.jsx';
 import PerfilEgresadoForm from './components/PerfilEgresadoForm.jsx';
 import PrivateRoute from "./components/PrivateRoute";
+import SidebarPiero from './components/SidebarPiero.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.withCredentials= true;
 
 function App() {
-
   return (
-      <UserContextProvider>
-        <Navbar/>
-        <Toaster position='bottom-right' toastOptions={{duration: 2000}}/>
+    <UserContextProvider>
+      <Navbar/>
+      <SidebarPiero />
+      <Toaster position='bottom-right' toastOptions={{duration: 2000}}/>
+      <div className="ml-16 md:ml-64 pt-16 transition-all duration-300">
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register/>} />
@@ -31,7 +33,8 @@ function App() {
           <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
           <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />             
         </Routes>
-      </UserContextProvider>
+      </div>
+    </UserContextProvider>
   )
 }
 
