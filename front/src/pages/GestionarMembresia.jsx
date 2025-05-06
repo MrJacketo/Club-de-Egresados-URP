@@ -109,7 +109,7 @@ export default function GestionarMembresiaForm() {
                 <button 
                   className={`px-4 py-2 rounded-lg flex items-center ${
                     membresia.estado === "activa" 
-                      ? "bg-gray-300 text-gray-600 cursor-not-allowed" 
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
                       : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
                   }`}
                   onClick={handleRenovar}
@@ -158,7 +158,7 @@ export default function GestionarMembresiaForm() {
                 </div>
                 <div className="w-full bg-black/50 rounded-full h-3">
                   <div 
-                    className="bg-white h-3 rounded-full" 
+                    className="bg-green-600 h-3 rounded-full" 
                     style={{ 
                       width: `${membresia.estado === "activa" ? porcentajeCompletado : 0}%` 
                     }}
@@ -172,7 +172,7 @@ export default function GestionarMembresiaForm() {
                       : "No activa"}
                   </span>
                   {membresia.estado === "activa" && diasRestantes < 15 && (
-                    <span className="text-xs bg-amber-400/20 border border-amber-400/50 text-white px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-amber-400/50 border border-amber-400/50 text-white px-2 py-0.5 rounded-full">
                       ¡Próximo a vencer!
                     </span>
                   )}
@@ -189,7 +189,7 @@ export default function GestionarMembresiaForm() {
                     <Award size={20} className="mr-2" />
                     {membresia.estado === "activa" 
                       ? "Beneficios actuales con su membresía:" 
-                      : "Beneficios incluidos si activa su membresía:"}
+                      : "Beneficios si activa su membresía:"}
                   </span>
                   {beneficiosAbiertos ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </button>
@@ -200,7 +200,7 @@ export default function GestionarMembresiaForm() {
                   {membresia.estado === "activa"
                     ? membresia.beneficios.map((beneficio, index) => (
                         <li key={index} className="flex items-start gap-3 bg-black/40 p-3 rounded-lg">
-                          <CheckCircle size={18} className="text-white-600 mt-0.5 flex-shrink-0" />
+                          <CheckCircle size={18} className="text-white-400 mt-0.5 flex-shrink-0" />
                           <span>{beneficio}</span>
                         </li>
                       ))
@@ -210,8 +210,8 @@ export default function GestionarMembresiaForm() {
                         "Conferencias gratuitas",
                         "Descuento en diferentes paquetes de cursos",
                       ].map((beneficio, index) => (
-                        <li key={index} className="flex items-start gap-3 bg-gray-100 p-3 rounded-lg">
-                          <CheckCircle size={18} className="text-gray-400 mt-0.5 flex-shrink-0" />
+                        <li key={index} className="flex items-start gap-3 bg-black/40 p-3 rounded-lg">
+                          <CheckCircle size={18} className="text-white-400 mt-0.5 flex-shrink-0" />
                           <span>{beneficio}</span>
                         </li>
                       ))}
