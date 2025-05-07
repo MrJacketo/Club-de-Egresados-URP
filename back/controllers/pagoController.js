@@ -1,4 +1,4 @@
-import { MercadoPagoConfig, PreApproval } from "mercadopago";
+import { MercadoPagoConfig, Payment, PreApproval } from "mercadopago";
 import Membresia from "../models/Membresia.js";
 import Usuario from "../models/User.js";
 
@@ -29,8 +29,8 @@ export const handleSubscription = async (req, res) => {
                     currency_id: "PEN"
                 },
                 reason: "Subscripcion anual",
-                back_url: "https://9f12-2800-200-e6e0-611-e58c-b508-5f0d-e69b.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
-                notification_url: "https://054d-2800-200-e6e0-611-e58c-b508-5f0d-e69b.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL
+                back_url: "https://7cba-2800-200-e6e0-611-a848-7312-19ca-9a9f.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
+                notification_url: "https://83dd-2800-200-e6e0-611-a848-7312-19ca-9a9f.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
                 external_reference: req.user.firebaseUid 
             }
         });
@@ -45,44 +45,54 @@ export const handleSubscription = async (req, res) => {
 
 
 export const handleWebhook = async (req, res) => {
-    const event = req.body;
-    console.log("Evento recibido:", event); 
-  
-    try {
-        if (event.type === "subscription_preapproval" && event.action === "updated") {
-            const preapprovalId = event.data.id;
-        
-            const preApproval = new PreApproval(config);
-            const subscriptionData = await preApproval.get({ id: preapprovalId });
-        
-            const firebaseUid = subscriptionData.external_reference;
-        
-            // Activar membresía como ya haces
-            const membresia = await Membresia.findOneAndUpdate(
-              { firebaseUid },
-              {
-                estado: "activa",
-                beneficios: [
-                  "Acceso a la bolsa exclusiva de URPex",
-                  "Conferencias gratuitas",
-                  "Descuento en diferentes paquetes de cursos",
-                  "Beneficios extra",
-                ],
-                fechaActivacion: new Date(),
-                fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-              },
-              { new: true, upsert: true }
-            );
-        
-            if (membresia) {
-              console.log("Membresía activada para UID:", firebaseUid);
-            } else {
-              console.log("No se encontró la membresía o no se pudo activar.");
-            }
+  const event = req.body;
+
+  try {
+    switch (event.action) {
+      case "payment.created":
+        console.log("Pago creado");
+        const paymentId = event.data.id;
+
+        const payment = new Payment(config);
+        const paymentData = await payment.get({ id: paymentId });
+        const externalReference = paymentData.external_reference; // el firebaseUid
+        const status = paymentData.status;
+
+        if (status === "approved" && externalReference) {
+          const membresia = await Membresia.findOneAndUpdate(
+            { firebaseUid: externalReference },
+            {
+              estado: "activa",
+              beneficios: [
+                "Acceso a la bolsa exclusiva de URPex",
+                "Conferencias gratuitas",
+                "Descuento en diferentes paquetes de cursos",
+                "Beneficios extra",
+              ],
+              fechaActivacion: new Date(),
+              fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+            },
+            { new: true, upsert: true }
+          );
+
+          if (membresia) {
+            console.log("Membresía activada para el usuario con UID:", externalReference);
+          }
+          else {
+            console.log("Pago no aprobado o no se encontro la membresia");
+          } 
         }
-      res.sendStatus(200);
-    } catch (error) {
-      console.error("Error en webhook:", error);
-      res.sendStatus(500);
+        break;
+        /*/
+        Ver casos Preapproval updated
+        /*/
+      default:
+        break;
     }
-  };
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error en webhook:", error);
+    res.sendStatus(500);
+  }
+};
