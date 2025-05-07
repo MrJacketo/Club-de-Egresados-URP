@@ -21,8 +21,8 @@ const CompraCompletada = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center py-10 px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-6">
+<div className="h-screen overflow-y-auto flex justify-center items-start pt-50 px-4 md:px-8">
+<div className="max-w-md w-full bg-white rounded-xl shadow-xl p-6">
         <div className="flex flex-col items-center text-center mb-6">
           <div className="rounded-full bg-green-100 p-3 mb-4">
             <CheckCircle className="h-10 w-10 text-green-600" />
