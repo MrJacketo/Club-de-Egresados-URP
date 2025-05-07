@@ -22,7 +22,7 @@ export const handleSubscription = async (req, res) => {
                 reason: "Subscripcion anual",
                 back_url: "https://www.youtube.com/watch?v=-kSAvHlXRUs", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
                 status: "pending",
-                notification_url: "https://0f6e-2800-200-e6e0-611-5465-7ad6-4263-30f.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL
+                notification_url: "https://8f79-2800-200-e6e0-611-e58c-b508-5f0d-e69b.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL
                 external_reference: req.user.firebaseUid 
             }
         });
@@ -38,7 +38,7 @@ export const handleSubscription = async (req, res) => {
 
 export const handleWebhook = async (req, res) => {
     const event = req.body;
-    console.log("Evento recibido:", event);  // Muestra el evento para depuración
+    console.log("Evento recibido:", event); 
   
     try {
         if (event.type === "subscription_preapproval" && event.action === "updated") {
