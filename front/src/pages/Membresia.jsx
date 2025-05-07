@@ -1,37 +1,4 @@
 import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle } from "lucide-react"
-import { auth } from "../firebase";
-
-const handleObtenerMembresia = async () => {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      alert("Debes iniciar sesión para obtener la membresía.");
-      return;
-    }
-
-    const token = await user.getIdToken();
-
-    // Redirige al endpoint del backend que crea la orden de pago
-    const response = await fetch("http://localhost:8000/api/pago/create-order", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
-
-    const data = await response.json();
-    if (data.init_point) {
-      window.location.href = data.init_point;
-    } else {
-      alert("Error iniciando el pago.");
-    }
-
-  } catch (error) {
-    console.error("Error al iniciar el pago:", error);
-    alert("No se pudo iniciar el pago.");
-  }
-};
 
 export default function Membresia() {
   const beneficios = [
@@ -111,12 +78,9 @@ export default function Membresia() {
             </div>
 
             <div className="mt-6 space-y-3">
-            <button
-              onClick={handleObtenerMembresia}
-              className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold py-4 px-6 rounded-xl transition duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-teal-600/30 text-xl"
-            >
-              Obtener Membresía Anual
-          </button>
+              <button className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold py-4 px-6 rounded-xl transition duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-teal-600/30 text-xl">
+                Obtener Membresía Anual
+              </button>
               <p className="text-center text-sm text-gray-500 flex items-center justify-center gap-1">
                 <CheckCircle className="w-4 h-4 text-teal-600" />
                 <span>Garantía de devolución durante los primeros 14 días</span>

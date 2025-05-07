@@ -28,13 +28,6 @@ const verifyFirebaseToken = async (req, res, next) => {
         profilePicture: picture || "",
       });
       await user.save();
-
-      //CREAR UNA MEMBRESIA AL USUARIO CREADO
-      const nuevaMembresia = new Membresia({
-        firebaseUid: uid,
-        estado: "pendiente",
-      });
-      await nuevaMembresia.save();
     }
     // Attach user to the request object
     req.user = user;
