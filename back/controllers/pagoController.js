@@ -16,7 +16,7 @@ export const handleSubscription = async (req, res) => {
                 auto_recurring: {
                     frequency: 12,
                     frequency_type: "months",
-                    transaction_amount: 5, //cambiar a 150
+                    transaction_amount: 150,
                     currency_id: "PEN"
                 },
                 reason: "Subscripcion anual",
