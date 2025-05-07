@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const perfilRoutes = require("./routes/perfilRoutes");
 const membresiaRoutes = require("./routes/membresiaRoutes");
+const pagoRoutes = require('./routes/pagoRoutes');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use(
 app.use("/", authRoutes); // Authentication routes
 app.use("/api", perfilRoutes); // Perfil de egresado routes
 app.use("/api/membresia", membresiaRoutes); //RUTAS MEMBRESIAS
+app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 
 // Global error handler
 app.use((err, req, res, next) => {

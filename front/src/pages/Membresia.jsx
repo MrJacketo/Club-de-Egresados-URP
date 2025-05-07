@@ -1,53 +1,130 @@
-import React from "react";
+import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle } from "lucide-react"
+import { auth } from "../firebase";
+
+const handleObtenerMembresia = async () => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Debes iniciar sesión para obtener la membresía.");
+      return;
+    }
+
+    const token = await user.getIdToken();
+
+    // Redirige al endpoint del backend que crea la orden de pago
+    const response = await fetch("http://localhost:8000/api/pago/create-order", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert("Error iniciando el pago.");
+    }
+
+  } catch (error) {
+    console.error("Error al iniciar el pago:", error);
+    alert("No se pudo iniciar el pago.");
+  }
+};
 
 export default function Membresia() {
-  const membresias = [
+  const beneficios = [
     {
-      duracion: "1 Mes",
-      precio: "S/ 15",
-      descripcion: "Ideal para probar los beneficios de URPex por un corto tiempo.",
-      bgColor: "bg-white",
+      icon: <Briefcase className="w-6 h-6 text-teal-600" />,
+      titulo: "Acceso a Bolsa Laboral Premium",
+      descripcion: "Ofertas exclusivas para egresados de la URP",
+
     },
     {
-      duracion: "3 Meses",
-      precio: "S/ 40",
-      descuento: "Ahorra S/5",
-      descripcion: "Perfecta si deseas mantenerte conectado con tus beneficios.",
-      bgColor: "bg-green-50",
+      icon: <Award className="w-6 h-6 text-teal-600" />,
+      titulo: "Certificaciones Profesionales",
+      descripcion: "Descuento en certificaciones",
     },
     {
-      duracion: "1 Año",
-      precio: "S/ 150",
-      descuento: "Ahorra S/30",
-      descripcion: "Mejor relación costo-beneficio. Disfruta todo el año sin preocupaciones.",
-      bgColor: "bg-green-100",
+      icon: <Users className="w-6 h-6 text-teal-600" />,
+      titulo: "Networking Profesional",
+      descripcion: "Eventos con empleadores y alumnos",
+
     },
-  ];
+    {
+      icon: <BookOpen className="w-6 h-6 text-teal-600" />,
+      titulo: "Cursos de Especialización",
+      descripcion: "Acesso a cursos profesionales",
+
+    },
+    {
+      icon: <Calendar className="w-6 h-6 text-teal-600" />,
+      titulo: "Asesorías Personalizadas",
+      descripcion: "Optimizacion de CV y Linkendl",
+    },
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br flex flex-col items-center py-25 px-4">
-      <h1 className="text-4xl font-extrabold text-gray-800 mb-20 text-center">
-        Planes de Membresía URPex
-      </h1>
+    <div className="h-screen flex items-center justify-center px-8">
+      <div className="max-w-4xl w-full">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-6">
+          Membresía <span className="text-teal-200">URPex</span> Premium
+        </h1>
+        <p className="text-xl text-white text-center mb-8 max-w-3xl mx-auto">
+          Impulsa tu carrera profesional con nuestra membresía para egresados URP
+        </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-11 w-full max-w-6xl">
-        {membresias.map((plan, idx) => (
-          <div
-            key={idx}
-            className={`rounded-3xl p-8 shadow-xl transform transition duration-300 hover:scale-105 ${plan.bgColor}`}
-          >
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{plan.duracion}</h2>
-            <p className="text-3xl font-extrabold text-green-600 mb-4">{plan.precio}</p>
-            {plan.descuento && (
-              <p className="text-sm text-green-700 font-medium mb-2">{plan.descuento}</p>
-            )}
-            <p className="text-gray-600 mb-6">{plan.descripcion}</p>
-            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300">
-              Obtener Membresía
-            </button>
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all hover:shadow-teal-900/30 hover:shadow-2xl">
+          <div className="bg-gradient-to-r from-teal-600 to-teal-700 p-6 text-white">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">Membresía Anual</h2>
+              <div className="flex items-center gap-3">
+                <span className="text-lg line-through opacity-75">S/ 180</span>
+                <span className="bg-white text-teal-700 text-sm font-bold px-3 py-1 rounded-full">AHORRA 17%</span>
+              </div>
+            </div>
+            <div className="mt-3 flex items-end gap-2">
+              <span className="text-4xl font-extrabold">S/ 150</span>
+              <span className="text-xl mb-1">/año</span>
+            </div>
+            <p className="mt-2 text-teal-100 text-base">Renovación automática anual. Cancela cuando quieras.</p>
           </div>
-        ))}
+
+          <div className="p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
+              Beneficios exclusivos para tu desarrollo profesional:
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {beneficios.map((beneficio, idx) => (
+                <div key={idx} className="flex items-start gap-3 text-left">
+                  <div className="flex-shrink-0 w-8">{beneficio.icon}</div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 text-base">{beneficio.titulo}</h4>
+                    {beneficio.descripcion?.trim() !== "" && (
+                      <p className="text-gray-600 text-sm">{beneficio.descripcion}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 space-y-3">
+            <button
+              onClick={handleObtenerMembresia}
+              className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold py-4 px-6 rounded-xl transition duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-teal-600/30 text-xl"
+            >
+              Obtener Membresía Anual
+          </button>
+              <p className="text-center text-sm text-gray-500 flex items-center justify-center gap-1">
+                <CheckCircle className="w-4 h-4 text-teal-600" />
+                <span>Garantía de devolución durante los primeros 14 días</span>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/userContext";
-import { auth } from "../firebase";
 import {
   Calendar,
   Clock, 
@@ -10,13 +9,14 @@ import {
   ChevronUp,
   Gift,
   RefreshCw,
-  ArrowUpRight,
   User,
 } from "lucide-react";
 import { getMembresiaRequest, activateMembresiaRequest } from "../api/membresiaApi";
+import { useNavigate } from "react-router-dom"; // Importamos useNavigate
 
 export default function GestionarMembresiaForm() {
   const user = useContext(UserContext);
+  const navigate = useNavigate(); // Hook para la navegación
   const [beneficiosAbiertos, setBeneficiosAbiertos] = useState(true);
   const [membresia, setMembresia] = useState({
     estado: "inactiva",
@@ -58,18 +58,11 @@ export default function GestionarMembresiaForm() {
   };
 
   const handleRenovar = async () => {
-    try {
-      const result = await activateMembresiaRequest();
-      setMembresia(result.membresia || {
-        ...membresia,
-        estado: "activa",
-        fechaActivacion: new Date(),
-        fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-      });
-    } catch (err) {
-      setError("Error al renovar la membresía");
-      console.error(err);
+    if (membresia.estado !== "activa") {
+      // Si la membresía no está activa, redirigimos a la página de membresía
+      navigate('/membresia');
     }
+    // No hacemos nada si la membresía ya está activa
   };
 
   if (loading) {
@@ -84,17 +77,16 @@ export default function GestionarMembresiaForm() {
   const porcentajeCompletado = 100 - Math.min(100, Math.round((diasRestantes / 365) * 100));
 
   return (
-    <div className="min-h-screen w-full flex flex-col">
-      <header className="w-full py-8 px-6 mt-10 text-white">
+    <div className="h-screen w-full flex flex-col overflow-hidden">
+      <header className="w-full py-8 px-6 mt-10 text-white ">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">Mi Membresía</h1>
-          <p className="opacity-80">Gestiona tu membresía y beneficios</p>
         </div>
       </header>
 
-      <main className="flex-1 w-full px-4 pb-12">
+      <main className="flex-1 w-full px-4 overflow-y-auto">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white/25 backdrop-blur-md rounded-lg p-6 mb-6 text-white shadow-lg">
+          <div className="bg-white/100 backdrop-blur-md rounded-lg p-6 mb-6 text-black shadow-lg">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 p-3 rounded-full">
@@ -115,7 +107,11 @@ export default function GestionarMembresiaForm() {
 
               <div className="flex gap-3">
                 <button 
-                  className="bg-white/20 hover:bg-white/30 text-white"
+                  className={`px-4 py-2 rounded-lg flex items-center ${
+                    membresia.estado === "activa" 
+                      ? "bg-gray-300 text-gray-600 cursor-not-allowed" 
+                      : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+                  }`}
                   onClick={handleRenovar}
                   disabled={membresia.estado === "activa"}
                 >
@@ -127,7 +123,7 @@ export default function GestionarMembresiaForm() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white/25 backdrop-blur-md rounded-lg p-6 text-white shadow-lg">
+            <div className="bg-white/100 backdrop-blur-md rounded-lg p-6 text-black shadow-lg">
               <h3 className="text-xl font-semibold mb-4">Detalles de membresía</h3>
 
               <div className="grid grid-cols-2 gap-6 mb-6">
@@ -160,7 +156,7 @@ export default function GestionarMembresiaForm() {
                     {membresia.estado === "activa" ? `${porcentajeCompletado}%` : "0%"}
                   </span>
                 </div>
-                <div className="w-full bg-white/20 rounded-full h-3">
+                <div className="w-full bg-black/50 rounded-full h-3">
                   <div 
                     className="bg-white h-3 rounded-full" 
                     style={{ 
@@ -184,30 +180,45 @@ export default function GestionarMembresiaForm() {
               </div>
             </div>
 
-            <div className="bg-white/25 backdrop-blur-md rounded-lg p-6 text-white shadow-lg">
+            <div className="bg-white/100 backdrop-blur-md rounded-lg p-6 text-white shadow-lg">
               <button
                 className="flex justify-between items-center w-full font-semibold text-xl mb-4"
                 onClick={() => setBeneficiosAbiertos(!beneficiosAbiertos)}
-              >
-                <span className="flex items-center">
-                  <Award size={20} className="mr-2" />
-                  Beneficios incluidos si activa su membresia:
-                </span>
-                {beneficiosAbiertos ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-
+                >
+                  <span className="flex items-center">
+                    <Award size={20} className="mr-2" />
+                    {membresia.estado === "activa" 
+                      ? "Beneficios actuales con su membresía:" 
+                      : "Beneficios incluidos si activa su membresía:"}
+                  </span>
+                  {beneficiosAbiertos ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+            
               {beneficiosAbiertos && (
                 <ul className="space-y-3">
-                  {membresia.beneficios.map((beneficio, index) => (
-                    <li key={index} className="flex items-start gap-3 bg-white/5 p-3 rounded-lg">
-                      <CheckCircle size={18} className="text-white mt-0.5 flex-shrink-0" />
-                      <span>{beneficio}</span>
-                    </li>
-                  ))}
+                  {/* Si la membresía está activa, mostrar los beneficios de membresía */}
+                  {membresia.estado === "activa"
+                    ? membresia.beneficios.map((beneficio, index) => (
+                        <li key={index} className="flex items-start gap-3 bg-black/40 p-3 rounded-lg">
+                          <CheckCircle size={18} className="text-white-600 mt-0.5 flex-shrink-0" />
+                          <span>{beneficio}</span>
+                        </li>
+                      ))
+                    :
+                      [
+                        "Acceso a la bolsa exclusiva de URPex",
+                        "Conferencias gratuitas",
+                        "Descuento en diferentes paquetes de cursos",
+                      ].map((beneficio, index) => (
+                        <li key={index} className="flex items-start gap-3 bg-gray-100 p-3 rounded-lg">
+                          <CheckCircle size={18} className="text-gray-400 mt-0.5 flex-shrink-0" />
+                          <span>{beneficio}</span>
+                        </li>
+                      ))}
                 </ul>
               )}
 
-              <button className="w-full mt-6 bg-white/20 hover:bg-white/30 text-white flex items-center justify-center">
+              <button className="w-full mt-6 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center">
                 <Gift size={18} className="mr-2" />
                 Ver beneficios adicionales
               </button>
