@@ -75,7 +75,7 @@ export default function Feedback() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center py-12 bg-gradient-to-r from-teal-100 to-green-100">
+    <div className="min-h-screen flex justify-center items-center py-12 ">
       <div className="bg-white w-full max-w-4xl p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">
           Feedback de Beneficios Deseados
@@ -87,7 +87,7 @@ export default function Feedback() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Beneficio Deseado */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Beneficio Deseado</label>
+            <label className="block text-sm font-medium text-gray-700">Título</label>
             <input
               type="text"
               name="beneficioDeseado"
@@ -101,18 +101,19 @@ export default function Feedback() {
 
           {/* Comentarios Adicionales */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Comentarios Adicionales</label>
+            <label className="block text-sm font-medium text-gray-700">Detalle de comentario</label>
             <textarea
               name="comentariosAdicionales"
               value={feedback.comentariosAdicionales}
               onChange={handleChange}
               rows="4"
-              placeholder="Escribe cualquier comentario adicional (opcional)"
+              placeholder="Describa su comentario a detalle"
               className="w-full mt-1 p-2 border rounded bg-white text-gray-700"
             />
           </div>
 
           {/* Prioridad */}
+          {/*
           <div>
             <label className="block text-sm font-medium text-gray-700">Prioridad</label>
             <select
@@ -127,6 +128,7 @@ export default function Feedback() {
               <option value="alta">Alta</option>
             </select>
           </div>
+          */}
 
           {/* Nombre */}
           <div>
@@ -138,6 +140,7 @@ export default function Feedback() {
               onChange={handleChange}
               placeholder="Tu nombre"
               className="w-full mt-1 p-2 border rounded bg-white text-gray-700"
+              disabled
             />
           </div>
 
@@ -151,13 +154,14 @@ export default function Feedback() {
               onChange={handleChange}
               placeholder="Tu email"
               className="w-full mt-1 p-2 border rounded bg-white text-gray-700"
+              disabled
             />
           </div>
 
           {/* Botón de Enviar */}
           <button
             type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-full transition duration-300"
+            className="w-full bg-teal-600 hover:bg-teal-700 text-black font-semibold py-3 px-6 rounded-full transition duration-300"
           >
             Enviar Feedback
           </button>
