@@ -1,5 +1,6 @@
 import { MercadoPagoConfig, PreApproval } from "mercadopago";
 import Membresia from "../models/Membresia.js";
+import Usuario from "../models/User.js";
 
 const config = new MercadoPagoConfig({
     accessToken: "APP_USR-7882162770540444-050618-87ccb203c08fabd550b498e4ccb6ae72-2428020760", //test access token from Vendedor
@@ -9,10 +10,18 @@ const config = new MercadoPagoConfig({
 export const handleSubscription = async (req, res) => {
 
     try {
+      /*/ PARA DATOS REALES DEL USER
+      const { firebaseUid } = req.user;
+      const usuario = await Usuario.findOne({ firebaseUid });
+
+      if (!usuario || !usuario.email) {
+        return res.status(404).json({ error: "Usuario no encontrado o sin email" });
+      }
+      /*/
         const preApproval = new PreApproval(config);
         const newSubscriber = await preApproval.create({
             body: {
-                payer_email: "test_user_1757711752@testuser.com", //test email from Comprador
+                payer_email: "test_user_1757711752@testuser.com",//usuario.email, PARA DATOS REALES | CAMBIAR TEST PARA LOCAL
                 auto_recurring: {
                     frequency: 12,
                     frequency_type: "months",
@@ -20,9 +29,8 @@ export const handleSubscription = async (req, res) => {
                     currency_id: "PEN"
                 },
                 reason: "Subscripcion anual",
-                back_url: "https://www.youtube.com/watch?v=-kSAvHlXRUs", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
-                status: "pending",
-                notification_url: "https://8f79-2800-200-e6e0-611-e58c-b508-5f0d-e69b.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL
+                back_url: "https://9f12-2800-200-e6e0-611-e58c-b508-5f0d-e69b.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
+                notification_url: "https://054d-2800-200-e6e0-611-e58c-b508-5f0d-e69b.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL
                 external_reference: req.user.firebaseUid 
             }
         });
