@@ -21,7 +21,7 @@ export const handleSubscription = async (req, res) => {
         const preApproval = new PreApproval(config);
         const newSubscriber = await preApproval.create({
             body: {
-                payer_email: "test_user_1757711752@testuser.com",//usuario.email, PARA DATOS REALES | CAMBIAR TEST PARA LOCAL
+                payer_email: "test_user_1906855404@testuser.com",//usuario.email, PARA DATOS REALES | CAMBIAR TEST PARA LOCAL
                 auto_recurring: {
                     frequency: 12,
                     frequency_type: "months",
@@ -29,8 +29,8 @@ export const handleSubscription = async (req, res) => {
                     currency_id: "PEN"
                 },
                 reason: "Subscripcion anual",
-                back_url: "https://7cba-2800-200-e6e0-611-a848-7312-19ca-9a9f.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
-                notification_url: "https://83dd-2800-200-e6e0-611-a848-7312-19ca-9a9f.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
+                back_url: "https://62eb-38-25-17-64.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
+                notification_url: "https://7d5a-38-25-17-64.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
                 external_reference: req.user.firebaseUid 
             }
         });
