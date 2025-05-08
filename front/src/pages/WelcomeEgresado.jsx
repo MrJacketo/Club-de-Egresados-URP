@@ -59,6 +59,12 @@ export default function Dashboard() {
             >
               Editar mi perfil
             </Link>
+            <Link
+          to="/VerMembresia"
+          className="bg-white border border-green-500 text-green-600 hover:bg-green-100 px-2 py-1 rounded-full font-medium transition duration-300"
+            >
+            Ver mi Membresía
+           </Link>
           </div>
         </div>
       </div>

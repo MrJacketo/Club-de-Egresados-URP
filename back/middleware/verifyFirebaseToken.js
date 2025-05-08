@@ -29,7 +29,6 @@ const verifyFirebaseToken = async (req, res, next) => {
       });
       await user.save();
     }
-
     // Attach user to the request object
     req.user = user;
     next();
