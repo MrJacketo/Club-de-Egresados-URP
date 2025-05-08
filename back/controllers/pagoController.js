@@ -1,13 +1,14 @@
-import { MercadoPagoConfig, Payment, PreApproval } from "mercadopago";
-import Membresia from "../models/Membresia.js";
-import Usuario from "../models/User.js";
+//import { MercadoPagoConfig, Payment, PreApproval } from "mercadopago";
+//import Usuario from "../models/User.js";
+const Membresia = require("../models/Membresia.js");
+const mercadopago = require("mercadopago");
 
-const config = new MercadoPagoConfig({
+const config = new mercadopago.MercadoPagoConfig({
     accessToken: "APP_USR-7882162770540444-050618-87ccb203c08fabd550b498e4ccb6ae72-2428020760", //test access token from Vendedor
     
 });
 
-export const handleSubscription = async (req, res) => {
+const handleSubscription = async (req, res) => {
 
     try {
       /*/ PARA DATOS REALES DEL USER
@@ -18,7 +19,7 @@ export const handleSubscription = async (req, res) => {
         return res.status(404).json({ error: "Usuario no encontrado o sin email" });
       }
       /*/
-        const preApproval = new PreApproval(config);
+        const preApproval = new mercadopago.PreApproval(config);
         const newSubscriber = await preApproval.create({
             body: {
                 payer_email: "test_user_1757711752@testuser.com",//usuario.email, PARA DATOS REALES | CAMBIAR TEST PARA LOCAL
@@ -29,8 +30,8 @@ export const handleSubscription = async (req, res) => {
                     currency_id: "PEN"
                 },
                 reason: "Subscripcion anual",
-                back_url: "https://7cba-2800-200-e6e0-611-a848-7312-19ca-9a9f.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
-                notification_url: "https://83dd-2800-200-e6e0-611-a848-7312-19ca-9a9f.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
+                back_url: "https://6820-2800-200-e6e0-611-7124-ea9d-1fa3-f69d.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
+                notification_url: "https://aa8b-2800-200-e6e0-611-7124-ea9d-1fa3-f69d.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
                 external_reference: req.user.firebaseUid 
             }
         });
@@ -44,7 +45,7 @@ export const handleSubscription = async (req, res) => {
 };
 
 
-export const handleWebhook = async (req, res) => {
+const handleWebhook = async (req, res) => {
   const event = req.body;
 
   try {
@@ -53,7 +54,7 @@ export const handleWebhook = async (req, res) => {
         console.log("Pago creado");
         const paymentId = event.data.id;
 
-        const payment = new Payment(config);
+        const payment = new mercadopago.Payment(config);
         const paymentData = await payment.get({ id: paymentId });
         const externalReference = paymentData.external_reference; // el firebaseUid
         const status = paymentData.status;
@@ -95,4 +96,9 @@ export const handleWebhook = async (req, res) => {
     console.error("Error en webhook:", error);
     res.sendStatus(500);
   }
+};
+
+module.exports = {
+  handleSubscription,
+  handleWebhook,
 };
