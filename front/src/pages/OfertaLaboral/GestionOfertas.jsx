@@ -27,7 +27,7 @@ export default function OfertaLaboral() {
   }, []);
 
   return (
-    <div className="mt-16 mb-21 flex flex-col items-start w-[90%] md:w-[60%] m-auto">
+    <div className="mb-15 flex flex-col items-start w-[90%] md:w-[60%] m-auto">
       <h2 className="text-[#242424] text-4xl font-bold mb-5">
         Gestionar Ofertas Laborales
       </h2>

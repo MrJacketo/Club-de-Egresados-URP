@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center pt-60">
+    <div className="min-h-screen flex flex-col items-center justify-center ">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-xl w-full text-center mb-12 transform transition duration-500 hover:scale-105">
         <h1 className="text-3xl md:text-5xl font-extrabold text-gray-800 mb-8">
           Bienvenido a <br /> URPex

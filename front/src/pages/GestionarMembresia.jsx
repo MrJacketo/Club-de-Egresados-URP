@@ -77,7 +77,7 @@ export default function GestionarMembresiaForm() {
   const porcentajeCompletado = 100 - Math.min(100, Math.round((diasRestantes / 365) * 100));
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden">
+    <div className=" w-full flex flex-col overflow-hidden">
       <header className="w-full py-8 px-6 mt-10 text-white ">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">Mi Membresía</h1>
