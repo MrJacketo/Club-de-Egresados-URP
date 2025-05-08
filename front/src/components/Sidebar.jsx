@@ -77,10 +77,10 @@ export default function Sidebar() {
           )}
         </nav>
 
-        {/* Botón visual con tres puntitos */}
+        {/* Botón visual con tres puntitos 
         <div className="w-10 h-10 bg-black/85 rounded-full flex items-center justify-center self-end mb-2">
           <span className="text-white text-xl leading-none">...</span>
-        </div>
+        </div>*/}
       </aside>
 
       {/* Contenido principal */}
