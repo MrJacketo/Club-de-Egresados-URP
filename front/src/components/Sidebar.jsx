@@ -1,8 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Star, User, Shield } from "lucide-react";
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
 export default function Sidebar() {
   const location = useLocation();
+  const { user } = useContext(UserContext); // Obtener el usuario desde el contexto
 
   return (
     <div>
@@ -13,6 +16,7 @@ export default function Sidebar() {
         transition-all duration-300 flex flex-col justify-between`}
       >
         <nav className="flex flex-col space-y-4 mt-4">
+          {/* Siempre mostrar la opción "Inicio" */}
           <Link
             to="/"
             className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
@@ -26,45 +30,51 @@ export default function Sidebar() {
               Inicio
             </span>
           </Link>
-          <Link
-            to="/gestion-oferta"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
-              location.pathname === "/gestion-oferta"
-                ? "bg-teal-600/80 text-white shadow-lg"
-                : "hover:bg-teal-500/20 hover:text-teal-300 transition"
-            }`}
-          >
-            <Star size={24} />
-            <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
-              Ofertas Laborales
-            </span>
-          </Link>
-          <Link
-            to="/VerMembresia"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
-              location.pathname === "/VerMembresia"
-                ? "bg-teal-600/80 text-white shadow-lg"
-                : "hover:bg-teal-500/20 hover:text-teal-300 transition"
-            }`}
-          >
-            <User size={24} />
-            <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
-              Mi Membresía
-            </span>
-          </Link>
-          <Link
-            to="/welcome-egresado"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
-              location.pathname === "/welcome-egresado"
-                ? "bg-teal-600/80 text-white shadow-lg"
-                : "hover:bg-teal-500/20 hover:text-teal-300 transition"
-            }`}
-          >
-            <Shield size={24} />
-            <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
-              Bienvenido
-            </span>
-          </Link>
+
+          {/* Mostrar las demás opciones solo si el usuario está autenticado */}
+          {user && (
+            <>
+              <Link
+                to="/gestion-oferta"
+                className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
+                  location.pathname === "/gestion-oferta"
+                    ? "bg-teal-600/80 text-white shadow-lg"
+                    : "hover:bg-teal-500/20 hover:text-teal-300 transition"
+                }`}
+              >
+                <Star size={24} />
+                <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
+                  Ofertas Laborales
+                </span>
+              </Link>
+              <Link
+                to="/VerMembresia"
+                className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
+                  location.pathname === "/VerMembresia"
+                    ? "bg-teal-600/80 text-white shadow-lg"
+                    : "hover:bg-teal-500/20 hover:text-teal-300 transition"
+                }`}
+              >
+                <User size={24} />
+                <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
+                  Mi Membresía
+                </span>
+              </Link>
+              <Link
+                to="/welcome-egresado"
+                className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
+                  location.pathname === "/welcome-egresado"
+                    ? "bg-teal-600/80 text-white shadow-lg"
+                    : "hover:bg-teal-500/20 hover:text-teal-300 transition"
+                }`}
+              >
+                <Shield size={24} />
+                <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
+                  Bienvenido
+                </span>
+              </Link>
+            </>
+          )}
         </nav>
 
         {/* Botón visual con tres puntitos */}
