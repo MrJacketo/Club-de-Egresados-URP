@@ -10,7 +10,11 @@ import { UserContextProvider } from './context/userContext.jsx';
 import WelcomeEgresado from './pages/WelcomeEgresado.jsx';
 import Beneficios from './pages/Beneficios.jsx';
 import Membresia from './pages/Membresia.jsx';
+import GuardarOferta from './pages/OfertaLaboral/GuardarOferta.jsx';
+import GestionOfertas from './pages/OfertaLaboral/GestionOfertas.jsx'
 import PerfilEgresadoForm from './components/PerfilEgresadoForm.jsx';
+
+
 import PrivateRoute from "./components/PrivateRoute";
 import GestionarMembresia from './pages/GestionarMembresia'; // ajusta la ruta
 import MembresiaSucess from './pages/MembresiaSucess.jsx'; // ajusta la ruta
@@ -31,7 +35,9 @@ function App() {
           <Route path='/beneficios' element={<Beneficios/>} />  
           <Route path='/membresia' element={<Membresia/>} /> 
           <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
-          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />    
+          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />             
+          <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta/></PrivateRoute>} />
+          <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas/></PrivateRoute>} />  
           <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
         </Routes>
