@@ -1,7 +1,7 @@
 "use client"
+
 import { useState } from "react"
-import SelectField from "../shared/SelectField"
-import { TIPO_BENEFICIO } from "../../constants/Beneficios/Beneficios.enum"
+import { TIPO_BENEFICIO, CURSO_FILTRO, POSTGRADO_FILTRO } from "../../constants/Beneficios/Beneficios.enum"
 import { enviarFeedback } from "../../api/beneficiosApi"
 
 const FeedbackForm = ({ onSuccess }) => {
@@ -51,17 +51,45 @@ const FeedbackForm = ({ onSuccess }) => {
     if (formData.tipoBeneficio === TIPO_BENEFICIO.CURSO) {
       return (
         <div className="mb-4">
-          <SelectField
-            label="Selecciona un Tipo Curso"
+          <select
             value={formData.tipoCurso}
             onChange={(e) => handleChange("tipoCurso", e.target.value)}
-            options={[
-              { value: "", label: "Selecciona un Tipo Curso" },
-              { value: "Administración y Gerencia", label: "Administración y Gerencia" },
-              { value: "Arquitectura", label: "Arquitectura" },
-              { value: "Ing. Informática", label: "Ing. Informática" },
-            ]}
-          />
+            className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          >
+            <option value="">Selecciona un Tipo Curso</option>
+            <option value={CURSO_FILTRO.ADMINISTRACION_GERENCIA}>{CURSO_FILTRO.ADMINISTRACION_GERENCIA}</option>
+            <option value={CURSO_FILTRO.ADMINISTRACION_NEGOCIOS}>{CURSO_FILTRO.ADMINISTRACION_NEGOCIOS}</option>
+            <option value={CURSO_FILTRO.ARQUITECTURA}>{CURSO_FILTRO.ARQUITECTURA}</option>
+            <option value={CURSO_FILTRO.BIOLOGIA}>{CURSO_FILTRO.BIOLOGIA}</option>
+            <option value={CURSO_FILTRO.CONTABILIDAD}>{CURSO_FILTRO.CONTABILIDAD}</option>
+            <option value={CURSO_FILTRO.DERECHO}>{CURSO_FILTRO.DERECHO}</option>
+            <option value={CURSO_FILTRO.ECONOMIA}>{CURSO_FILTRO.ECONOMIA}</option>
+            <option value={CURSO_FILTRO.ING_CIVIL}>{CURSO_FILTRO.ING_CIVIL}</option>
+            <option value={CURSO_FILTRO.ING_ELECTRONICA}>{CURSO_FILTRO.ING_ELECTRONICA}</option>
+            <option value={CURSO_FILTRO.ING_INDUSTRIAL}>{CURSO_FILTRO.ING_INDUSTRIAL}</option>
+            <option value={CURSO_FILTRO.ING_INFORMATICA}>{CURSO_FILTRO.ING_INFORMATICA}</option>
+            <option value={CURSO_FILTRO.ING_MECATRONICA}>{CURSO_FILTRO.ING_MECATRONICA}</option>
+            <option value={CURSO_FILTRO.MARKETING}>{CURSO_FILTRO.MARKETING}</option>
+            <option value={CURSO_FILTRO.MEDICINA_HUMANA}>{CURSO_FILTRO.MEDICINA_HUMANA}</option>
+            <option value={CURSO_FILTRO.MEDICINA_VETERINARIA}>{CURSO_FILTRO.MEDICINA_VETERINARIA}</option>
+            <option value={CURSO_FILTRO.PSICOLOGIA}>{CURSO_FILTRO.PSICOLOGIA}</option>
+            <option value={CURSO_FILTRO.TRADUCCION}>{CURSO_FILTRO.TRADUCCION}</option>
+            <option value={CURSO_FILTRO.TURISMO}>{CURSO_FILTRO.TURISMO}</option>
+          </select>
+        </div>
+      )
+    } else if (formData.tipoBeneficio === TIPO_BENEFICIO.POSTGRADO) {
+      return (
+        <div className="mb-4">
+          <select
+            value={formData.tipoCurso}
+            onChange={(e) => handleChange("tipoCurso", e.target.value)}
+            className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          >
+            <option value="">Selecciona un Tipo de Postgrado</option>
+            <option value={POSTGRADO_FILTRO.MAESTRIA}>{POSTGRADO_FILTRO.MAESTRIA}</option>
+            <option value={POSTGRADO_FILTRO.DOCTORADO}>{POSTGRADO_FILTRO.DOCTORADO}</option>
+          </select>
         </div>
       )
     }
@@ -72,17 +100,19 @@ const FeedbackForm = ({ onSuccess }) => {
     if (formData.tipoBeneficio === TIPO_BENEFICIO.CURSO && formData.tipoCurso) {
       return (
         <div className="mb-4">
-          <SelectField
-            label="Selecciona un Tema"
+          <select
             value={formData.tema}
             onChange={(e) => handleChange("tema", e.target.value)}
-            options={[
-              { value: "", label: "Selecciona un Tema" },
-              { value: "Base de Datos II", label: "Base de Datos II" },
-              { value: "Cyberseguridad", label: "Cyberseguridad" },
-              { value: "Desarrollo Web", label: "Desarrollo Web" },
-            ]}
-          />
+            className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          >
+            <option value="">Selecciona un Tema</option>
+            <option value="Base de Datos II">Base de Datos II</option>
+            <option value="Cyberseguridad">Cyberseguridad</option>
+            <option value="Desarrollo Web">Desarrollo Web</option>
+            <option value="Lenguaje c#">Lenguaje c#</option>
+            <option value="Inteligencia Artificial">Inteligencia Artificial</option>
+            <option value="Redes y Comunicaciones">Redes y Comunicaciones</option>
+          </select>
         </div>
       )
     }
@@ -90,21 +120,20 @@ const FeedbackForm = ({ onSuccess }) => {
   }
 
   return (
-    <div className="bg-gray-200 rounded-lg p-4">
-      <h3 className="text-center text-xl font-bold mb-4">Solicitar Beneficio</h3>
+    <div className="bg-white rounded-lg p-6 shadow-md">
+      <h3 className="text-center text-xl font-bold mb-6 text-black">Solicitar Beneficio</h3>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <SelectField
-            label="Beneficio Deseado"
+          <select
             value={formData.tipoBeneficio}
             onChange={(e) => handleChange("tipoBeneficio", e.target.value)}
-            options={[
-              { value: "", label: "Beneficio Deseado" },
-              { value: TIPO_BENEFICIO.POSTGRADO, label: "Postgrado" },
-              { value: TIPO_BENEFICIO.CURSO, label: "Cursos" },
-              { value: TIPO_BENEFICIO.CONFERENCIA, label: "Conferecias" },
-            ]}
-          />
+            className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          >
+            <option value="">Beneficio Deseado</option>
+            <option value={TIPO_BENEFICIO.POSTGRADO}>Postgrado</option>
+            <option value={TIPO_BENEFICIO.CURSO}>Cursos</option>
+            <option value={TIPO_BENEFICIO.CONFERENCIA}>Conferecias</option>
+          </select>
         </div>
 
         {renderTipoCursoSelect()}
@@ -112,11 +141,12 @@ const FeedbackForm = ({ onSuccess }) => {
 
         {formData.tipoBeneficio && (
           <div className="mb-4">
-            <SelectField
-              label="¿Cuándo quisieras llevarlo?"
+            <p className="mb-2 font-medium text-black">¿Cuándo quisieras llevarlo?</p>
+            <input
               type="date"
               value={formData.fechaDeseada}
               onChange={(e) => handleChange("fechaDeseada", e.target.value)}
+              className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
             />
           </div>
         )}
@@ -125,7 +155,8 @@ const FeedbackForm = ({ onSuccess }) => {
           <button
             type="submit"
             disabled={loading || !formData.tipoBeneficio}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-8 rounded-full border border-gray-500"
+            className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+            style={{ color: "white !important" }}
           >
             {loading ? "Enviando..." : "Enviar"}
           </button>
@@ -134,9 +165,9 @@ const FeedbackForm = ({ onSuccess }) => {
 
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4">¡Envío Exitoso!</h3>
-            <p>Tu solicitud ha sido enviada correctamente.</p>
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-bold mb-4 text-black">¡Envío Exitoso!</h3>
+            <p className="text-black">Tu solicitud ha sido enviada correctamente.</p>
           </div>
         </div>
       )}
