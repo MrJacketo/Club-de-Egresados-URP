@@ -105,7 +105,7 @@ export default function BeneficiosVista() {
     const yaReclamado = beneficio.reclamado;
 
     return (
-      <div className={`bg-white rounded-3xl shadow-md border transition-all duration-200 hover:shadow-lg ${
+        <div className={`bg-white rounded-3xl shadow-md border transition-all duration-300 hover:shadow-xl hover:scale-105 hover:-translate-y-1 ${
         sinStock ? 'opacity-80' : ''
       }`}>
         <div className="p-6">
