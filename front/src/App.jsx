@@ -14,6 +14,8 @@ import PerfilEgresadoForm from './components/PerfilEgresadoForm.jsx';
 import PrivateRoute from "./components/PrivateRoute";
 import GestionarMembresia from './pages/GestionarMembresia'; // ajusta la ruta
 import MembresiaSucess from './pages/MembresiaSucess.jsx'; // ajusta la ruta
+import VerBeneficios from './pages/VerBeneficios.jsx'; // ajusta la ruta
+
 
 axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.withCredentials= true;
@@ -34,6 +36,8 @@ function App() {
           <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />    
           <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
+          <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
+
         </Routes>
       </UserContextProvider>
   )
