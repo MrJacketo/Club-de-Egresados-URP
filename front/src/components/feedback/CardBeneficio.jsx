@@ -4,7 +4,7 @@ const CardBeneficio = ({ beneficio }) => {
   const getIcono = (tipo) => {
     switch (tipo) {
       case TIPO_BENEFICIO.POSTGRADO:
-        // Imagen para Maestría/Postgrado
+        // Imagen para Postgrado
         return (
           <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
             <img src="https://cdn-icons-png.flaticon.com/512/3976/3976631.png" alt="Postgrado" className="w-8 h-8" />
@@ -42,7 +42,7 @@ const CardBeneficio = ({ beneficio }) => {
 
   const getAreaIcon = () => {
     return (
-      <div className="flex items-center text-black">
+      <div className="flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5 mr-1"
@@ -98,6 +98,7 @@ const CardBeneficio = ({ beneficio }) => {
       lugar,
       fecha,
       gratuito,
+      tipoPostgrado,
     } = beneficio
 
     switch (tipo) {
@@ -123,8 +124,25 @@ const CardBeneficio = ({ beneficio }) => {
               <span className="font-bold text-black">Docente: {docente}</span>
             </div>
             <div className="flex items-center mb-2">{getModalidadIcon()}</div>
+            <div className="flex items-center mb-2 text-purple-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+              <span className="font-bold">Tipo: {tipoPostgrado}</span>
+            </div>
             {descuento && (
-              <div className="flex items-center text-black">
+              <div className="flex items-center mb-2 text-yellow-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-1"
@@ -188,7 +206,7 @@ const CardBeneficio = ({ beneficio }) => {
             </div>
             <div className="flex items-center mb-2">{getModalidadIcon()}</div>
             {descuento && (
-              <div className="flex items-center text-black">
+              <div className="flex items-center mb-2 text-yellow-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-1"
@@ -208,7 +226,7 @@ const CardBeneficio = ({ beneficio }) => {
                 </span>
               </div>
             )}
-            <div className="flex items-center text-black">
+            <div className="flex items-center text-red-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-1"
@@ -274,7 +292,7 @@ const CardBeneficio = ({ beneficio }) => {
                 {gratuito ? "Gratuito" : `Costo: ${beneficio.costo}`} | Lugar: {lugar}
               </span>
             </div>
-            <div className="flex items-center text-500">
+            <div className="flex items-center text-red-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-1"
@@ -299,24 +317,40 @@ const CardBeneficio = ({ beneficio }) => {
   }
 
   const getTitulo = () => {
-    const { tipo, area, titulo } = beneficio
+    const { tipo, area, titulo, tipoPostgrado } = beneficio
 
     switch (tipo) {
       case TIPO_BENEFICIO.POSTGRADO:
-        return `${tipo} | ${titulo || "Cyberseguridad"}`
+        return `${tipo} | ${tipoPostgrado} en ${titulo}`
       case TIPO_BENEFICIO.CURSO:
+        return `${tipo} | ${titulo}`
       case TIPO_BENEFICIO.CONFERENCIA:
-        return `${tipo} | ${area || "Ingeniería Informática"}`
+        return `${tipo} | ${titulo}`
       default:
         return ""
     }
   }
 
   return (
-    <div className="w-full bg-white rounded-3xl p-6 mb-4 shadow-md">
+    <div className="w-full bg-white rounded-lg p-6 mb-4 shadow-md">
       <div className="flex justify-between items-start">
         <h3 className="text-xl font-bold text-black">{getTitulo()}</h3>
-        
+        <button className="text-gray-100 hover:text-gray-100 bg-gray-900 text-white p-2 rounded-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+            />
+          </svg>
+        </button>
       </div>
       <div className="flex mt-4">
         <div className="mr-4">{getIcono(beneficio.tipo)}</div>

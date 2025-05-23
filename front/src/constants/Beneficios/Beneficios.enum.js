@@ -1,5 +1,5 @@
 export const TIPO_BENEFICIO = {
-  POSTGRADO: "Maestría",
+  POSTGRADO: "Postgrado",
   CURSO: "Curso",
   CONFERENCIA: "Conferencia",
 }
