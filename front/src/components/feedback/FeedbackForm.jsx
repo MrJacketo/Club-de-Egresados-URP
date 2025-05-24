@@ -155,8 +155,8 @@ const FeedbackForm = ({ onSuccess }) => {
           <button
             type="submit"
             disabled={loading || !formData.tipoBeneficio}
-            className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition-colors"
-            style={{ color: "white !important" }}
+            className="bg-white border-2 border-green-500 hover:bg-green-50 text-black font-bold py-3 px-8 rounded-lg transition-colors"
+            style={{ color: "#000000" }}
           >
             {loading ? "Enviando..." : "Enviar"}
           </button>

@@ -6,14 +6,14 @@ const CardBeneficio = ({ beneficio }) => {
       case TIPO_BENEFICIO.POSTGRADO:
         // Imagen para Postgrado
         return (
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
             <img src="https://cdn-icons-png.flaticon.com/512/3976/3976631.png" alt="Postgrado" className="w-8 h-8" />
           </div>
         )
       case TIPO_BENEFICIO.CURSO:
         if (beneficio.tema === "Lenguaje c#") {
           return (
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <img
                 src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg"
                 alt="C#"
@@ -24,14 +24,14 @@ const CardBeneficio = ({ beneficio }) => {
         }
         // Imagen genérica para otros cursos
         return (
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
             <img src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" alt="Curso" className="w-8 h-8" />
           </div>
         )
       case TIPO_BENEFICIO.CONFERENCIA:
         // Imagen para Conferencia
         return (
-          <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
             <img src="https://cdn-icons-png.flaticon.com/512/1205/1205526.png" alt="Conferencia" className="w-8 h-8" />
           </div>
         )
@@ -42,7 +42,7 @@ const CardBeneficio = ({ beneficio }) => {
 
   const getAreaIcon = () => {
     return (
-      <div className="flex items-center">
+      <div className="flex items-center text-black">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5 mr-1"
@@ -57,14 +57,14 @@ const CardBeneficio = ({ beneficio }) => {
             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
           />
         </svg>
-        <span className="font-bold text-black">{beneficio.area}</span>
+        <span className="font-bold">{beneficio.area}</span>
       </div>
     )
   }
 
   const getModalidadIcon = () => {
     return (
-      <div className="flex items-center">
+      <div className="flex items-center text-black">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5 mr-1"
@@ -79,7 +79,7 @@ const CardBeneficio = ({ beneficio }) => {
             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
           />
         </svg>
-        <span className="font-bold text-black">{beneficio.modalidad}</span>
+        <span className="font-bold">{beneficio.modalidad}</span>
       </div>
     )
   }
@@ -105,8 +105,8 @@ const CardBeneficio = ({ beneficio }) => {
       case TIPO_BENEFICIO.POSTGRADO:
         return (
           <div className="mt-3">
-            <div className="flex items-center mb-2">{getAreaIcon()}</div>
-            <div className="flex items-center mb-2">
+            <div className="flex items-center mb-2 text-black">{getAreaIcon()}</div>
+            <div className="flex items-center mb-2 text-black">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-1"
@@ -121,10 +121,10 @@ const CardBeneficio = ({ beneficio }) => {
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              <span className="font-bold text-black">Docente: {docente}</span>
+              <span className="font-bold">Docente: {docente}</span>
             </div>
-            <div className="flex items-center mb-2">{getModalidadIcon()}</div>
-            <div className="flex items-center mb-2 text-purple-600">
+            <div className="flex items-center mb-2 text-black">{getModalidadIcon()}</div>
+            <div className="flex items-center mb-2 text-green-800">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-1"
@@ -142,7 +142,7 @@ const CardBeneficio = ({ beneficio }) => {
               <span className="font-bold">Tipo: {tipoPostgrado}</span>
             </div>
             {descuento && (
-              <div className="flex items-center mb-2 text-yellow-500">
+              <div className="flex items-center mb-2 text-green-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-1"
@@ -184,8 +184,8 @@ const CardBeneficio = ({ beneficio }) => {
       case TIPO_BENEFICIO.CURSO:
         return (
           <div className="mt-3">
-            <div className="flex items-center mb-2">{getAreaIcon()}</div>
-            <div className="flex items-center mb-2">
+            <div className="flex items-center text-black">{getAreaIcon()}</div>
+            <div className="flex items-center text-black">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-1"
@@ -200,13 +200,13 @@ const CardBeneficio = ({ beneficio }) => {
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              <span className="font-bold text-black">
+              <span className="font-bold">
                 Docente: {docente} | Nivel: {nivel}
               </span>
             </div>
             <div className="flex items-center mb-2">{getModalidadIcon()}</div>
             {descuento && (
-              <div className="flex items-center mb-2 text-yellow-500">
+              <div className="flex items-center mb-2 text-green-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-1"
@@ -248,8 +248,8 @@ const CardBeneficio = ({ beneficio }) => {
       case TIPO_BENEFICIO.CONFERENCIA:
         return (
           <div className="mt-3">
-            <div className="flex items-center mb-2">{getAreaIcon()}</div>
-            <div className="flex items-center mb-2">
+            <div className="flex items-center text-black">{getAreaIcon()}</div>
+            <div className="flex items-center text-black">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-1"
@@ -264,10 +264,10 @@ const CardBeneficio = ({ beneficio }) => {
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              <span className="font-bold text-black">Expositor: {expositor}</span>
+              <span className="font-bold">Expositor: {expositor}</span>
             </div>
-            <div className="flex items-center mb-2">{getModalidadIcon()}</div>
-            <div className="flex items-center mb-2">
+            <div className="flex items-center text-black">{getModalidadIcon()}</div>
+            <div className="flex items-center text-black">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-1"
@@ -288,9 +288,7 @@ const CardBeneficio = ({ beneficio }) => {
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <span className="font-bold text-black">
-                {gratuito ? "Gratuito" : `Costo: ${beneficio.costo}`} | Lugar: {lugar}
-              </span>
+              <span className="font-bold text-black">Gratuito | Lugar: {lugar}</span>
             </div>
             <div className="flex items-center text-red-500">
               <svg
@@ -335,22 +333,6 @@ const CardBeneficio = ({ beneficio }) => {
     <div className="w-full bg-white rounded-lg p-6 mb-4 shadow-md">
       <div className="flex justify-between items-start">
         <h3 className="text-xl font-bold text-black">{getTitulo()}</h3>
-        <button className="text-gray-100 hover:text-gray-100 bg-gray-900 text-white p-2 rounded-lg">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-            />
-          </svg>
-        </button>
       </div>
       <div className="flex mt-4">
         <div className="mr-4">{getIcono(beneficio.tipo)}</div>

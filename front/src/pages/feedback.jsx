@@ -14,7 +14,7 @@ const FeedbackPage = () => {
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 py-4 text-black">FEEDBACK DE BENEFICIOS</h1>
+        <h1 className="text-4xl font-bold text-center mb-12 pt-8 text-black">FEEDBACK DE BENEFICIOS</h1>
 
         <FiltrosBeneficio filtros={filtros} setFiltros={setFiltros} />
 
@@ -23,7 +23,7 @@ const FeedbackPage = () => {
             {beneficiosFiltrados.length > 0 ? (
               beneficiosFiltrados.map((beneficio) => <CardBeneficio key={beneficio.id} beneficio={beneficio} />)
             ) : (
-              <div className="bg-white rounded-3xl p-8 text-center border border-gray-200 shadow-md">
+              <div className="bg-white rounded-lg p-8 text-center border border-gray-200 shadow-md">
                 <p className="text-lg font-bold text-black">
                   No se encontraron beneficios con los filtros seleccionados.
                 </p>

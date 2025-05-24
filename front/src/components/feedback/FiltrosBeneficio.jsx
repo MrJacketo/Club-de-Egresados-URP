@@ -9,10 +9,10 @@ import {
 const FiltrosBeneficio = ({ filtros, setFiltros, opciones }) => {
   const handleFiltroChange = (tipo, valor) => {
     setFiltros((prevFiltros) => {
-      // Crear un nuevo objeto de filtros limpio
-      const nuevosFiltros = {}
+      // Crear un nuevo objeto de filtros manteniendo los existentes
+      const nuevosFiltros = { ...prevFiltros }
 
-      // Solo mantener el filtro que se está cambiando
+      // Actualizar solo el filtro específico que cambió
       if (tipo === "postgrado") {
         nuevosFiltros.postgrado = valor
       } else if (tipo === "curso") {
@@ -20,11 +20,12 @@ const FiltrosBeneficio = ({ filtros, setFiltros, opciones }) => {
       } else if (tipo === "conferencia") {
         nuevosFiltros.conferencia = valor
       } else if (tipo === "modalidad") {
-        // La modalidad se puede combinar con otros filtros
         nuevosFiltros.modalidad = valor
-        if (prevFiltros.postgrado) nuevosFiltros.postgrado = prevFiltros.postgrado
-        if (prevFiltros.curso) nuevosFiltros.curso = prevFiltros.curso
-        if (prevFiltros.conferencia) nuevosFiltros.conferencia = prevFiltros.conferencia
+      }
+
+      // Si el valor está vacío, eliminar la propiedad del objeto
+      if (!valor) {
+        delete nuevosFiltros[tipo]
       }
 
       return nuevosFiltros
