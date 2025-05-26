@@ -23,7 +23,7 @@ const FeedbackPage = () => {
             {beneficiosFiltrados.length > 0 ? (
               beneficiosFiltrados.map((beneficio) => <CardBeneficio key={beneficio.id} beneficio={beneficio} />)
             ) : (
-              <div className="bg-white rounded-lg p-8 text-center border border-gray-200 shadow-md">
+              <div className="bg-white rounded-2xl p-8 text-center border border-gray-200 shadow-md">
                 <p className="text-lg font-bold text-black">
                   No se encontraron beneficios con los filtros seleccionados.
                 </p>

@@ -28,6 +28,43 @@ export const POSTGRADO_FILTRO = {
   DOCTORADO: "Doctorado",
 }
 
+// Nuevas constantes para tipos específicos de Maestría
+export const MAESTRIA_TIPOS = {
+  SELECCIONAR: "Seleccionar un Tipo de Maestría",
+  ADMINISTRACION: "Maestría en Administración de Empresas",
+  DERECHO: "Maestría en Derecho Constitucional",
+  EDUCACION: "Maestría en Educación",
+  INGENIERIA: "Maestría en Ingeniería Civil",
+  CYBERSEGURIDAD: "Maestría en Cyberseguridad",
+  SALUD: "Maestría en Salud Pública",
+  INTELIGENCIA_ARTIFICIAL: "Maestría en Inteligencia Artificial",
+  FINANZAS: "Maestría en Finanzas Corporativas",
+}
+
+// Nuevas constantes para tipos específicos de Doctorado
+export const DOCTORADO_TIPOS = {
+  SELECCIONAR: "Seleccionar un Tipo de Doctorado",
+  DERECHO: "Doctorado en Derecho",
+  EDUCACION: "Doctorado en Educación",
+  INGENIERIA: "Doctorado en Ingeniería",
+  CIENCIAS_POLITICAS: "Doctorado en Ciencias Políticas",
+  NEUROCIENCIAS: "Doctorado en Neurociencias",
+}
+
+// Nuevas constantes para temas de conferencias
+export const CONFERENCIA_TEMAS = {
+  SELECCIONAR: "Seleccionar un Tema",
+  INTELIGENCIA_ARTIFICIAL: "El avance de las IAS",
+  ARQUITECTURA_SOSTENIBLE: "Tendencias en Arquitectura Sostenible",
+  MEDICINA_GENOMICA: "Avances en Medicina Genómica",
+  ECONOMIA_POST_PANDEMIA: "Economía Post-Pandemia",
+  PSICOLOGIA_CLINICA: "Innovación en Psicología Clínica",
+  MARKETING_DIGITAL: "Nuevas Tendencias en Marketing Digital",
+  TECNOLOGIA_EDUCATIVA: "Tecnología Educativa del Futuro",
+  SOSTENIBILIDAD_EMPRESARIAL: "Sostenibilidad Empresarial",
+  INNOVACION_MEDICA: "Innovación en Medicina Moderna",
+}
+
 export const CURSO_FILTRO = {
   SELECCIONAR: "Seleccione un Curso",
   ADMINISTRACION_GERENCIA: "Administración y Gerencia",

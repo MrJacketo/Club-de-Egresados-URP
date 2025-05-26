@@ -38,7 +38,7 @@ const FiltrosBeneficio = ({ filtros, setFiltros, opciones }) => {
         <select
           value={filtros.postgrado || ""}
           onChange={(e) => handleFiltroChange("postgrado", e.target.value)}
-          className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          className="w-full p-3 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
         >
           <option value="">{POSTGRADO_FILTRO.SELECCIONAR}</option>
           <option value={POSTGRADO_FILTRO.MAESTRIA}>{POSTGRADO_FILTRO.MAESTRIA}</option>
@@ -50,7 +50,7 @@ const FiltrosBeneficio = ({ filtros, setFiltros, opciones }) => {
         <select
           value={filtros.curso || ""}
           onChange={(e) => handleFiltroChange("curso", e.target.value)}
-          className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          className="w-full p-3 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
         >
           <option value="">{CURSO_FILTRO.SELECCIONAR}</option>
           <option value={CURSO_FILTRO.ADMINISTRACION_GERENCIA}>{CURSO_FILTRO.ADMINISTRACION_GERENCIA}</option>
@@ -78,7 +78,7 @@ const FiltrosBeneficio = ({ filtros, setFiltros, opciones }) => {
         <select
           value={filtros.conferencia || ""}
           onChange={(e) => handleFiltroChange("conferencia", e.target.value)}
-          className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          className="w-full p-3 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
         >
           <option value="">{CONFERENCIA_FILTRO.SELECCIONAR}</option>
           <option value={CONFERENCIA_FILTRO.ADMINISTRACION_GERENCIA}>
@@ -110,7 +110,7 @@ const FiltrosBeneficio = ({ filtros, setFiltros, opciones }) => {
         <select
           value={filtros.modalidad || ""}
           onChange={(e) => handleFiltroChange("modalidad", e.target.value)}
-          className="w-full p-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
+          className="w-full p-3 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-black font-bold"
         >
           <option value="">Seleccionar Modalidad</option>
           <option value={MODALIDAD.PRESENCIAL}>Presencial</option>
