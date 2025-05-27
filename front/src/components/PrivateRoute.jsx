@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { auth } from "../firebase";
+import { UserContext } from "../../context/userContext";
 
 const PrivateRoute = ({ children }) => {
-    const user = auth.currentUser;
+  const { user, loading } = useContext(UserContext);
 
-    return user ? children : <Navigate to="/login" />;
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading spinner while checking authentication
+  }
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

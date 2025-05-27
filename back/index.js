@@ -4,6 +4,8 @@ const cors = require('cors');
 const mongoose = require('mongoose'); // Keep MongoDB connection for future use
 const cookieParser = require('cookie-parser');
 const feedbackRoutes = require("./routes/feedbackRoutes")
+const noticiaRoutes = require("./routes/noticiaRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -28,8 +30,15 @@ app.use(
 );
 
 // Routes
-app.use('/', require('./routes/authRoutes')); // Authentication routes
+app.use("/", authRoutes); // Authentication routes
 app.use("/api/feedback", feedbackRoutes);
+app.use("/api/noticias", noticiaRoutes); // Noticias routes
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Something went wrong!" });
+});
 
 // Start the server
 const port = 8000;

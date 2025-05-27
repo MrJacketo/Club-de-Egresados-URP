@@ -14,6 +14,9 @@ import Membresia from './pages/Membresia.jsx';
 import PerfilEgresado from './pages/PerfilEgresado.jsx';
 import PrivateRoute from "./components/PrivateRoute";
 import Feedback from "./pages/feedback.jsx";
+import NoticiasPage from './pages/Noticiaspage.jsx';
+import SidebarPiero from './components/SidebarPiero.jsx';
+
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -22,19 +25,31 @@ function App() {
   return (
     <UserContextProvider>
       <Navbar />
-      <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/beneficios' element={<Beneficios />} />
-        <Route path='/membresia' element={<Membresia />} />
-        <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
-        <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado /></PrivateRoute>} />
-        <Route path='/perfil' element={<PrivateRoute><Perfil /></PrivateRoute>} />
-        <Route path='/perfilegresado' element={<PrivateRoute><PerfilEgresado /></PrivateRoute>} />
+      <SidebarPiero />
+      <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
+      {/* Contenedor principal sin margen dinámico */}
+      <div className="relative pt-16 transition-all duration-300">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/beneficios" element={<Beneficios />} />
+          <Route path="/membresia" element={<Membresia />} />
+          <Route
+            path="/welcome-egresado"
+            element={
+              <PrivateRoute>
+                <WelcomeEgresado />
+              </PrivateRoute>
+            }
+          />
+          
+          <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
+          <Route path='/noticias' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
+          <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
 
-      </Routes>
+        </Routes>
+      </div>
     </UserContextProvider>
   );
 }
