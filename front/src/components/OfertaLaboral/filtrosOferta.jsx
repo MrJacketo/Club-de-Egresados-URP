@@ -38,7 +38,7 @@ export default function FiltrosOferta({ filtros, agregarFiltro, quitarFiltro }) 
     ));
 
   return (
-    <div className="w-full flex flex-col gap-4 mb-3">
+    <div className="w-full flex flex-col gap-4 mb">
       <div className="flex flex-col md:flex-row gap-3">
         {renderSelect("area", AREAS_LABORALES, "Seleccionar área")}
         {renderSelect("modalidad", MODALIDAD, "Seleccionar modalidad")}

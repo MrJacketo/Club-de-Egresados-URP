@@ -80,6 +80,30 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+
+.ProseMirror {
+  color: black;
+  background-color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  min-height: 200px;
+  border: 1.5px solid rgba(142, 142, 142, 0.501);
+  transition-all duration-200
+
+  &:focus {
+    outline: none;
+    border: 1px solid #25BF7B;
+  }
+
+  &:hover {
+    border-color: #686868bb; 
+  }
+}
+
+
+
 /* Preferencia de esquema claro */
 @media (prefers-color-scheme: light) {
   :root {
