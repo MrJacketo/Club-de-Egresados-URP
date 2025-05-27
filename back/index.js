@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const perfilRoutes = require("./routes/perfilRoutes");
 const membresiaRoutes = require("./routes/membresiaRoutes");
 const pagoRoutes = require('./routes/pagoRoutes');
+const beneficiosRoutes = require('./routes/beneficiosRoutes');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/", authRoutes); // Authentication routes
 app.use("/api", perfilRoutes); // Perfil de egresado routes
 app.use("/api/membresia", membresiaRoutes); //RUTAS MEMBRESIAS
 app.use("/api/pago", pagoRoutes); //RUTA PAGOS
+app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
 
 // Global error handler
 app.use((err, req, res, next) => {
