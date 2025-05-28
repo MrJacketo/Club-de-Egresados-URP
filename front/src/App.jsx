@@ -17,6 +17,8 @@ import GestionarMembresia from './pages/GestionarMembresia'; // ajusta la ruta
 import MembresiaSucess from './pages/MembresiaSucess.jsx'; // ajusta la ruta
 import PrivateRoute from './components/PrivateRoute';
 import Sidebar from './components/Sidebar.jsx';
+import VerBeneficios from './pages/VerBeneficios.jsx'; // ajusta la ruta
+
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -36,11 +38,13 @@ function App() {
           <Route path='/beneficios' element={<Beneficios/>} />  
           <Route path='/membresia' element={<Membresia/>} /> 
           <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
-          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />             
+          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />    
           <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta/></PrivateRoute>} />
           <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas/></PrivateRoute>} />  
           <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
+          <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
+
         </Routes>
       </div>
     </UserContextProvider>

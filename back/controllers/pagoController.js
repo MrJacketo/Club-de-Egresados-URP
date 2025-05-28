@@ -30,8 +30,8 @@ const handleSubscription = async (req, res) => {
                     currency_id: "PEN"
                 },
                 reason: "Subscripcion anual",
-                back_url: "https://6820-2800-200-e6e0-611-7124-ea9d-1fa3-f69d.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
-                notification_url: "https://aa8b-2800-200-e6e0-611-7124-ea9d-1fa3-f69d.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
+                back_url: "https://a3d6-2800-200-e6e0-611-3534-31a4-c1b2-bc1d.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
+                notification_url: "https://164b-2800-200-e6e0-611-3534-31a4-c1b2-bc1d.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
                 external_reference: req.user.firebaseUid 
             }
         });
@@ -64,12 +64,6 @@ const handleWebhook = async (req, res) => {
             { firebaseUid: externalReference },
             {
               estado: "activa",
-              beneficios: [
-                "Acceso a la bolsa exclusiva de URPex",
-                "Conferencias gratuitas",
-                "Descuento en diferentes paquetes de cursos",
-                "Beneficios extra",
-              ],
               fechaActivacion: new Date(),
               fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
             },

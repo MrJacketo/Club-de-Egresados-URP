@@ -48,7 +48,7 @@ export default function Dashboard() {
 
           <div className="flex flex-col sm:flex-row sm:justify-start items-center gap-3">
             <Link
-              to="/beneficios"
+              to="/VerTodosBeneficios"
               className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full font-medium transition duration-300"
             >
               Ver beneficios

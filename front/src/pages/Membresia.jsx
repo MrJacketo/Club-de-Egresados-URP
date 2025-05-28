@@ -66,8 +66,8 @@ export default function Membresia() {
   ]
 
   return (
-    <div className="h-screen flex items-center justify-center px-8">
-      <div className="max-w-4xl w-full">
+<div className="h-screen overflow-y-auto flex justify-center items-start pt-32 px-4 md:px-8">
+<div className="max-w-4xl w-full">
         <h1 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-6">
           Membresía <span className="text-teal-200">URPex</span> Premium
         </h1>

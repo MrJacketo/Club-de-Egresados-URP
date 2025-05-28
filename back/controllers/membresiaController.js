@@ -10,7 +10,6 @@ const getMembresia = async (req, res) => {
       console.log("No se encontró membresía, devolviendo defaults");
       return res.status(200).json({
         estado: "inactiva",
-        beneficios: [],
         fechaActivacion: null,
         fechaVencimiento: null
       });
@@ -35,12 +34,6 @@ const activateMembresia = async (req, res) => {
       { firebaseUid },
       {
         estado: "activa",
-        beneficios: [
-          "Acceso a la bolsa exclusiva de URPex",
-          "Conferencias gratuitas",
-          "Descuento en diferentes paquetes de cursos",
-          "Beneficios extra"
-        ],
         fechaActivacion: new Date(),
         fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) // 1 año de membresía
       },
@@ -60,7 +53,42 @@ const activateMembresia = async (req, res) => {
   }
 };
 
+/*/VER BENEFICIOS
+const agregarBeneficioAMembresia = async (req, res) => {
+  const firebaseUid = req.user.firebaseUid;
+  const beneficio = req.body.beneficio;
+
+  console.log("Beneficio recibido:", req.body);
+
+  if (!beneficio) {
+    return res.status(400).json({ error: "Beneficio inválido" });
+  }
+
+  try {
+    beneficio.fechaReclamo = new Date(); // agregar fecha de reclamo si no está
+
+    const membresia = await Membresia.findOneAndUpdate(
+      { firebaseUid },
+      { $push: { beneficios: beneficio } },
+      { new: true, upsert: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      membresia
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error al agregar beneficio a la membresía",
+      details: error.message
+    });
+  }
+};
+/*/
+
 module.exports = {
   getMembresia,
   activateMembresia,
-};
+  //agregarBeneficioAMembresia
+}
