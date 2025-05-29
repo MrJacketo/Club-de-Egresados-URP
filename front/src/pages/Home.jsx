@@ -17,7 +17,6 @@ export default function Home() {
         >
           Membresía
         </Link>
-
       </div>
 
       {/* Contenedor flex para imagen y beneficios */}
@@ -29,7 +28,6 @@ export default function Home() {
           className="w-full sm:w-1/2 max-w-xl object-cover rounded-3xl shadow-xl"
         />
 
-        
         <div className="bg-white p-8 w-full sm:w-1/2 max-w-xl flex flex-col justify-between rounded-3xl shadow-xl transform transition duration-500 hover:scale-105 min-h-full">
           <h2 className="text-2xl font-bold text-gray-800 text-center mb-6 tracking-wide">
             ¿Por qué obtener la membresía URPex?
@@ -61,6 +59,16 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Agregamos el enlace a la página de Feedback */}
+      <div className="mt-12">
+        <Link
+          to="/feedback"
+          className="inline-block bg-gradient-to-r from-teal-500 to-green-400 hover:from-teal-600 hover:to-green-500 text-white font-semibold py-2 px-6 rounded-full transition duration-300"
+        >
+          ¡Danos tu Feedback sobre los Beneficios!
+        </Link>
       </div>
     </div>
   );

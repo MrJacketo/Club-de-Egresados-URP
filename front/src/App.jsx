@@ -6,7 +6,7 @@ import Register from '../src/pages/Register.jsx';
 import Login from '../src/pages/Login.jsx';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
-import { UserContextProvider } from './context/userContext.jsx';
+import { UserContextProvider } from '../context/userContext.jsx';
 import WelcomeEgresado from './pages/WelcomeEgresado.jsx';
 import Beneficios from './pages/Beneficios.jsx';
 import Membresia from './pages/Membresia.jsx';
@@ -18,6 +18,8 @@ import MembresiaSucess from './pages/MembresiaSucess.jsx'; // ajusta la ruta
 import PrivateRoute from './components/PrivateRoute';
 import Sidebar from './components/Sidebar.jsx';
 import VerBeneficios from './pages/VerBeneficios.jsx'; // ajusta la ruta
+import Feedback from "./pages/feedback.jsx";
+import NoticiasPage from './pages/Noticiaspage.jsx';
 
 
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -42,6 +44,9 @@ function App() {
           <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta/></PrivateRoute>} />
           <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas/></PrivateRoute>} />  
           <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia/></PrivateRoute>} />
+          <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
+          <Route path='/noticias' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
+          <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
 
