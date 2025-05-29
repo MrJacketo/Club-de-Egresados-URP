@@ -6,7 +6,7 @@ import Register from '../src/pages/Register.jsx';
 import Login from '../src/pages/Login.jsx';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
-import { UserContextProvider } from '../context/userContext.jsx';
+import { UserContextProvider } from './context/userContext.jsx';
 import WelcomeEgresado from './pages/WelcomeEgresado.jsx';
 import Beneficios from './pages/Beneficios.jsx';
 import Membresia from './pages/Membresia.jsx';
