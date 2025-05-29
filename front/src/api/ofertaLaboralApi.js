@@ -122,3 +122,14 @@ export const getPostulantesDeOfertaRequest = async (idOferta) => {
     }
 };
 
+// Obtener ofertas creadas por un usuario
+export const getOfertasCreadasPorUsuario = async (uid) => {
+    try {
+        const response = await apiClient.get(`/api/ofertas/usuario/${uid}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error al obtener ofertas creadas por el usuario:", error.response?.data || error.message);
+        throw error;
+    }
+};
+

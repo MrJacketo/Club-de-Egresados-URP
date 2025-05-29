@@ -26,7 +26,8 @@ export default function CardOfertaLaboral(props) {
     salario,
     estado,
     onSeleccionOferta,
-    seleccionado
+    seleccionado,
+    edicion
   } = props;
 
   // Estado local para el estado de la oferta laboral
@@ -60,7 +61,7 @@ export default function CardOfertaLaboral(props) {
   };
 
   return (
-    <div onClick={handleSeleccionarOferta} className={`flex flex-col py-6 px-14 w-full rounded-3xl shadow-md
+    <div onClick={handleSeleccionarOferta} className={`flex flex-col py-6 px-6 w-full rounded-3xl shadow-md
      bg-white transition-all duration-500 hover:cursor-pointer text-[#1e1e1e]
      ${seleccionado? "border-3 border-[#1b8b53] scale-103" : "border-2 border-transparent" }`}>
       <div className="flex flex-col gap-2 w-full justify-around items-start">
@@ -97,7 +98,7 @@ export default function CardOfertaLaboral(props) {
         </div>
       </div>
 
-    {
+    {edicion && ( 
       <div className="flex flex-row mt-3 items-start lg:items-end gap-4">
         <div
           className="flex flex-row items-center gap-2 hover:underline hover:text-green-600"
@@ -118,7 +119,7 @@ export default function CardOfertaLaboral(props) {
           <h3 className="font-medium">{offerStatus}</h3>
         </div>
       </div>
-    }
+    )}
     </div>
   );
 }

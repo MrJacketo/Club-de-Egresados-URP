@@ -1,38 +1,53 @@
 const OfertaLaboral = require("../models/OfertaLaboral")
 const User = require("../models/User")
+const Postulacion = require("../models/Postulacion");
+const PublicacionOfertas = require("../models/PublicacionOfertas");
 const { AREAS_LABORALES, TIPOS_CONTRATO, MODALIDAD, REQUISITOS, ESTADO } = require('../enums/OfertaLaboral.enum');
+const { v4: uuidv4 } = require("uuid");
+const bucket = require("../firebase");
+
+
 // Crear o actualizar una oferta laboral
 const createOrUpdateOferta = async (req, res) => {
-  const { id } = req.params;  // ID de la oferta laboral a actualizar, si existe
-  const { ofertaData, uid } = req.body;  // Los datos de la oferta laboral recibidos en el cuerpo de la solicitud
+  const { id } = req.params;
+  const { ofertaData, uid } = req.body;
 
   try {
-    // Verificar si la oferta laboral ya existe
-    let oferta = id ? await OfertaLaboral.findById(id) : null;
+    if (id) {
+      const oferta = await OfertaLaboral.findByIdAndUpdate(
+        id,
+        { ...ofertaData, updatedAt: Date.now() },
+        { new: true }
+      );
+      if (!oferta) return res.status(404).json({ error: 'Oferta no encontrada' });
 
-    if (oferta) {
-      // Si existe, actualizar la oferta
-      Object.assign(oferta, ofertaData);
-      oferta.updatedAt = Date.now();  // Actualizar la fecha de actualización
-      await oferta.save();
       return res.json({ message: 'Oferta laboral actualizada exitosamente', oferta });
     }
 
-    // Si no existe, crear una nueva oferta
+    // Si no hay id, crear oferta y asociar perfil
     const perfil = await User.findOne({ firebaseUid: uid });
     if (!perfil) {
       return res.status(404).json({ error: 'Perfil de egresado no encontrado' });
     }
-    oferta = new OfertaLaboral(ofertaData);
-    await oferta.save();
-    perfil.ofertasPublicadas.push({ oferta: oferta._id });
-    await perfil.save();
-    res.json({ message: 'Oferta laboral creada exitosamente', oferta });
+
+    //guardo la nueva oferta
+    const nuevaOferta = new OfertaLaboral(ofertaData);
+    await nuevaOferta.save();
+
+    const nuevaPublicacion = new PublicacionOfertas({
+      ofertaLaboral: nuevaOferta._id,
+      perfil: perfil._id
+    });
+    await nuevaPublicacion.save();
+
+    res.json({ message: 'Oferta laboral creada exitosamente', nuevaOferta });
   } catch (error) {
     console.error('Error creando/actualizando oferta laboral:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
+
+
 
 // Obtener una oferta laboral por ID
 const getOferta = async (req, res) => {
@@ -53,7 +68,7 @@ const getOferta = async (req, res) => {
 // Obtener todas las ofertas laborales
 const getOfertas = async (req, res) => {
   try {
-    const ofertas = await OfertaLaboral.find().select("-postulantes");;  // Obtener todas las ofertas laborales
+    const ofertas = await OfertaLaboral.find({ estado: "Activo" });  // Obtener todas las ofertas laborales
     res.json(ofertas);  // Devolver las ofertas
   } catch (error) {
     console.error('Error obteniendo las ofertas laborales:', error);
@@ -128,8 +143,8 @@ const postularOferta = async (req, res) => {
   }
 
   try {
-    // Ejecutar ambas consultas en paralelo
-    const [oferta, perfilDoc] = await Promise.all([
+    // Ejecutar en paralelo
+    const [oferta, perfil] = await Promise.all([
       OfertaLaboral.findById(id),
       User.findOne({ firebaseUid: uid }),
     ]);
@@ -137,83 +152,96 @@ const postularOferta = async (req, res) => {
     if (!oferta) {
       return res.status(404).json({ error: 'Oferta no encontrada' });
     }
-    if (!perfilDoc) {
-      return res.status(404).json({ error: 'Perfil de egresado no encontrado' });
+    if (!perfil) {
+      return res.status(404).json({ error: 'Perfil no encontrado' });
     }
 
     // Verificar si ya postuló
-    const yaPostulo = oferta.postulantes.some(
-      (post) => post.perfil.toString() === perfilDoc._id.toString()
-    );
+    const yaPostulo = await Postulacion.findOne({
+      ofertaLaboral: id,
+      perfil: perfil._id,
+    });
+
     if (yaPostulo) {
       return res.status(400).json({ error: 'Ya has postulado a esta oferta' });
     }
+    /*
+        // Subir CV a Firebase Storage
+        const nombreArchivo = `cvs/${uuidv4()}_${req.file.originalname}`;
+        const file = bucket.file(nombreArchivo);
+    
+        await file.save(req.file.buffer, {
+          metadata: {
+            contentType: req.file.mimetype,
+          },
+        });
+    
+        const urlCV = `https://storage.googleapis.com/${bucket.name}/${nombreArchivo}`;
+    */
 
-    // Crear nuevo postulante
-    const nuevoPostulante = {
-      perfil: perfilDoc._id,
+    // Crear registro en colección Postulacion
+    const nuevaPostulacion = new Postulacion({
+      ofertaLaboral: oferta._id,
+      perfil: perfil._id,
       correo,
       numero,
-      cv: {
-        data: req.file.buffer,
-        contentType: req.file.mimetype,
-        nombreArchivo: req.file.originalname,
-      },
-    };
+      cv: req.file.originalname,
+    });
 
-    // Actualizar ambos documentos
-    oferta.postulantes.push(nuevoPostulante);
-    perfilDoc.ofertasPostuladas.push({ oferta: oferta._id });
+    await nuevaPostulacion.save();
 
-    // Guardar ambos en paralelo
-    await Promise.all([oferta.save(), perfilDoc.save()]);
-
-    res.json({ message: 'Postulación realizada con éxito' });
+    res.json({ message: 'Postulación realizada con éxito'});
   } catch (error) {
     console.error('Error al postular a la oferta:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
+
+
 const verificarPostulacion = async (req, res) => {
   const { uid } = req.params;
+
   try {
-    // Primero, buscar el perfil del usuario por uid
+    // Buscar el perfil por el UID de Firebase
     const perfil = await User.findOne({ firebaseUid: uid });
     if (!perfil) return res.status(404).json({ error: 'Perfil no encontrado' });
 
-    // Buscar ofertas donde postulantes contengan este perfil
-    const ofertasPostuladas = await OfertaLaboral.find({
-      'postulantes.perfil': perfil._id
-    }).select('_id');
+    // Buscar todas las postulaciones realizadas por este perfil
+    const postulaciones = await Postulacion.find({ perfil: perfil._id }).select('ofertaLaboral');
 
-    const ids = ofertasPostuladas.map((oferta) => oferta._id);
+    // Extraer solo los IDs de las ofertas
+    const ids = postulaciones.map((postulacion) => postulacion.ofertaLaboral);
+
     res.json({ ofertasPostuladas: ids });
   } catch (error) {
-    console.error(error);
+    console.error('Error al verificar postulación:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
-}
+};
 
-// controllers/oferta.controller.js
+
+
+// Obtener los postulantes de una oferta laboral
 
 const getPostulantesDeOferta = async (req, res) => {
   try {
     const { idOferta } = req.params;
 
-    const oferta = await OfertaLaboral.findById(idOferta);
-    if (!oferta) {
-      return res.status(404).json({ message: "Oferta no encontrada." });
+    // Buscar todas las postulaciones que referencian la oferta
+    const postulaciones = await Postulacion.find({ ofertaLaboral: idOferta }).populate('perfil');
+
+    if (!postulaciones.length) {
+      return res.status(404).json({ message: "No hay postulaciones para esta oferta." });
     }
 
-    const postulantes = oferta.postulantes.map((postulante) => ({
-      _id: postulante._id,
-      nombreCompleto: postulante.perfil?.name || "Nombre no registrado",
-      correo: postulante.correo,
-      numero: postulante.numero,
-      cv: {
-        nombreArchivo: postulante.cv?.nombreArchivo || null,
-      },
+    // Mapear para devolver datos limpios
+    const postulantes = postulaciones.map((postulacion) => ({
+      _id: postulacion.perfil?._id,
+      nombreCompleto: postulacion.perfil?.name || "Nombre no registrado",
+      correo: postulacion.correo,
+      numero: postulacion.numero,
+      cv: postulacion.cv || null,
     }));
 
     return res.json(postulantes);
@@ -223,6 +251,29 @@ const getPostulantesDeOferta = async (req, res) => {
   }
 };
 
+//obtener ofertas creadas por un usuario
+const getOfertasCreadasPorUsuario = async (req, res) => {
+  const { uid } = req.params;
+
+  try {
+    // Buscar el perfil del usuario por su UID de Firebase
+    const perfil = await User.findOne({ firebaseUid: uid });
+    if (!perfil) {
+      return res.status(404).json({ error: 'Perfil de usuario no encontrado' });
+    }
+
+    // Buscar las publicaciones donde el perfil coincida
+    const publicaciones = await PublicacionOfertas.find({ perfil: perfil._id }).populate('ofertaLaboral');
+
+    // Extraer solo las ofertas laborales
+    const ofertas = publicaciones.map(pub => pub.ofertaLaboral);
+
+    res.json(ofertas);
+  } catch (error) {
+    console.error('Error obteniendo ofertas creadas por el usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 
 
@@ -236,5 +287,6 @@ module.exports = {
   getOptions,
   postularOferta,
   verificarPostulacion,
-  getPostulantesDeOferta
+  getPostulantesDeOferta,
+  getOfertasCreadasPorUsuario
 };

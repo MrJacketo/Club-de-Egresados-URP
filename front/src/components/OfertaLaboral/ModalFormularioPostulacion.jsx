@@ -23,7 +23,6 @@ function ModalFormularioPostulacion({
 
   const onSubmit = (data) => {
     onSubmitPostulacion(data);
-    toast.success("Postulación enviada correctamente");
     reset();
     setFileName(""); // Limpiar nombre del archivo
     onClose();

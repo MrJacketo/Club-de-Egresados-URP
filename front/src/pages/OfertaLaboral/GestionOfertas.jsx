@@ -8,10 +8,12 @@ import { tiempoRelativo, DiasTranscurridos } from "../../utils/tiempoRelativo";
 import toast from "react-hot-toast";
 
 import ModalFormularioPostulacion from "../../components/OfertaLaboral/ModalFormularioPostulacion";
+import ModalMensaje from "../../components/ModalMensaje";
 
 import {
   postularOfertaRequest,
   getOfertasPostuladasPorUsuario,
+  getOfertasCreadasPorUsuario,
 } from "../../api/ofertaLaboralApi";
 
 //Improtacion para obtener diferencia de tiempos
@@ -27,22 +29,25 @@ import {
   VisibilityOff,
   Work,
 } from "@mui/icons-material";
+import { useRef } from "react";
 
 export default function OfertaLaboral() {
   //Estado para obtener la oferta seleccionada
   const navigate = useNavigate();
   const [ofertaActual, setOfertaSeleccionada] = useState(null);
-
   const [yaPostulado, setYaPostulado] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
-
   const [modalAbierto, setModalAbierto] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
-
   const [ofertas, setOfertas] = useState([]);
-  const { filtros, agregarFiltro, quitarFiltro, ofertasFiltradas } =
-    useFiltrosOferta(ofertas);
+  const {
+    filtros,
+    agregarFiltro,
+    quitarFiltro,
+    ofertasFiltradas,
+    searchTerm,
+    setSearchTerm,
+  } = useFiltrosOferta(ofertas);
   const [ofertasPostuladas, setOfertasPostuladas] = useState([]);
 
   const handlePostulacion = async (data) => {
@@ -59,10 +64,13 @@ export default function OfertaLaboral() {
         uid: user.uid,
         cvFile: file,
       });
+
+      ofertasPostuladas.push(ofertaActual._id);
+      toast.success("Postulación enviada correctamente");
     } catch (error) {
       console.log("Error capturado en handlePostulacion:", error);
       toast.error(
-        "❌ Error al postular a la oferta: " +
+        "Error al postular a la oferta: " +
           (error.response?.data?.error || error.message)
       );
     } finally {
@@ -70,52 +78,111 @@ export default function OfertaLaboral() {
     }
   };
 
-  useEffect(() => {
-    const fetchOfertas = async () => {
-      try {
-        const data = await getOfertasRequest();
-        setOfertas(data);
-        setOfertaSeleccionada(data[0] || null); // Selecciona la primera oferta por defectO
-      } catch (error) {
-        console.error("Error al cargar ofertas:", error);
-      }
-    };
-    fetchOfertas();
-  }, []);
+  //Estados opcionales
+  const [activo, setActivo] = useState(false);
+  const toggle = () => setActivo(!activo);
+  const [modalMensajeAbierto, setModalMensaje] = useState(false);
 
+  //Datos temporales
+  let ofertasTotales = useRef([]);
+  let ofertasCreadas = useRef([]);
+
+  //fetch ara obtener las ofertas totales
+  const fetchOfertas = async () => {
+    try {
+      const [ofTotales, ofCreadas] = await Promise.all([
+        getOfertasRequest(),
+        getOfertasCreadasPorUsuario(user.uid),
+      ]);
+
+      //Asignamos las ofertas
+      ofertasTotales.current = ofTotales;
+      ofertasCreadas.current = ofCreadas;
+
+      //Establecemos las ofertas a mostrar
+
+      setOfertas(ofTotales);
+      setOfertaSeleccionada(ofTotales[0] || null); // Selecciona la primera oferta por defectO
+    } catch (error) {
+      console.error("Error al cargar ofertas:", error);
+    }
+  };
+
+  //Obtener las ofertas al cargar el componente
   useEffect(() => {
+    fetchOfertas();
     if (user?.uid) {
       getOfertasPostuladasPorUsuario(user.uid).then(setOfertasPostuladas);
     }
   }, []);
 
+  useEffect(() => {
+    setOfertaSeleccionada(ofertasFiltradas[0] || null);
+  }, [ofertasFiltradas]);
+
+  //Maneja la activacion de edición de la página ofertas
+  const cambiarVista = async () => {
+    setActivo(!activo);
+    if (!activo) {
+      setOfertas(ofertasCreadas.current);
+      setOfertaSeleccionada(ofertasCreadas.current[0] || null);
+    } else {
+      setOfertas(ofertasTotales.current);
+      setOfertaSeleccionada(ofertasTotales.current[0] || null);
+      fetchOfertas();
+    }
+    setModalMensaje(false);
+  };
+
   return (
     <div className="relative mb-16 flex flex-col items-start w-full min-h-screen">
       {/* Título (opcional) */}
-      {/*
-  <h2 className="text-[#242424] text-4xl font-bold mb-5">
-    Gestionar Ofertas Laborales
-  </h2>
-  */}
+      <div className="flex flex-row w-full justify-between items-center">
+        <div>
+          <h2 className="text-[#ffffff]  text-4xl font-bold mb-5">
+            Ofertas Laborales
+          </h2>
+        </div>
+        <div className="flex items-center gap-4">
+          <p className="font-semibold text-lg">Modo de edicion</p>
+          <div
+            onClick={() => setModalMensaje(true)}
+            className={`w-16 h-8 flex items-center rounded-full p-1 cursor-pointer transition-all duration-300 
+          ${activo ? "bg-[#008278]" : "bg-gray-400"}`}
+          >
+            <div
+              className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300
+            ${activo ? "translate-x-8" : "translate-x-0"}`}
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <input
+        type="text"
+        placeholder="Buscar por cargo o empresa"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full px-4 py-2 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#008278]"
+      />
 
       {/* Filtros fijos */}
-      <div className="w-full">
+      <div className="w-full flex justify-between gap-10 items-start mb-4">
         <FiltrosOferta
           filtros={filtros}
           agregarFiltro={agregarFiltro}
           quitarFiltro={quitarFiltro}
         />
         {/* Botón añadir oferta (opcional) */}
-        {/*
-    <Link
-      to="/guardar-oferta"
-      className="bg-[#1A1A1A] w-full md:w-[20%] hover:bg-[#2d2d2d] hover:text-white hover:cursor-pointer text-[16px] text-white font-semibold py-3  rounded-xl transition-all duration-300 ease-in-out text-center mb-1"
-    >
-      Añadir Oferta
-    </Link>
-    */}
+        {activo && (
+          <Link
+            to="/guardar-oferta"
+            className="bg-[#1A1A1A] flex-1/6 hover:bg-[#2d2d2d] hover:text-white hover:cursor-pointer text-[16px] text-white font-semibold py-3  rounded-xl transition-all duration-300 ease-in-out text-center"
+          >
+            Añadir Oferta
+          </Link>
+        )}
       </div>
-
       {/* Contenido principal */}
       <div className="flex flex-row w-full gap-5">
         {/* Lista de ofertas */}
@@ -137,6 +204,7 @@ export default function OfertaLaboral() {
                 onSeleccionOferta={() => setOfertaSeleccionada(oferta)}
                 // Variable para indicar si la oferta está seleccionada
                 seleccionado={ofertaActual?._id === oferta._id}
+                edicion={activo}
               />
             ))
           ) : (
@@ -210,14 +278,16 @@ export default function OfertaLaboral() {
                   >
                     Guardar
                   </button>
-                  <button
-                    onClick={() =>
-                      navigate(`/postulantes-oferta/${ofertaActual?._id}`)
-                    }
-                    className="bg-[#1A1A1A] w-full md:w-[20%] hover:bg-[#2d2d2d] hover:text-white hover:cursor-pointer text-[16px] text-white font-semibold py-3  rounded-xl transition-all duration-300 ease-in-out text-center mb-1"
-                  >
-                    Ver postulantes
-                  </button>
+                  {activo && (
+                    <button
+                      onClick={() =>
+                        navigate(`/postulantes-oferta/${ofertaActual?._id}`)
+                      }
+                      className="text-white px-7! py-2! mt-2!  rounded-3xl! outline-none! border-0 bg-[#042d59]!  hover:border-0"
+                    >
+                      Ver postulantes
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -249,6 +319,16 @@ export default function OfertaLaboral() {
         onClose={() => setModalAbierto(false)}
         onSubmitPostulacion={handlePostulacion}
         oferta={ofertaActual}
+      />
+      <ModalMensaje
+        closeDefault={() => setModalMensaje(false)}
+        isOpen={modalMensajeAbierto}
+        onClose={cambiarVista}
+        mensaje={
+          activo
+            ? "¿Deseas salir del modo de edición?"
+            : "¿Deseas Activar el modo de edición?"
+        }
       />
     </div>
   );

@@ -5,6 +5,7 @@ export default function PostulantesDeOferta({ idOferta }) {
   const [postulantes, setPostulantes] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -15,6 +16,7 @@ export default function PostulantesDeOferta({ idOferta }) {
       } finally {
         setLoading(false);
       }
+
     };
     fetch();
   }, [idOferta]);
@@ -23,32 +25,32 @@ export default function PostulantesDeOferta({ idOferta }) {
   if (postulantes.length === 0) return <p>No hay postulantes.</p>;
 
   return (
-    <table className="w-full text-left border border-gray-300 mt-4">
-      <thead className="bg-gray-100">
+    <table className="text-sm text-gray-800 rounded-2xl shadow-2xl">
+      < thead className=" bg- rounded-3xl text-s text-gray-900  uppercase tracking-wider" >
         <tr>
           <th className="px-4 py-2">Nombre</th>
           <th className="px-4 py-2">Correo</th>
           <th className="px-4 py-2">Número</th>
           <th className="px-4 py-2">CV</th>
         </tr>
-      </thead>
+      </thead >
       <tbody>
         {postulantes.map((p) => (
-          <tr key={p._id} className="border-t">
+          <tr
+            key={p._id}
+            className="hover:bg-green-200 transition duration-200 cursor-pointer" >
+
             <td className="px-4 py-2">{p.nombreCompleto}</td>
             <td className="px-4 py-2">{p.correo}</td>
             <td className="px-4 py-2">{p.numero}</td>
             <td className="px-4 py-2">
-              <button
-                className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                
-              >
+              <button className="bg-blue-800 text-white px-3 py-1 rounded hover:bg-blue-700" >
                 Descargar CV
               </button>
             </td>
           </tr>
         ))}
       </tbody>
-    </table>
+    </table >
   );
 }

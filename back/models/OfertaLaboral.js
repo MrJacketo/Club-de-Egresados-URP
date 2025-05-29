@@ -64,33 +64,7 @@ const ofertaLaboralSchema = new mongoose.Schema({
         type: String,
         enum: ESTADO,
         default: 'Activo',
-    },
-    postulantes: [
-        {
-            perfil: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-                required: true,
-            },
-            correo: {
-                type: String,
-                required: true,
-            },
-            numero: {
-                type: String,
-                required: true,
-            },
-            cv: {
-                data: Buffer,
-                contentType: String,
-                nombreArchivo: String,
-            },
-            fechaPostulacion: {
-                type: Date,
-                default: Date.now,
-            },
-        },
-    ],
+    }
 });
 
 const OfertaLaboral = mongoose.model('OfertaLaboral', ofertaLaboralSchema);

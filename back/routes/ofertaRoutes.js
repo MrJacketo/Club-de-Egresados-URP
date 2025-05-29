@@ -9,6 +9,7 @@ const { createOrUpdateOferta,
     getOptions,
     postularOferta,
     getPostulantesDeOferta,
+    getOfertasCreadasPorUsuario,
   verificarPostulacion } = require("../controllers/ofertaController");
 const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 
@@ -23,6 +24,8 @@ router.get('/postulaciones/:uid',verifyFirebaseToken,verificarPostulacion);
 
 //Obtener postulantes de cada oferta
 router.get("/oferta/:idOferta/postulantes", verifyFirebaseToken, getPostulantesDeOferta);
+//Obtener ofertas creadas por un usuario
+router.get("/ofertas/usuario/:uid", verifyFirebaseToken, getOfertasCreadasPorUsuario);
 
 router.put("/oferta/:id", verifyFirebaseToken, createOrUpdateOferta);
 router.get("/oferta/:id", verifyFirebaseToken, getOferta);
