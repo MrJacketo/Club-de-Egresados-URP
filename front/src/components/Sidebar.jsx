@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Star, User, Shield } from "lucide-react";
+import { Home, Star, User, Shield, Newspaper } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
@@ -60,6 +60,21 @@ export default function Sidebar() {
                   Mi Membresía
                 </span>
               </Link>
+
+              <Link
+                to="/noticias"
+                className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
+                  location.pathname.startsWith("/noticias")
+                    ? "bg-teal-600/80 text-white shadow-lg"
+                    : "hover:bg-teal-500/20 hover:text-teal-300 transition"
+                }`}
+              >
+                <Newspaper size={24} />
+                <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
+                  Noticias
+                </span>
+              </Link>
+
               <Link
                 to="/welcome-egresado"
                 className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
