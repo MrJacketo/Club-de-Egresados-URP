@@ -10,6 +10,7 @@ const pagoRoutes = require('./routes/pagoRoutes');
 const beneficiosRoutes = require('./routes/beneficiosRoutes');
 const feedbackRoutes = require("./routes/feedbackRoutes")
 const noticiaRoutes = require("./routes/noticiaRoutes");
+const ofertaRoutes = require("./routes/ofertaRoutes.js")
 const app = express();
 
 // Connect to MongoDB
@@ -40,6 +41,7 @@ app.use("/api/noticias", noticiaRoutes); // Noticias routes
 app.use("/api/membresia", membresiaRoutes); //RUTAS MEMBRESIAS
 app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
+app.use("/api", ofertaRoutes); //Ruta de oferta laboral
 
 // Global error handler
 app.use((err, req, res, next) => {
