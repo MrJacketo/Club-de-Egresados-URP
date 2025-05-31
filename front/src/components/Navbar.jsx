@@ -17,6 +17,19 @@ export default function Navbar() {
       console.error("Error during logout:", error);
     }
   };
+  // ←— Si hay user, no renderizar nada
+  if (user) return (
+    <nav className="fixed top-0 left-0 w-full p-4 z-50">
+      <div className="flex justify-end items-center">
+        <img src="/logo.png" alt="Logo URP" className="w-16 h-16 mr-2" />
+        <Link
+          to="/"
+          className="text-white font-bold text-2xl hover:text-teal-300 transition"
+        > URPex
+        </Link>
+      </div>
+    </nav>);
+
 
   return (
     <nav className="bg-black/50 backdrop-blur-sm p-4 shadow-lg fixed top-0 left-0 w-full z-50">
