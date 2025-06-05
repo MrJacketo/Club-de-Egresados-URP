@@ -301,6 +301,12 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
     setIsEditing(false);
   };
 
+  const predefinedComments = ["¡Gracias!", "¡Muy bien!", "¡Interesante!", "¡Felicidades!", "¡Qué buena noticia!"];
+
+  const handlePredefinedComment = (text) => {
+    onAddComment(post.id, text, () => {});
+  };
+
   return (
     <article className="bg-white rounded-xl shadow-md p-5 text-black relative group hover:shadow-lg transition-shadow">
       <header className="flex justify-between items-center mb-4">
@@ -341,14 +347,14 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
                 Editar
               </button>
               <button
-              onClick={() => {
+                onClick={() => {
                   if (window.confirm("¿Seguro que deseas eliminar esta publicación?")) onDelete();
                 }}
                 className="block w-full text-left px-4 py-2 bg-green-600 text-white hover:bg-green-700"
                 role="menuitem"
               >
-              <Trash2 size={16} className="inline mr-1" />
-              Eliminar
+                <Trash2 size={16} className="inline mr-1" />
+                Eliminar
               </button>
             </div>
           )}
@@ -369,7 +375,7 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
         )}
 
         {post.media && (
-          <div className="mt-3 rounded-lg overflow-hidden border border-green-300 max-w-full max-h-60  " >
+          <div className="mt-3 rounded-lg overflow-hidden border border-green-300 max-w-full max-h-60">
             {post.media.type === "image" ? (
               <img
                 src={post.media.url}
@@ -393,7 +399,7 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
         <div className="flex justify-end gap-2 mb-4">
           <button
             onClick={() => setIsEditing(false)}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-4 py-1 rounded-full transition text-white "
+            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-4 py-1 rounded-full transition text-white"
             type="button"
           >
             Cancelar
@@ -412,7 +418,7 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
         <button
           aria-label={post.likedByUser ? "Quitar me gusta" : "Me gusta"}
           onClick={() => onToggleLike(post.id)}
-          className={`flex items-center gap-1 transition  text-white ${
+          className={`flex items-center gap-1 transition text-white ${
             post.likedByUser ? "text-green-600 font-semibold" : "hover:text-green-600"
           }`}
           type="button"
@@ -434,48 +440,47 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
       </footer>
 
       {showCommentBox && (
-        <div id={`comments-${post.id}`} className="mt-4 border-t border-green-200 pt-3">
+        <div id={`comments-${post.id}`} className="mt-4 border-t border-green-200 pt-3 space-y-3">
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {post.comments.length === 0 ? (
               <p className="text-gray-400 italic select-none">Sin comentarios aún</p>
             ) : (
               post.comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex justify-between items-start gap-2 p-2 rounded-lg bg-green-50"
-                >
+                <div key={comment.id} className="flex items-start justify-between bg-green-50 p-2 rounded-lg">
                   <div>
-                    <p className="text-green-700 font-semibold">{comment.user}</p>
-                    <p className="text-gray-600 text-sm whitespace-pre-wrap">{comment.content}</p>
-                    <time className="text-gray-400 text-xs">{comment.datetime}</time>
+                    <p className="font-semibold text-green-700">{comment.user}</p>
+                    <p className="text-sm">{comment.content}</p>
+                    <time className="text-xs text-gray-400">{comment.datetime}</time>
                   </div>
                   <button
-                    onClick={() => {
-                      if (window.confirm("¿Eliminar este comentario?")) {
-                        onDeleteComment(post.id, comment.id);
-                      }
-                    }}
-                    className="text-red-600 hover:text-red-700"
-                    aria-label="Eliminar comentario"
-                    type="button"
+                    onClick={() => onDeleteComment(post.id, comment.id)}
+                    className="text-red-500 hover:text-red-700"
+                    title="Eliminar comentario"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               ))
             )}
           </div>
 
-          <CommentInput
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            onSend={() => onAddComment(post.id, commentText, clearCommentInput)}
-          />
+          <div className="flex flex-wrap gap-2 pt-2">
+            {predefinedComments.map((msg, i) => (
+              <button
+                key={i}
+                onClick={() => handlePredefinedComment(msg)}
+                className="bg-green-100 text-green-800 px-3 py-1 rounded-full hover:bg-green-200 text-sm transition text-white"
+              >
+                {msg}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </article>
   );
 }
+
 
 // Input para comentarios
 function CommentInput({ value, onChange, onSend }) {
