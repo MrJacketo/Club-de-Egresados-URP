@@ -220,7 +220,11 @@ export default function PerfilEgresadoForm() {
           Aquí puedes ver y actualizar tu información como egresado URPex.
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nombre Completo */}
+
+          {/* Comentado por el momento para evitar conflictos con el diseño 
+          
+          
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Nombre Completo
@@ -235,7 +239,7 @@ export default function PerfilEgresadoForm() {
             />
           </div>
 
-          {/* Año de Egreso */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Año de Egreso
@@ -250,7 +254,7 @@ export default function PerfilEgresadoForm() {
             />
           </div>
 
-          {/* Carrera */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Carrera
@@ -271,7 +275,7 @@ export default function PerfilEgresadoForm() {
             </select>
           </div>
 
-          {/* Grado Académico */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Grado Académico
@@ -292,7 +296,7 @@ export default function PerfilEgresadoForm() {
             </select>
           </div>
 
-          {/* Experiencia Laboral */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Años de Experiencia
@@ -313,14 +317,14 @@ export default function PerfilEgresadoForm() {
             </select>
           </div>
 
-          {/* Areas de Experiencia */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Áreas de Experiencia
             </label>
             {profile.experienciaLaboral.areasExperiencia.map((area, index) => (
               <div key={index} className="flex space-x-4 items-center mb-2">
-                {/* Dropdown for Areas de Experiencia */}
+                
                 <select
                   value={area}
                   onChange={(e) =>
@@ -337,7 +341,7 @@ export default function PerfilEgresadoForm() {
                   ))}
                 </select>
 
-                {/* Remove Button */}
+                
                 <button
                   type="button"
                   onClick={() => removeAreaExperiencia(index)}
@@ -348,7 +352,7 @@ export default function PerfilEgresadoForm() {
               </div>
             ))}
 
-            {/* Add Button */}
+            
             <button
               type="button"
               onClick={addAreaExperiencia}
@@ -358,7 +362,8 @@ export default function PerfilEgresadoForm() {
             </button>
           </div>
 
-          {/* Tipo de Empresa */}
+          */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Tipo de Empresa
@@ -379,7 +384,7 @@ export default function PerfilEgresadoForm() {
             </select>
           </div>
 
-          {/* Areas de Interés */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Áreas de Interés
