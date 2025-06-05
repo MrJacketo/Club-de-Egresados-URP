@@ -1,14 +1,22 @@
 import { auth } from "../firebase";
 import apiClient from "./apiClient";
 // Crear o actualizar una oferta laboral
+
+
 export const createOrUpdateOfertaRequest = async (ofertaData) => {
     try {
+
+        const uid = JSON.parse(localStorage.getItem('user')).uid;
+
+        // Añadir el UID al objeto enviado
+        const dataConUid = { ofertaData, uid };
+
         let response;
 
         if (ofertaData.id) {
-            response = await apiClient.put(`/api/oferta/${ofertaData.id}`, ofertaData);
+            response = await apiClient.put(`/api/oferta/${ofertaData.id}`, dataConUid);
         } else {
-            response = await apiClient.post("/api/oferta", ofertaData);
+            response = await apiClient.post("/api/oferta", dataConUid);
         }
 
         return response.data;
@@ -75,3 +83,53 @@ export const getOptionsRequest = async () => {
         throw error;
     }
 };
+
+// Postular a una oferta laboral (con archivo PDF adjunto)
+export const postularOfertaRequest = async ({ idOferta, correo, numero, uid, cvFile }) => {
+    try {
+        const formData = new FormData();
+        formData.append("correo", correo);
+        formData.append("numero", numero);
+        formData.append("uid", uid);
+        formData.append("cv", cvFile); // archivo pdf
+        const response = await apiClient.post(`/api/oferta/${idOferta}/postular`, formData);
+
+        return response.data;
+    } catch (error) {
+        console.error("Error al postular a la oferta:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const getOfertasPostuladasPorUsuario = async (uid) => {
+    try {
+        const response = await apiClient.get(`/api/postulaciones/${uid}`);
+        return response.data.ofertasPostuladas; // Array de IDs
+    } catch (error) {
+        console.error('Error al obtener ofertas postuladas:', error);
+        return [];
+    }
+};
+
+//Postulantes de la oferta
+export const getPostulantesDeOfertaRequest = async (idOferta) => {
+    try {
+        const response = await apiClient.get(`/api/oferta/${idOferta}/postulantes`);
+        return response.data; 
+    } catch (error) {
+        console.error("Error al obtener postulantes:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+// Obtener ofertas creadas por un usuario
+export const getOfertasCreadasPorUsuario = async (uid) => {
+    try {
+        const response = await apiClient.get(`/api/ofertas/usuario/${uid}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error al obtener ofertas creadas por el usuario:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
