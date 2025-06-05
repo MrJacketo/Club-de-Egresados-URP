@@ -4,8 +4,10 @@ export default function useFiltrosOferta(ofertas) {
   const [filtros, setFiltros] = useState({
     area: [],
     modalidad: [],
-    tipoContrato: []
+    tipoContrato: [],
   });
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const agregarFiltro = (tipo, valor) => {
     if (!valor || filtros[tipo].includes(valor)) return;
@@ -33,15 +35,22 @@ export default function useFiltrosOferta(ofertas) {
       const cumpleContrato = filtros.tipoContrato.length
         ? filtros.tipoContrato.includes(oferta.tipoContrato)
         : true;
-      return cumpleArea && cumpleModalidad && cumpleContrato;
+      const cumpleBusqueda =
+        searchTerm.trim() === "" ||
+        oferta.cargo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        oferta.empresa.toLowerCase().includes(searchTerm.toLowerCase());
+
+      return cumpleArea && cumpleModalidad && cumpleContrato && cumpleBusqueda;
     });
-  }, [ofertas, filtros]);
+  }, [ofertas, filtros, searchTerm]);
 
   return {
     filtros,
     setFiltros,
     agregarFiltro,
     quitarFiltro,
+    searchTerm,
+    setSearchTerm,
     ofertasFiltradas,
   };
 }
