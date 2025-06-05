@@ -21,7 +21,6 @@ import VerBeneficios from './pages/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/feedback.jsx";
 import NoticiasPage from './pages/Noticiaspage.jsx';
 import ForoEgresados from '../src/pages/ForoEgresados';
-import PostulantesOferta from './pages/OfertaLaboral/PostulantesOfertas.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -48,7 +47,6 @@ function App() {
           <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
           <Route path='/noticias' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
           <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
-          <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
           <Route path="/foro-egresados" element={<ForoEgresados />} />
