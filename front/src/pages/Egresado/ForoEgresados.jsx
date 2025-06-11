@@ -1,24 +1,25 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  ThumbsUp,
-  MessageCircle,
-  MoreVertical,
-  Trash2,
-  Send,
-  Pencil,
-  X,
-} from "lucide-react";
+import { ThumbsUp, MessageCircle, MoreVertical, Trash2, Send, Pencil, X } from "lucide-react";
 
 function ForoEgresados() {
   const [postText, setPostText] = useState("");
   const [media, setMedia] = useState(null);
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo(0, 0);
   }, []);
+
+  const etiquetasDisponibles = [
+    "Debate",
+    "Opiniones",
+    "Sugerencias",
+    "Eventos",
+    "Oportunidades",
+    "Otros",
+  ];
 
   const getFormattedDateTime = () => {
     const now = new Date();
@@ -39,8 +40,19 @@ function ForoEgresados() {
     }
   };
 
+  const handleTagToggle = (tag) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
   const handlePost = useCallback(() => {
     if (postText.trim() === "" && !media) return;
+
+    const tagsFromText = postText.match(/#\w+/g)?.map(tag => tag.slice(1)) || [];
+    const allTags = [...new Set([...tagsFromText])];
 
     const newPost = {
       id: Date.now(),
@@ -48,6 +60,7 @@ function ForoEgresados() {
       datetime: getFormattedDateTime(),
       content: postText.trim(),
       media,
+      tags: allTags,
       comments: [],
       likedByUser: false,
       likesCount: 0,
@@ -117,23 +130,21 @@ function ForoEgresados() {
     );
   }, []);
 
-  const filteredPosts = posts.filter(
-    (post) =>
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = 
       post.content.toLowerCase().includes(search.toLowerCase()) ||
-      post.user.toLowerCase().includes(search.toLowerCase())
-  );
+      post.user.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesTags = selectedTags.length === 0 || 
+      (post.tags && selectedTags.some(tag => post.tags.includes(tag)));
+    
+    return matchesSearch && matchesTags;
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-90 to-white flex flex-col">
-      <header
-        id="navbar"
-        className="bg-white shadow sticky top-0 z-30 p-12 flex flex-col md:flex-row justify-between items-center gap-"
-      >
-        <h1
-          className="text-3xl font-extrabold text-green-700 cursor-pointer select-none hover:text-green-800 transition"
-          onClick={() => window.location.reload()}
-          aria-label="Recargar foro"
-        >
+    <div className="bg-gradient-to-b from-green-90 to-white flex flex-col">
+      <header className="mt-12 bg-white shadow sticky top-0 z-30 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <h1 className="text-3xl font-extrabold text-green-700 cursor-pointer select-none hover:text-green-800 transition">
           ForoEgresados
         </h1>
 
@@ -143,16 +154,14 @@ function ForoEgresados() {
           className="w-full max-w-sm px-4 py-2 rounded-full border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-black"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          aria-label="Buscar publicaciones"
         />
 
         <nav className="flex space-x-3">
           {["Inicio", "Mensajes", "Notificaciones", "Perfil"].map((item) => (
             <a
               key={item}
-              href={item === "Inicio" ? "http://localhost:5173/" : "#"}
+              href={item === "Inicio" ? "/" : "#"}
               className="bg-green-700 text-white px-5 py-2 rounded-full hover:bg-green-800 shadow-md transition"
-              aria-label={item}
             >
               {item}
             </a>
@@ -170,13 +179,30 @@ function ForoEgresados() {
               <li
                 key={item}
                 className="cursor-pointer hover:underline hover:text-green-800 transition"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === "Enter" && alert(`Navegar a ${item}`)}
               >
                 {item}
               </li>
             ))}
           </ul>
+
+          <div className="mt-6">
+            <h3 className="font-semibold text-lg border-b border-green-200 pb-2 mb-3">
+              Filtrar por etiquetas
+            </h3>
+            <div className="space-y-2">
+              {etiquetasDisponibles.map((etiqueta) => (
+                <label key={etiqueta} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedTags.includes(etiqueta)}
+                    onChange={() => handleTagToggle(etiqueta)}
+                    className="form-checkbox h-4 w-4 text-green-600 rounded focus:ring-green-500"
+                  />
+                  <span>{etiqueta}</span>
+                </label>
+              ))}
+            </div>
+          </div>
         </aside>
 
         <section className="flex-1 flex flex-col gap-6">
@@ -188,6 +214,7 @@ function ForoEgresados() {
             onFileChange={handleFileChange}
             onPost={handlePost}
             onCancel={handleCancel}
+            availableTags={etiquetasDisponibles}
           />
 
           {filteredPosts.length === 0 ? (
@@ -218,26 +245,36 @@ function ForoEgresados() {
   );
 }
 
-// Componente para nueva publicación
-function NewPostInput({ postText, setPostText, media, setMedia, onFileChange, onPost, onCancel }) {
+function NewPostInput({ postText, setPostText, media, setMedia, onFileChange, onPost, onCancel, availableTags }) {
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const handleTagToggle = (tag) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+    
+    if (!postText.includes(`#${tag}`)) {
+      setPostText(prev => `${prev} #${tag}`);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-5 flex flex-col gap-4">
       <textarea
         className="resize-none w-full h-24 p-3 border border-green-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-green-500 text-black placeholder:text-gray-400"
-        placeholder="¿Qué quieres compartir con tus compañeros?"
+        placeholder="¿Qué quieres compartir con tus compañeros? (Usa # para etiquetas)"
         value={postText}
         onChange={(e) => setPostText(e.target.value)}
-        aria-label="Texto de la publicación"
       />
 
+      
+
       <div className="flex flex-col md:flex-row md:items-center gap-4">
-        <label
-          htmlFor="media-upload"
-          className="cursor-pointer bg-green-100 text-green-700 px-4 py-2 rounded-full font-semibold hover:bg-green-200 flex items-center justify-center gap-2 transition"
-        >
+        <label className="cursor-pointer bg-green-100 text-green-700 px-4 py-2 rounded-full font-semibold hover:bg-green-200 flex items-center justify-center gap-2 transition">
           Seleccionar archivo
           <input
-            id="media-upload"
             type="file"
             accept="image/*,video/*"
             onChange={onFileChange}
@@ -253,10 +290,8 @@ function NewPostInput({ postText, setPostText, media, setMedia, onFileChange, on
               <video src={media.url} controls className="object-cover w-full h-40" />
             )}
             <button
-              aria-label="Eliminar archivo adjunto"
               className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition"
               onClick={() => setMedia(null)}
-              title="Eliminar archivo"
             >
               <X size={18} />
             </button>
@@ -266,8 +301,7 @@ function NewPostInput({ postText, setPostText, media, setMedia, onFileChange, on
         <div className="ml-auto flex gap-2">
           <button
             onClick={onCancel}
-            className="bg-gray-300 hover:bg-gray-400 text-white-700 font-semibold px-4 py-2 rounded-full transition"
-            type="button"
+            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-4 py-2 rounded-full transition text-white"
           >
             Cancelar
           </button>
@@ -275,7 +309,6 @@ function NewPostInput({ postText, setPostText, media, setMedia, onFileChange, on
             onClick={onPost}
             disabled={postText.trim() === "" && !media}
             className="bg-green-700 hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-full transition"
-            type="button"
           >
             Publicar
           </button>
@@ -285,7 +318,6 @@ function NewPostInput({ postText, setPostText, media, setMedia, onFileChange, on
   );
 }
 
-// Componente para cada publicación
 function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleLike }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -301,11 +333,17 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
     setIsEditing(false);
   };
 
+  const predefinedComments = ["¡Gracias!", "¡Muy bien!", "¡Interesante!", "¡Felicidades!", "¡Qué buena noticia!"];
+
+  const handlePredefinedComment = (text) => {
+    onAddComment(post.id, text, () => {});
+  };
+
   return (
     <article className="bg-white rounded-xl shadow-md p-5 text-black relative group hover:shadow-lg transition-shadow">
-      <header className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-3">
-          <div className="bg-green-700 text-white font-bold rounded-full w-10 h-10 flex items-center justify-center text-lg select-none">
+      <header className="flex justify-between items-center mb-4" >
+        <div className="flex items-center gap-3 te">
+          <div className="bg-green-700 text-white font-bold rounded-full w-10 h-10 flex items-center justify-center text-lg select-none ">
             {post.user.charAt(0)}
           </div>
           <div>
@@ -316,16 +354,13 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
 
         <div className="relative">
           <button
-            aria-label="Opciones del post"
-            className="p-1 rounded-full hover:bg-green-100 transition"
+            className="p-1 rounded-full hover:bg-green-100 transition text-white"
             onClick={() => setShowOptions((v) => !v)}
           >
             <MoreVertical size={20} />
           </button>
           {showOptions && (
             <div
-              role="menu"
-              aria-label="Opciones del post"
               className="absolute right-0 mt-2 w-28 bg-white border border-green-300 rounded-md shadow-md z-10"
               onMouseLeave={() => setShowOptions(false)}
             >
@@ -335,20 +370,18 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
                   setShowOptions(false);
                 }}
                 className="block w-full text-left px-4 py-2 hover:bg-green-50 text-white"
-                role="menuitem"
               >
                 <Pencil size={16} className="inline mr-1" />
                 Editar
               </button>
               <button
-              onClick={() => {
+                onClick={() => {
                   if (window.confirm("¿Seguro que deseas eliminar esta publicación?")) onDelete();
                 }}
-                className="block w-full text-left px-4 py-2 bg-green-600 text-white hover:bg-green-700"
-                role="menuitem"
+                className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 text-white"
               >
-              <Trash2 size={16} className="inline mr-1" />
-              Eliminar
+                <Trash2 size={16} className="inline mr-1" />
+                Eliminar
               </button>
             </div>
           )}
@@ -362,14 +395,23 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
             onChange={(e) => setEditedContent(e.target.value)}
             className="w-full border border-green-300 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-green-600 text-black"
             rows={3}
-            aria-label="Editar contenido de la publicación"
           />
         ) : (
           <p className="whitespace-pre-wrap">{post.content}</p>
         )}
 
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {post.tags.map(tag => (
+              <span key={tag} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+
         {post.media && (
-          <div className="mt-3 rounded-lg overflow-hidden border border-green-300 max-w-full max-h-60  " >
+          <div className="mt-3 rounded-lg overflow-hidden border border-green-300 max-w-full max-h-60">
             {post.media.type === "image" ? (
               <img
                 src={post.media.url}
@@ -393,15 +435,13 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
         <div className="flex justify-end gap-2 mb-4">
           <button
             onClick={() => setIsEditing(false)}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-4 py-1 rounded-full transition text-white "
-            type="button"
+            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-4 py-1 rounded-full transition"
           >
             Cancelar
           </button>
           <button
             onClick={handleSaveEdit}
             className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-1 rounded-full transition"
-            type="button"
           >
             Guardar
           </button>
@@ -410,12 +450,10 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
 
       <footer className="flex items-center justify-between text-gray-600 text-sm select-none">
         <button
-          aria-label={post.likedByUser ? "Quitar me gusta" : "Me gusta"}
           onClick={() => onToggleLike(post.id)}
-          className={`flex items-center gap-1 transition  text-white ${
-            post.likedByUser ? "text-green-600 font-semibold" : "hover:text-green-600"
+          className={`flex items-center gap-1 transition ${
+            post.likedByUser ? "text-green-600 font-semibold" : "hover:text-green-600 text-white"
           }`}
-          type="button"
         >
           <ThumbsUp size={18} />
           {post.likesCount > 0 ? post.likesCount : "Me gusta"}
@@ -424,9 +462,6 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
         <button
           onClick={() => setShowCommentBox((v) => !v)}
           className="flex items-center gap-1 hover:text-green-600 transition text-white"
-          aria-expanded={showCommentBox}
-          aria-controls={`comments-${post.id}`}
-          type="button"
         >
           <MessageCircle size={18} />
           Comentarios ({post.comments.length})
@@ -434,80 +469,46 @@ function Post({ post, onDelete, onEdit, onAddComment, onDeleteComment, onToggleL
       </footer>
 
       {showCommentBox && (
-        <div id={`comments-${post.id}`} className="mt-4 border-t border-green-200 pt-3">
+        <div className="mt-4 border-t border-green-200 pt-3 space-y-3">
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {post.comments.length === 0 ? (
               <p className="text-gray-400 italic select-none">Sin comentarios aún</p>
             ) : (
               post.comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex justify-between items-start gap-2 p-2 rounded-lg bg-green-50"
-                >
+                <div key={comment.id} className="flex items-start justify-between bg-green-50 p-2 rounded-lg">
                   <div>
-                    <p className="text-green-700 font-semibold">{comment.user}</p>
-                    <p className="text-gray-600 text-sm whitespace-pre-wrap">{comment.content}</p>
-                    <time className="text-gray-400 text-xs">{comment.datetime}</time>
+                    <p className="font-semibold text-green-700">{comment.user}</p>
+                    <p className="text-sm">{comment.content}</p>
+                    <time className="text-xs text-gray-400">{comment.datetime}</time>
                   </div>
                   <button
-                    onClick={() => {
-                      if (window.confirm("¿Eliminar este comentario?")) {
-                        onDeleteComment(post.id, comment.id);
-                      }
-                    }}
-                    className="text-red-600 hover:text-red-700"
-                    aria-label="Eliminar comentario"
-                    type="button"
+                    onClick={() => onDeleteComment(post.id, comment.id)}
+                    className="text-red-500 hover:text-red-700"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               ))
             )}
           </div>
 
-          <CommentInput
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            onSend={() => onAddComment(post.id, commentText, clearCommentInput)}
-          />
+          <div className="flex flex-wrap gap-2 pt-2">
+            {predefinedComments.map((msg, i) => (
+              <button
+                key={i}
+                onClick={() => handlePredefinedComment(msg)}
+                className="bg-green-100 text-green-800 px-3 py-1 rounded-full hover:bg-green-200 text-sm transition text-white"
+              >
+                {msg}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </article>
   );
 }
 
-// Input para comentarios
-function CommentInput({ value, onChange, onSend }) {
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSend();
-      }}
-      className="flex items-center gap-2 mt-3"
-    >
-      <input
-        type="text"
-        placeholder="Escribe un comentario..."
-        value={value}
-        onChange={onChange}
-        className="flex-grow border border-green-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-black"
-        aria-label="Escribir comentario"
-      />
-      <button
-        type="submit"
-        disabled={value.trim() === ""}
-        className="bg-green-700 hover:bg-green-800 text-white rounded-full p-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        aria-label="Enviar comentario"
-      >
-        <Send size={20} />
-      </button>
-    </form>
-  );
-}
-
-// Componente de temas populares (aside)
 function PopularTopics() {
   const topics = [
     "Programación",
@@ -517,7 +518,7 @@ function PopularTopics() {
     "Eventos U. Ricardo Palma",
   ];
   return (
-    <section aria-label="Temas populares" className="text-green-700">
+    <section className="text-green-700">
       <h3 className="font-semibold text-lg border-b border-green-200 pb-2 mb-3">
         Temas Populares
       </h3>
@@ -526,8 +527,6 @@ function PopularTopics() {
           <li
             key={topic}
             className="bg-green-100 hover:bg-green-200 cursor-pointer rounded-full px-3 py-1 text-sm select-none"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && alert(`Explorar tema: ${topic}`)}
           >
             {topic}
           </li>
@@ -537,7 +536,6 @@ function PopularTopics() {
   );
 }
 
-// Componente de eventos próximos (aside)
 function UpcomingEvents() {
   const events = [
     { date: "2025-06-15", title: "Taller de React" },
@@ -545,18 +543,13 @@ function UpcomingEvents() {
     { date: "2025-08-12", title: "Encuentro de Egresados" },
   ];
   return (
-    <section aria-label="Eventos próximos" className="text-green-700">
+    <section className="text-green-700">
       <h3 className="font-semibold text-lg border-b border-green-200 pb-2 mb-3">
         Eventos Próximos
       </h3>
       <ul className="space-y-2">
         {events.map(({ date, title }) => (
-          <li
-            key={date}
-            className="cursor-pointer hover:underline hover:text-green-800 transition select-none"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && alert(`Evento: ${title}`)}
-          >
+          <li key={date} className="cursor-pointer hover:underline hover:text-green-800 transition select-none">
             <time dateTime={date} className="font-mono mr-2 text-sm text-gray-500">
               {new Date(date).toLocaleDateString()}
             </time>
