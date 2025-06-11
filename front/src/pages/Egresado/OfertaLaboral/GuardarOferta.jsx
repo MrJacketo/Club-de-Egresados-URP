@@ -1,5 +1,5 @@
 import React from "react";
-import OfertaLaboralForm from "../../components/OfertaLaboral/OfertaLaboralForm";
+import OfertaLaboralForm from "../../../components/OfertaLaboral/OfertaLaboralForm";
 
 export default function OfertaLaboral() {
   return (

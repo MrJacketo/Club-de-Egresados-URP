@@ -1,5 +1,5 @@
 import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle } from "lucide-react"
-import { auth } from "../firebase";
+import { auth } from "../../firebase";
 
 const handleObtenerMembresia = async () => {
   try {

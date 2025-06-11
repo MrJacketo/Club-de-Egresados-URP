@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { auth, googleProvider } from "../firebase";
+import { auth, googleProvider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
-import { UserContext } from "../context/userContext";
-import { getGraduateProfileRequest } from "../api/perfilEgresadoApi";
+import { UserContext } from "../../context/userContext";
+import { getGraduateProfileRequest } from "../../api/perfilEgresadoApi";
 
 export default function Login() {
   const navigate = useNavigate();

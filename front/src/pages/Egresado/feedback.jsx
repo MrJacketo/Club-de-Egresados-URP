@@ -1,7 +1,7 @@
-import FiltrosBeneficio from "../components/feedback/FiltrosBeneficio"
-import CardBeneficio from "../components/feedback/CardBeneficio"
-import FeedbackForm from "../components/feedback/FeedbackForm"
-import useFiltrosBeneficios from "../hooks/useFiltrosBeneficios"
+import FiltrosBeneficio from "../../components/feedback/FiltrosBeneficio"
+import CardBeneficio from "../../components/feedback/CardBeneficio"
+import FeedbackForm from "../../components/feedback/FeedbackForm"
+import useFiltrosBeneficios from "../../hooks/useFiltrosBeneficios"
 
 const FeedbackPage = () => {
   const { filtros, setFiltros, beneficiosFiltrados, resetFiltros } = useFiltrosBeneficios()

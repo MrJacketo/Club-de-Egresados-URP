@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import PostulantesDeOferta from "../../components/OfertaLaboral/Postulantes";
+import PostulantesDeOferta from "../../../components/OfertaLaboral/Postulantes";
 
 export default function PostulantesOferta({ }) {
   const { id } = useParams();

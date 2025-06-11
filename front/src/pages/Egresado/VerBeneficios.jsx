@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Gift, ExternalLink, Ticket, BookOpen, ShoppingBag, CheckCircle } from 'lucide-react';
-import { auth } from "../firebase";
-import apiClient from '../api/apiClient';
-import { getBeneficiosRequest, getBeneficiosRedimidosRequest } from '../api/beneficiosApi';
+import { auth } from "../../firebase";
+import apiClient from '../../api/apiClient';
+import { getBeneficiosRequest, getBeneficiosRedimidosRequest } from '../../api/beneficiosApi';
 
 
 export default function BeneficiosVista() {

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/userContext";
+import { UserContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
-import apiClient from "../api/apiClient"; // Axios instance to fetch user data
+import apiClient from "../../api/apiClient"; // Axios instance to fetch user data
 
 export default function Dashboard() {
   const { user } = useContext(UserContext); // Firebase user from context

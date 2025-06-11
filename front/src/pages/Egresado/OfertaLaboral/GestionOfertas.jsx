@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { getOfertasRequest } from "../../api/ofertaLaboralApi";
-import CardOfertaLaboral from "../../components/OfertaLaboral/CardOfertaLaboral";
+import { getOfertasRequest } from "../../../api/ofertaLaboralApi";
+import CardOfertaLaboral from "../../../components/OfertaLaboral/CardOfertaLaboral";
 import { Link, useNavigate } from "react-router-dom";
-import FiltrosOferta from "../../components/OfertaLaboral/filtrosOferta";
-import useFiltrosOferta from "../../Hooks/useFiltroOfertas";
-import { tiempoRelativo, DiasTranscurridos } from "../../utils/tiempoRelativo";
+import FiltrosOferta from "../../../components/OfertaLaboral/filtrosOferta";
+import useFiltrosOferta from "../../../Hooks/useFiltroOfertas";
+import { tiempoRelativo, DiasTranscurridos } from "../../../utils/tiempoRelativo";
 import toast from "react-hot-toast";
 
-import ModalFormularioPostulacion from "../../components/OfertaLaboral/ModalFormularioPostulacion";
-import ModalMensaje from "../../components/ModalMensaje";
+import ModalFormularioPostulacion from "../../../components/OfertaLaboral/ModalFormularioPostulacion";
+import ModalMensaje from "../../../components/ModalMensaje";
 
 import {
   postularOfertaRequest,
   getOfertasPostuladasPorUsuario,
   getOfertasCreadasPorUsuario,
-} from "../../api/ofertaLaboralApi";
+} from "../../../api/ofertaLaboralApi";
 
 //Improtacion para obtener diferencia de tiempos
 import { formatDistanceToNow } from "date-fns";

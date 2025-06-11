@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react"
 // Componentes
-import NoticiasHeader from "../components/noticias/NoticiasHeader"
-import NoticiasSearch from "../components/noticias/NoticiasSearch"
-import NoticiasList from "../components/noticias/NoticiasList"
+import NoticiasHeader from "../../components/noticias/NoticiasHeader"
+import NoticiasSearch from "../../components/noticias/NoticiasSearch"
+import NoticiasList from "../../components/noticias/NoticiasList"
 
 // Datos
-import { noticiasDemo } from "../demo/noticiasDemo"
+import { noticiasDemo } from "../../demo/noticiasDemo"
 
 const NoticiasPage = () => {
   // ===== ESTADOS =====

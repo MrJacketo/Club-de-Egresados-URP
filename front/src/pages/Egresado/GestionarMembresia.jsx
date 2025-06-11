@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/userContext";
+import { UserContext } from "../../context/userContext";
 import {
   Calendar,
   Clock,
@@ -11,8 +11,8 @@ import {
   RefreshCw,
   User,
 } from "lucide-react";
-import { getMembresiaRequest } from "../api/membresiaApi";
-import { getBeneficiosRedimidosRequest } from "../api/beneficiosApi";
+import { getMembresiaRequest } from "../../api/membresiaApi";
+import { getBeneficiosRedimidosRequest } from "../../api/beneficiosApi";
 import { useNavigate } from "react-router-dom";
 
 export default function GestionarMembresiaForm() {
