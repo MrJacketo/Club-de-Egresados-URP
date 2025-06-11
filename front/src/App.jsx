@@ -37,7 +37,7 @@ function App() {
           <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
           <Route path='/perfil' element={<PrivateRoute><Perfil/></PrivateRoute>} />          
           <Route path='/perfilegresado' element={<PrivateRoute><PerfilEgresado/></PrivateRoute>} />  
-         <Route path="/foroegresados" element={<ForoEgresados />} />
+          <Route path="/foro-egresados" element={<ForoEgresados/>} />
 
 
         </Routes>
