@@ -211,7 +211,7 @@ export default function PerfilEgresadoForm() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center pt-200 ">
+    <div className="min-h-screen flex justify-center items-center ">
       <div className="bg-white w-full max-w-4xl p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">
           Mi Perfil
@@ -231,7 +231,7 @@ export default function PerfilEgresadoForm() {
               value={profile.nombreCompleto}
               onChange={handleChange}
               className="w-full mt-1 p-2 border rounded bg-white text-gray-700"
-              required
+              disabled
             />
           </div>
 
@@ -341,7 +341,7 @@ export default function PerfilEgresadoForm() {
                 <button
                   type="button"
                   onClick={() => removeAreaExperiencia(index)}
-                  className="text-red-500 hover:text-red-700"
+                  className="hover:text-gray-300"
                 >
                   Eliminar
                 </button>
@@ -352,7 +352,7 @@ export default function PerfilEgresadoForm() {
             <button
               type="button"
               onClick={addAreaExperiencia}
-              className="mt-2 text-emerald-600 hover:text-emerald-800"
+              className="mt-2 hover:text-gray-300"
             >
               Agregar Área de Experiencia
             </button>
@@ -420,7 +420,7 @@ export default function PerfilEgresadoForm() {
                 <button
                   type="button"
                   onClick={() => removeAreaInteres(index)}
-                  className="text-red-500 hover:text-red-700"
+                  className="hover:text-gray-300"
                 >
                   Eliminar
                 </button>
@@ -431,7 +431,7 @@ export default function PerfilEgresadoForm() {
             <button
               type="button"
               onClick={addAreaInteres}
-              className="mt-2 text-emerald-600 hover:text-emerald-800"
+              className="mt-2 hover:text-gray-300"
             >
               Agregar Área de Interés
             </button>
@@ -440,7 +440,7 @@ export default function PerfilEgresadoForm() {
           {/* Modalidad */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Modalidad
+              Modalidad Preferida de Empleo
             </label>
             <select
               name="modalidad"
@@ -482,7 +482,7 @@ export default function PerfilEgresadoForm() {
           {/* Idiomas */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Idiomas
+              Idiomas que maneja
             </label>
             {profile.habilidades.idiomas.map((idiomaObj, index) => (
               <div key={index} className="flex space-x-4 items-center mb-2">
@@ -522,7 +522,7 @@ export default function PerfilEgresadoForm() {
                 <button
                   type="button"
                   onClick={() => removeIdioma(index)}
-                  className="text-red-500 hover:text-red-700"
+                  className="hover:text-gray-300"
                 >
                   Eliminar
                 </button>
@@ -533,7 +533,7 @@ export default function PerfilEgresadoForm() {
             <button
               type="button"
               onClick={addIdioma}
-              className="mt-2 text-emerald-600 hover:text-emerald-800"
+              className="mt-2 hover:text-gray-300"
             >
               Agregar Idioma
             </button>

@@ -47,7 +47,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex justify-center items-center pt-35">
       <div className="w-[90%] md:w-[80%] max-w-6xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden bg-white z-10 relative h-[350px] md:h-[450px]">
         {/* Left Column: Google Login */}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-6 md:p-10">
