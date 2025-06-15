@@ -1,27 +1,28 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from '../src/components/Navbar.jsx';
-import Home from '../src/pages/Home.jsx';
-import Register from '../src/pages/Register.jsx';
-import Login from '../src/pages/Login.jsx';
+import Home from '../src/pages/Egresado/Home.jsx';
+import Register from '../src/pages/Egresado/Register.jsx';
+import Login from '../src/pages/Egresado/Login.jsx';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
 import { UserContextProvider } from './context/userContext.jsx';
-import WelcomeEgresado from './pages/WelcomeEgresado.jsx';
-import Beneficios from './pages/Beneficios.jsx';
-import Membresia from './pages/Membresia.jsx';
-import GuardarOferta from './pages/OfertaLaboral/GuardarOferta.jsx';
-import GestionOfertas from './pages/OfertaLaboral/GestionOfertas.jsx'
+import WelcomeEgresado from './pages/Egresado/WelcomeEgresado.jsx';
+import Beneficios from './pages/Egresado/Beneficios.jsx';
+import Membresia from './pages/Egresado/Membresia.jsx';
+import GuardarOferta from './pages/Egresado/OfertaLaboral/GuardarOferta.jsx';
+import GestionOfertas from './pages/Egresado/OfertaLaboral/GestionOfertas.jsx'
 import PerfilEgresadoForm from './components/PerfilEgresadoForm.jsx';
-import GestionarMembresia from './pages/GestionarMembresia'; // ajusta la ruta
-import MembresiaSucess from './pages/MembresiaSucess.jsx'; // ajusta la ruta
+import GestionarMembresia from './pages/Egresado/GestionarMembresia'; // ajusta la ruta
+import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx'; // ajusta la ruta
 import PrivateRoute from './components/PrivateRoute';
 import Sidebar from './components/Sidebar.jsx';
-import VerBeneficios from './pages/VerBeneficios.jsx'; // ajusta la ruta
-import Feedback from "./pages/feedback.jsx";
-import NoticiasPage from './pages/Noticiaspage.jsx';
-import GestionMembresiaAdmin from './pages/GestionMembresiaAdmin.jsx';
-
+import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
+import Feedback from "./pages/Egresado/feedback.jsx";
+import NoticiasPage from './pages/Egresado/Noticiaspage.jsx';
+import ForoEgresados from '../src/pages/Egresado/ForoEgresados';
+import PostulantesOferta from './pages/Egresado/OfertaLaboral/PostulantesOfertas.jsx';
+import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -48,10 +49,12 @@ function App() {
           <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
           <Route path='/noticias' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
           <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
+          <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
-          <Route path="/GestionMembresiaAdmin" element={<GestionMembresiaAdmin/>} />
-
+          <Route path="/foro-egresados" element={<ForoEgresados />} />
+          {/* Rutas de administrador */}
+          <Route path="/admin" element={<AdminDashboard />} />
 
         </Routes>
       </div>

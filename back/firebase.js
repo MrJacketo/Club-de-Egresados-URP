@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const { getStorage } = require('firebase-admin/storage');
 
 const serviceAccount = {
   type: "service_account",
@@ -16,6 +17,7 @@ const serviceAccount = {
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
+  storageBucket: 'react-urpex-auth.appspot.com'
 });
-
-module.exports = admin;
+const bucket = getStorage().bucket();
+module.exports = {admin, bucket};
