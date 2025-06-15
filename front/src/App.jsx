@@ -20,6 +20,7 @@ import Sidebar from './components/Sidebar.jsx';
 import VerBeneficios from './pages/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/feedback.jsx";
 import NoticiasPage from './pages/Noticiaspage.jsx';
+import GestionMembresiaAdmin from './pages/GestionMembresiaAdmin.jsx';
 
 
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -49,6 +50,8 @@ function App() {
           <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
+          <Route path="/GestionMembresiaAdmin" element={<GestionMembresiaAdmin/>} />
+
 
         </Routes>
       </div>
