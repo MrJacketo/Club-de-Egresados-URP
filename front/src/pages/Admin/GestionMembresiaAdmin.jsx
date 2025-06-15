@@ -358,7 +358,7 @@ export default function GestionMembresiasAdmin() {
             titulo="Ingresos Mensuales"
             valor={`S/ ${estadisticasMock.ingresosMensuales.toLocaleString()}`}
             icon={DollarSign}
-            color="emerald"
+            color="green"
             extra={
               <p className="text-sm text-green-600 flex items-center">
                 <TrendingUp size={14} className="mr-1" />
