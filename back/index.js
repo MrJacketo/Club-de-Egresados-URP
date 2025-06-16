@@ -5,8 +5,12 @@ const mongoose = require("mongoose"); // Keep MongoDB connection for future use
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const perfilRoutes = require("./routes/perfilRoutes");
+const membresiaRoutes = require("./routes/membresiaRoutes");
+const pagoRoutes = require('./routes/pagoRoutes');
+const beneficiosRoutes = require('./routes/beneficiosRoutes');
+const feedbackRoutes = require("./routes/feedbackRoutes")
 const noticiaRoutes = require("./routes/noticiaRoutes");
-
+const ofertaRoutes = require("./routes/ofertaRoutes.js")
 const app = express();
 
 // Connect to MongoDB
@@ -32,13 +36,19 @@ app.use(
 // Routes
 app.use("/", authRoutes); // Authentication routes
 app.use("/api", perfilRoutes); // Perfil de egresado routes
+app.use("/api/feedback", feedbackRoutes);
 app.use("/api/noticias", noticiaRoutes); // Noticias routes
+app.use("/api/membresia", membresiaRoutes); //RUTAS MEMBRESIAS
+app.use("/api/pago", pagoRoutes); //RUTA PAGOS
+app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
+app.use("/api", ofertaRoutes); //Ruta de oferta laboral
 
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
+
 
 // Start the server
 const port = 8000;
