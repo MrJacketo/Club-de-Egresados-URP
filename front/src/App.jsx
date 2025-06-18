@@ -23,6 +23,7 @@ import NoticiasPage from './pages/Egresado/Noticiaspage.jsx';
 import ForoEgresados from '../src/pages/Egresado/ForoEgresados';
 import PostulantesOferta from './pages/Egresado/OfertaLaboral/PostulantesOfertas.jsx';
 import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
+import AdminUsers from './pages/Admin/AdminUsers.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -55,7 +56,7 @@ function App() {
           <Route path="/foro-egresados" element={<ForoEgresados />} />
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminDashboard />} />
-
+          <Route path='/admin/egresados' element={<AdminUsers/>}></Route>
         </Routes>
       </div>
     </UserContextProvider>
