@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Star, User, Shield } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
 export default function Sidebar() {
@@ -77,14 +77,15 @@ export default function Sidebar() {
                     }`}
                 >
                   <User size={24} />
-                  {open && <span className="text-sm font-medium">Mi Membresía</span>}
+                  <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
+                    Mi Membresía
+                  </span>
                 </Link>
-
                 <Link
                   to="/welcome-egresado"
                   className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${location.pathname === "/welcome-egresado"
-                    ? "bg-teal-600/80 text-white shadow-lg"
-                    : "hover:bg-teal-500/20 hover:text-teal-300 transition"
+                      ? "bg-teal-600/80 text-white shadow-lg"
+                      : "hover:bg-teal-500/20 hover:text-teal-300 transition"
                     }`}
                 >
                   <Shield size={24} />

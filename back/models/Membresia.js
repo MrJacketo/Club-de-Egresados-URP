@@ -23,18 +23,10 @@ const membresiaSchema = new mongoose.Schema({
       return null;
     },
   },
-  beneficios: {
-    type: [String],
-    default: [
-      "Acceso a la bolsa exclusiva de URPex",
-      "Conferencias gratuitas",
-      "Descuento en diferentes paquetes de cursos",
-    ],
-    required: true,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
 module.exports = mongoose.model("Membresia", membresiaSchema);
