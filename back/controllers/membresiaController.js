@@ -1,4 +1,6 @@
+const User = require("../models/User");
 const Membresia = require("../models/Membresia");
+const BeneficioRedimido = require("../models/BeneficioRedimido");
 
 // GET MEMBRESIAS
 const getMembresia = async (req, res) => {
@@ -7,7 +9,6 @@ const getMembresia = async (req, res) => {
     const membresia = await Membresia.findOne({ firebaseUid });
 
     if (!membresia) {
-      console.log("No se encontró membresía, devolviendo defaults");
       return res.status(200).json({
         estado: "inactiva",
         fechaActivacion: null,
@@ -23,7 +24,6 @@ const getMembresia = async (req, res) => {
     });
   }
 };
-
 
 // PUT MEMBRESIAS / UPDATE MEMBRESIAS
 const activateMembresia = async (req, res) => {
@@ -53,23 +53,71 @@ const activateMembresia = async (req, res) => {
   }
 };
 
-/*/VER BENEFICIOS
-const agregarBeneficioAMembresia = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
-  const beneficio = req.body.beneficio;
+// GET ALL MEMBRESIAS (ADMIN)
+const getAllMembresias = async (req, res) => {
+  try {
+    const membresias = await Membresia.find().lean();
 
-  console.log("Beneficio recibido:", req.body);
+    const firebaseUids = membresias.map(m => m.firebaseUid);
+    const usuarios = await User.find({ firebaseUid: { $in: firebaseUids } }).lean();
+    const usuariosPorUid = Object.fromEntries(usuarios.map(u => [u.firebaseUid, u]));
+    const beneficiosRedimidos = await BeneficioRedimido.aggregate([
+      { $match: { firebaseUid: { $in: firebaseUids } } },
+      { $group: { _id: "$firebaseUid", cantidad: { $sum: 1 } } }
+    ]);
+    const beneficiosPorUid = Object.fromEntries(beneficiosRedimidos.map(b => [b._id, b.cantidad]));
+    const datosFinales = membresias.map(m => {
+      const usuario = usuariosPorUid[m.firebaseUid];
+      const beneficiosUsados = beneficiosPorUid[m.firebaseUid] || 0;
 
-  if (!beneficio) {
-    return res.status(400).json({ error: "Beneficio inválido" });
+      return {
+        id: m._id.toString(),
+        usuario: {
+          nombre: usuario?.name || "Desconocido",
+          email: usuario?.email || "",
+          codigo: usuario?.firebaseUid || "Sin código",
+        },
+        estado: m.estado,
+        fechaActivacion: m.fechaActivacion,
+        fechaVencimiento: m.fechaVencimiento,
+        precio: 150,
+        beneficiosUsados,
+        ultimaActividad: m.updatedAt || m.fechaActivacion,
+      };
+    });
+
+    res.status(200).json(datosFinales);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Error del servidor",
+      details: error.message,
+    });
   }
+};
+
+// PUT UPDATE MEMBRESIA ESTADO (Admin)
+const updateMembresiaEstado = async (req, res) => {
+  const { userId } = req.params;
+  const { estado } = req.body;
 
   try {
-    beneficio.fechaReclamo = new Date(); // agregar fecha de reclamo si no está
+    // Validar estado recibido
+    const estadosPermitidos = ['activa', 'inactiva', 'vencida', 'pausada'];
+    if (!estadosPermitidos.includes(estado)) {
+      return res.status(400).json({ error: "Estado de membresía no válido" });
+    }
 
+    // Buscar usuario para validar que existe
+    const user = await User.findOne({ firebaseUid: userId });
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Actualizar o crear membresía
     const membresia = await Membresia.findOneAndUpdate(
-      { firebaseUid },
-      { $push: { beneficios: beneficio } },
+      { firebaseUid: userId },
+      { estado },
       { new: true, upsert: true }
     );
 
@@ -77,18 +125,20 @@ const agregarBeneficioAMembresia = async (req, res) => {
       success: true,
       membresia
     });
+
   } catch (error) {
-    res.status(500).json({
+    console.error("Error actualizando estado de membresía:", error);
+    res.status(500).json({ 
       success: false,
-      error: "Error al agregar beneficio a la membresía",
-      details: error.message
+      error: "Error interno al actualizar membresía",
+      details: error.message 
     });
   }
 };
-/*/
 
 module.exports = {
   getMembresia,
   activateMembresia,
-  //agregarBeneficioAMembresia
+  getAllMembresias,
+  updateMembresiaEstado
 }

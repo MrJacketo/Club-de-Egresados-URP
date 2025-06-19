@@ -1,41 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, Users, Calendar, DollarSign, TrendingUp, Eye, Edit3, Trash2, 
   UserX, UserCheck, Download, RefreshCw, AlertTriangle, CheckCircle, Clock, X
 } from 'lucide-react';
-
-// Datos mock
-const membresiasMock = [
-  {
-    id: 1,
-    usuario: { nombre: "Juan Carlos Pérez", email: "juan.perez@urp.edu.pe", codigo: "2019110001" },
-    estado: "activa", fechaActivacion: "2024-01-15", fechaVencimiento: "2025-01-15",
-    precio: 150, beneficiosUsados: 3, totalBeneficios: 5, ultimaActividad: "2024-12-10"
-  },
-  {
-    id: 2,
-    usuario: { nombre: "María Elena Rodríguez", email: "maria.rodriguez@urp.edu.pe", codigo: "2020110045" },
-    estado: "vencida", fechaActivacion: "2023-06-01", fechaVencimiento: "2024-06-01",
-    precio: 150, beneficiosUsados: 5, totalBeneficios: 5, ultimaActividad: "2024-05-28"
-  },
-  {
-    id: 3,
-    usuario: { nombre: "Roberto Silva Castro", email: "roberto.silva@urp.edu.pe", codigo: "2018110123" },
-    estado: "activa", fechaActivacion: "2024-08-20", fechaVencimiento: "2025-08-20",
-    precio: 150, beneficiosUsados: 1, totalBeneficios: 5, ultimaActividad: "2024-12-14"
-  },
-  {
-    id: 4,
-    usuario: { nombre: "Ana Sofia Mendoza", email: "ana.mendoza@urp.edu.pe", codigo: "2021110067" },
-    estado: "suspendida", fechaActivacion: "2024-03-10", fechaVencimiento: "2025-03-10",
-    precio: 150, beneficiosUsados: 2, totalBeneficios: 5, ultimaActividad: "2024-11-30"
-  }
-];
-
-const estadisticasMock = {
-  totalMembresias: 156, membresiasActivas: 89, membresiasVencidas: 45, 
-  membresiasSuspendidas: 22, ingresosMensuales: 13350, crecimientoMensual: 12.5
-};
+import { getAllMembresiasRequest, updateMembresiaEstadoRequest } from "../../api/membresiaApi";
 
 // Utilidades
 const formatDate = (date) => new Date(date).toLocaleDateString();
@@ -76,7 +44,7 @@ const EstadoBadge = ({ estado }) => {
   );
 };
 
-const BarraProgreso = ({ usado, total }) => {
+const BarraProgreso = ({ usado = 0, total = 5 }) => {
   const porcentaje = (usado / total) * 100;
   return (
     <div>
@@ -95,9 +63,9 @@ const FilaMembresia = ({ membresia, onVerDetalles }) => {
     <tr className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap">
         <div>
-          <div className="text-sm font-medium text-gray-900">{membresia.usuario.nombre}</div>
-          <div className="text-sm text-gray-500">{membresia.usuario.email}</div>
-          <div className="text-xs text-gray-400">Código: {membresia.usuario.codigo}</div>
+          <div className="text-sm font-medium text-gray-900">{membresia.usuario?.nombre}</div>
+          <div className="text-sm text-gray-500">{membresia.usuario?.email}</div>
+          <div className="text-xs text-gray-400">Código: {membresia.usuario?.codigo}</div>
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
@@ -117,10 +85,10 @@ const FilaMembresia = ({ membresia, onVerDetalles }) => {
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <BarraProgreso usado={membresia.beneficiosUsados} total={membresia.totalBeneficios} />
+        <BarraProgreso usado={membresia.beneficiosUsados || 0} total={membresia.totalBeneficios || 5} />
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-        S/ {membresia.precio}
+        S/ {membresia.precio || 0}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
         <div className="flex items-center gap-2">
@@ -143,7 +111,7 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading }) => {
   if (!membresia) return null;
   
   const diasRestantes = calcularDiasRestantes(membresia.fechaVencimiento);
-  const porcentajeBeneficios = Math.round((membresia.beneficiosUsados / membresia.totalBeneficios) * 100);
+  const porcentajeBeneficios = Math.round(((membresia.beneficiosUsados || 0) / (membresia.totalBeneficios || 5) * 100));
   
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -159,9 +127,9 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading }) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
               <label className="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
-              <p className="text-sm font-medium text-gray-900">{membresia.usuario.nombre}</p>
-              <p className="text-xs text-gray-500">{membresia.usuario.email}</p>
-              <p className="text-xs text-gray-400">Código: {membresia.usuario.codigo}</p>
+              <p className="text-sm font-medium text-gray-900">{membresia.usuario?.nombre}</p>
+              <p className="text-xs text-gray-500">{membresia.usuario?.email}</p>
+              <p className="text-xs text-gray-400">Código: {membresia.usuario?.codigo}</p>
             </div>
             <div className="text-center">
               <label className="block text-sm font-medium text-gray-700 mb-2">Estado</label>
@@ -186,11 +154,13 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading }) => {
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Precio</label>
-              <p className="text-sm font-medium text-gray-900">S/ {membresia.precio}</p>
+              <p className="text-sm font-medium text-gray-900">S/ {membresia.precio || 0}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Última Actividad</label>
-              <p className="text-sm font-medium text-gray-900">{formatDate(membresia.ultimaActividad)}</p>
+              <p className="text-sm font-medium text-gray-900">
+                {membresia.ultimaActividad ? formatDate(membresia.ultimaActividad) : 'N/A'}
+              </p>
             </div>
           </div>
 
@@ -198,7 +168,7 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">Beneficios</label>
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="flex justify-between text-sm text-gray-600 mb-2">
-                <span>{membresia.beneficiosUsados} de {membresia.totalBeneficios} utilizados</span>
+                <span>{(membresia.beneficiosUsados || 0)} de {(membresia.totalBeneficios || 5)} utilizados</span>
                 <span className="font-semibold">{porcentajeBeneficios}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
@@ -210,7 +180,7 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading }) => {
           <div className="flex gap-2 pt-4">
             {membresia.estado === 'activa' && (
               <button
-                onClick={() => onCambiarEstado(membresia.id, 'suspendida')}
+                onClick={() => onCambiarEstado(membresia._id, 'suspendida')}
                 className="flex items-center px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700"
                 disabled={loading}
               >
@@ -221,7 +191,7 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading }) => {
             
             {membresia.estado === 'suspendida' && (
               <button
-                onClick={() => onCambiarEstado(membresia.id, 'activa')}
+                onClick={() => onCambiarEstado(membresia._id, 'activa')}
                 className="flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
                 disabled={loading}
               >
@@ -232,7 +202,7 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading }) => {
             
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-gray-100 text-sm font-medium rounded-md hover:bg-gray-400"
+              className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-400"
             >
               Cerrar
             </button>
@@ -276,14 +246,55 @@ const Paginacion = ({ paginaActual, totalPaginas, onCambioPagina, totalItems, it
 };
 
 export default function GestionMembresiasAdmin() {
-  const [membresias, setMembresias] = useState(membresiasMock);
+  const [membresias, setMembresias] = useState([]);
   const [filtros, setFiltros] = useState({ busqueda: '', estado: 'todos' });
   const [paginaActual, setPaginaActual] = useState(1);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [membresiaSeleccionada, setMembresiaSeleccionada] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingDatos, setLoadingDatos] = useState(true);
+  const [estadisticas, setEstadisticas] = useState({
+    totalMembresias: 0,
+    membresiasActivas: 0,
+    membresiasVencidas: 0,
+    membresiasSuspendidas: 0,
+    ingresosMensuales: 0,
+    crecimientoMensual: 0
+  });
 
   const itemsPorPagina = 10;
+
+  useEffect(() => {
+    const fetchMembresias = async () => {
+      setLoadingDatos(true);
+      try {
+        const data = await getAllMembresiasRequest();
+        setMembresias(data);
+        
+        // Calcular estadísticas
+        const total = data.length;
+        const activas = data.filter(m => m.estado === 'activa').length;
+        const vencidas = data.filter(m => m.estado === 'vencida').length;
+        const suspendidas = data.filter(m => m.estado === 'suspendida').length;
+        const ingresos = activas * 150; // Asumiendo que cada membresía activa paga S/150
+        
+        setEstadisticas({
+          totalMembresias: total,
+          membresiasActivas: activas,
+          membresiasVencidas: vencidas,
+          membresiasSuspendidas: suspendidas,
+          ingresosMensuales: ingresos,
+          crecimientoMensual: 12.5 // Este valor podría calcularse con datos históricos
+        });
+      } catch (error) {
+        console.error("Error al obtener membresías:", error);
+      } finally {
+        setLoadingDatos(false);
+      }
+    };
+
+    fetchMembresias();
+  }, []);
 
   // Filtrar membresías
   const membresiasFiltradas = membresias.filter(membresia => {
@@ -291,9 +302,9 @@ export default function GestionMembresiasAdmin() {
     const { usuario } = membresia;
     
     const cumpleBusqueda = !busqueda || 
-      usuario.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      usuario.email.toLowerCase().includes(busqueda.toLowerCase()) ||
-      usuario.codigo.includes(busqueda);
+      (usuario?.nombre?.toLowerCase().includes(busqueda.toLowerCase()) || 
+       usuario?.email?.toLowerCase().includes(busqueda.toLowerCase()) ||
+       usuario?.codigo?.includes(busqueda));
     
     const cumpleEstado = estado === 'todos' || membresia.estado === estado;
     
@@ -307,10 +318,11 @@ export default function GestionMembresiasAdmin() {
   const handleCambiarEstado = async (id, nuevoEstado) => {
     setLoading(true);
     try {
-      setMembresias(prev => prev.map(m => m.id === id ? { ...m, estado: nuevoEstado } : m));
+      await updateMembresiaEstadoRequest(id, nuevoEstado);
+      setMembresias(prev => prev.map(m => m._id === id ? { ...m, estado: nuevoEstado } : m));
       handleCerrarModal();
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error al cambiar estado:', error);
     } finally {
       setLoading(false);
     }
@@ -326,9 +338,30 @@ export default function GestionMembresiasAdmin() {
     setMembresiaSeleccionada(null);
   };
 
+  const handleActualizarDatos = async () => {
+    setLoadingDatos(true);
+    try {
+      const data = await getAllMembresiasRequest();
+      setMembresias(data);
+    } catch (error) {
+      console.error("Error al actualizar membresías:", error);
+    } finally {
+      setLoadingDatos(false);
+    }
+  };
+
+  if (loadingDatos) {
+    return <div className="h-screen w-full flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Cargando membresías...</p>
+      </div>
+    </div>;
+  }
+
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden admin-panel rounded-2xl">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Membresías</h1>
@@ -338,31 +371,31 @@ export default function GestionMembresiasAdmin() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <EstadisticaCard
             titulo="Total Membresías"
-            valor={estadisticasMock.totalMembresias}
+            valor={estadisticas.totalMembresias}
             icon={Users}
             color="gray"
           />
           <EstadisticaCard
             titulo="Activas"
-            valor={estadisticasMock.membresiasActivas}
+            valor={estadisticas.membresiasActivas}
             icon={CheckCircle}
             color="green"
           />
           <EstadisticaCard
             titulo="Vencidas"
-            valor={estadisticasMock.membresiasVencidas}
+            valor={estadisticas.membresiasVencidas}
             icon={AlertTriangle}
             color="red"
           />
           <EstadisticaCard
             titulo="Ingresos Mensuales"
-            valor={`S/ ${estadisticasMock.ingresosMensuales.toLocaleString()}`}
+            valor={`S/ ${estadisticas.ingresosMensuales.toLocaleString()}`}
             icon={DollarSign}
             color="green"
             extra={
               <p className="text-sm text-green-600 flex items-center">
                 <TrendingUp size={14} className="mr-1" />
-                +{estadisticasMock.crecimientoMensual}%
+                +{estadisticas.crecimientoMensual}%
               </p>
             }
           />
@@ -377,14 +410,20 @@ export default function GestionMembresiasAdmin() {
                 type="text"
                 placeholder="Buscar por nombre, email o código..."
                 value={filtros.busqueda}
-                onChange={(e) => setFiltros(prev => ({ ...prev, busqueda: e.target.value }))}
+                onChange={(e) => {
+                  setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
+                  setPaginaActual(1);
+                }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
               />
             </div>
 
             <select
               value={filtros.estado}
-              onChange={(e) => setFiltros(prev => ({ ...prev, estado: e.target.value }))}
+              onChange={(e) => {
+                setFiltros(prev => ({ ...prev, estado: e.target.value }));
+                setPaginaActual(1);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
             >
               <option value="todos">Todos los estados</option>
@@ -394,11 +433,14 @@ export default function GestionMembresiasAdmin() {
             </select>
 
             <div className="flex gap-2">
-              <button className="flex items-center px-4 py-2 text-gray-100 bg-gray-100 rounded-lg hover:bg-gray-200">
+              <button className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
                 <Download size={16} className="mr-2" />
                 Exportar
               </button>
-              <button className="flex items-center px-4 py-2 text-gray-100 bg-gray-100 rounded-lg hover:bg-gray-200">
+              <button 
+                onClick={handleActualizarDatos}
+                className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+              >
                 <RefreshCw size={16} className="mr-2" />
                 Actualizar
               </button>
@@ -421,24 +463,34 @@ export default function GestionMembresiasAdmin() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {membresiasActuales.map((membresia) => (
-                  <FilaMembresia
-                    key={membresia.id}
-                    membresia={membresia}
-                    onVerDetalles={handleVerDetalles}
-                  />
-                ))}
+                {membresiasActuales.length > 0 ? (
+                  membresiasActuales.map((membresia) => (
+                    <FilaMembresia
+                      key={membresia._id}
+                      membresia={membresia}
+                      onVerDetalles={handleVerDetalles}
+                    />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                      No se encontraron membresías que coincidan con los filtros
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
 
-          <Paginacion
-            paginaActual={paginaActual}
-            totalPaginas={totalPaginas}
-            onCambioPagina={setPaginaActual}
-            totalItems={membresiasFiltradas.length}
-            itemsPorPagina={itemsPorPagina}
-          />
+          {membresiasFiltradas.length > 0 && (
+            <Paginacion
+              paginaActual={paginaActual}
+              totalPaginas={totalPaginas}
+              onCambioPagina={setPaginaActual}
+              totalItems={membresiasFiltradas.length}
+              itemsPorPagina={itemsPorPagina}
+            />
+          )}
         </div>
       </div>
 

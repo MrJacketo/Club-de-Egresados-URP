@@ -34,6 +34,51 @@ export const getMembresiaRequest = async () => {
   }
 };
 
+export const getAllMembresiasRequest = async () => {
+  try {
+    //await auth.authStateReady(); FALTA USUARIO ADMIN
+    //const user = auth.currentUser;
+
+    //if (!user) {
+      //return []; // No hay usuario → no se puede consultar membresías
+    //}
+
+    //const token = await user.getIdToken();
+    const response = await apiClient.get("/api/membresia/getAll");//, {
+      //headers: { Authorization: `Bearer ${token}` },
+    //});
+
+    return response.data || [];
+  } catch (error) {
+    console.error("Error obteniendo las membresias", error);
+    return [];
+  }
+};
+
+export const updateMembresiaEstadoRequest = async () => {
+  try {
+    //await auth.authStateReady(); FALTA USUARIO ADMIN
+    //const user = auth.currentUser;
+
+    //if (!user) {
+      //return []; // No hay usuario → no se puede consultar membresías
+    //}
+
+    //const token = await user.getIdToken();
+     const response = await apiClient.put(
+      '/api/membresia/updateEstado/${userId}',
+      { estado: nuevoEstado }
+    );//, {
+      //headers: { Authorization: `Bearer ${token}` },
+    //});
+
+    return response.data || [];
+  } catch (error) {
+    console.error("Error actualizando la membresia", error);
+    return [];
+  }
+}
+
 export const activateMembresiaRequest = async () => {
   try {
     const token = await auth.currentUser?.getIdToken();
