@@ -56,7 +56,7 @@ function App() {
           <Route path="/foro-egresados" element={<ForoEgresados />} />
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path='/admin/egresados' element={<AdminUsers/>}></Route>
+          <Route path='/admin/egresados' element={<PrivateRoute><AdminUsers/></PrivateRoute>} />
         </Routes>
       </div>
     </UserContextProvider>
