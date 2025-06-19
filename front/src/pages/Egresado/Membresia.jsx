@@ -1,39 +1,80 @@
 import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle } from "lucide-react"
 import { auth } from "../../firebase";
-
-const handleObtenerMembresia = async () => {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      alert("Debes iniciar sesión para obtener la membresía.");
-      return;
-    }
-
-    const token = await user.getIdToken();
-
-    // Redirige al endpoint del backend que crea la orden de pago
-    const response = await fetch("http://localhost:8000/api/pago/create-order", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
-
-    const data = await response.json();
-    if (data.init_point) {
-      window.location.href = data.init_point;
-    } else {
-      alert("Error iniciando el pago.");
-    }
-
-  } catch (error) {
-    console.error("Error al iniciar el pago:", error);
-    alert("No se pudo iniciar el pago.");
-  }
-};
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Membresia() {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleObtenerMembresia = async () => {
+    try {
+      setLoading(true);
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Debes iniciar sesión para obtener la membresía.");
+        return;
+      }
+
+      const token = await user.getIdToken();
+
+      // Redirige al endpoint del backend que crea la orden de pago
+      const response = await fetch("http://localhost:8000/api/pago/create-order", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await response.json();
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert("Error iniciando el pago.");
+      }
+
+    } catch (error) {
+      console.error("Error al iniciar el pago:", error);
+      alert("No se pudo iniciar el pago.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSimularPago = async () => {
+    try {
+      setLoading(true);
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Debes iniciar sesión para simular el pago.");
+        return;
+      }
+
+      const token = await user.getIdToken();
+
+      const response = await fetch("http://localhost:8000/api/pago/simular-pago", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await response.json();      if (data.success) {
+        navigate("/MembresiaCompletada");
+      } else {
+        alert("Error al simular el pago: " + (data.error || "Error desconocido"));
+      }
+
+    } catch (error) {
+      console.error("Error al simular el pago:", error);
+      alert("No se pudo simular el pago.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const beneficios = [
     {
       icon: <Briefcase className="w-6 h-6 text-teal-600" />,
@@ -66,8 +107,8 @@ export default function Membresia() {
   ]
 
   return (
-<div className="h-screen overflow-y-auto flex justify-center items-start pt-32 px-4 md:px-8">
-<div className="max-w-4xl w-full">
+    <div className="h-screen overflow-y-auto flex justify-center items-start pt-32 px-4 md:px-8">
+      <div className="max-w-4xl w-full">
         <h1 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-6">
           Membresía <span className="text-teal-200">URPex</span> Premium
         </h1>
@@ -111,12 +152,23 @@ export default function Membresia() {
             </div>
 
             <div className="mt-6 space-y-3">
-            <button
-              onClick={handleObtenerMembresia}
-              className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold py-4 px-6 rounded-xl transition duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-teal-600/30 text-xl"
-            >
-              Obtener Membresía Anual
-            </button>
+              <button
+                onClick={handleObtenerMembresia}
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold py-4 px-6 rounded-xl transition duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-teal-600/30 text-xl disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {loading ? "Procesando..." : "Obtener Membresía Anual"}
+              </button>
+              
+              {/* Botón para simular pago (solo en desarrollo) */}
+              <button
+                onClick={handleSimularPago}
+                disabled={loading}
+                className="w-full border border-teal-600 text-teal-600 hover:bg-teal-50 font-bold py-3 px-6 rounded-xl transition duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                Simular Pago (Solo desarrollo)
+              </button>
+              
               <p className="text-center text-sm text-gray-500 flex items-center justify-center gap-1">
                 <CheckCircle className="w-4 h-4 text-teal-600" />
                 <span>Garantía de devolución durante los primeros 14 días</span>
