@@ -9,7 +9,7 @@ const membresiasMock = [
   {
     id: 1,
     usuario: { nombre: "Juan Carlos Pérez", email: "juan.perez@urp.edu.pe", codigo: "2019110001" },
-    estado: "activa", fechaActivacion: "2024-01-15", fechaVencimiento: "2025-01-15",
+    estado: "activa", fechaActivacion: "2025-01-15", fechaVencimiento: "2025-06-22",
     precio: 150, beneficiosUsados: 3, totalBeneficios: 5, ultimaActividad: "2024-12-10"
   },
   {
@@ -29,7 +29,15 @@ const membresiasMock = [
     usuario: { nombre: "Ana Sofia Mendoza", email: "ana.mendoza@urp.edu.pe", codigo: "2021110067" },
     estado: "suspendida", fechaActivacion: "2024-03-10", fechaVencimiento: "2025-03-10",
     precio: 150, beneficiosUsados: 2, totalBeneficios: 5, ultimaActividad: "2024-11-30"
+  },
+   
+  {
+    id: 5,
+    usuario: { nombre: "Gerald Casas Morales", email: "gerald.casas@urp.edu.pe", codigo: "202220920" },
+    estado: "activa", fechaActivacion: "2025-03-10", fechaVencimiento: "2026-03-10",
+    precio: 150, beneficiosUsados: 2, totalBeneficios: 5, ultimaActividad: "2024-11-30"
   }
+  
 ];
 
 const estadisticasMock = {
@@ -49,7 +57,7 @@ const estadoConfig = {
 
 // Componentes
 const EstadisticaCard = ({ titulo, valor, icon: Icon, color = "blue", extra }) => (
-  <div className="bg-white rounded-lg p-6 shadow-sm border">
+  <div className="bg-white rounded-3xl p-6 shadow-sm border">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-gray-600">{titulo}</p>
@@ -327,7 +335,7 @@ export default function GestionMembresiasAdmin() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden admin-panel rounded-2xl">
+    <div className="h-screen w-full flex flex-col overflow-hidden admin-panel rounded-3xl">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -369,7 +377,7 @@ export default function GestionMembresiasAdmin() {
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -407,7 +415,7 @@ export default function GestionMembresiasAdmin() {
         </div>
 
         {/* Tabla */}
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-sm border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
