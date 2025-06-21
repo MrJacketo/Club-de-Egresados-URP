@@ -8,5 +8,6 @@ router.get("/", verifyFirebaseToken, membresiaController.getMembresia);
 router.put("/activate", verifyFirebaseToken, membresiaController.activateMembresia);
 router.get("/getAll", /*/verifyFirebaseToken,/*/ membresiaController.getAllMembresias)
 router.put("/updateEstado/:userId", membresiaController.updateMembresiaEstado);
+router.delete("/deleteMembresia/:userId", membresiaController.deleteMembresia); 
 
 module.exports = router;

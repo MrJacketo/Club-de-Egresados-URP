@@ -30,8 +30,8 @@ const handleSubscription = async (req, res) => {
                     currency_id: "PEN"
                 },
                 reason: "Subscripcion anual",
-                back_url: "https://bd91-38-25-16-212.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
-                notification_url: "https://5a24-38-25-16-212.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
+                back_url: "https://2ce9-2800-200-e6e0-611-aca7-8381-60a5-7f62.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
+                notification_url: "https://0188-2800-200-e6e0-611-aca7-8381-60a5-7f62.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
                 external_reference: req.user.firebaseUid 
             }
         });

@@ -17,7 +17,7 @@ const membresiaSchema = new mongoose.Schema({
     default: function () {
       if (this.fechaActivacion) {
         const fechaVencimiento = new Date(this.fechaActivacion);
-        fechaVencimiento.setFullYear(fechaVencimiento.getFullYear() + 1); // Membresía anual
+        fechaVencimiento.setFullYear(fechaVencimiento.getFullYear() + 1); 
         return fechaVencimiento;
       }
       return null;

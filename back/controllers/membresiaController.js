@@ -103,7 +103,7 @@ const updateMembresiaEstado = async (req, res) => {
 
   try {
     // Validar estado recibido
-    const estadosPermitidos = ['activa', 'inactiva', 'vencida', 'pausada'];
+    const estadosPermitidos = ['activa', 'inactiva', 'vencida'];
     if (!estadosPermitidos.includes(estado)) {
       return res.status(400).json({ error: "Estado de membresía no válido" });
     }
@@ -136,9 +136,30 @@ const updateMembresiaEstado = async (req, res) => {
   }
 };
 
+const deleteMembresia = async (req, res) => {
+  const firebaseUid = req.params.userId;
+  try {
+    const membresia = await Membresia.findOneAndDelete({ firebaseUid });
+    if (!membresia) {
+      return res.status(404).json({ error: "Membresía no encontrada" });
+    }
+    res.status(200).json({
+      success: true,
+      mensaje: "Membresía eliminada correctamente"
+    });
+  } catch (error) {
+    console.error("Error al eliminar membresía:", error);
+    res.status(500).json({
+      error: "Error del servidor",
+      details: error.message,
+    });
+  }
+};
+
 module.exports = {
   getMembresia,
   activateMembresia,
   getAllMembresias,
-  updateMembresiaEstado
+  updateMembresiaEstado,
+  deleteMembresia
 }
