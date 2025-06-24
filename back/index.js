@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const feedbackRoutes = require("./routes/feedbackRoutes")
 const noticiaRoutes = require("./routes/noticiaRoutes");
 const authRoutes = require("./routes/authRoutes");
+const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes"); // <--- Agrega esta línea
+
 
 const app = express();
 
@@ -32,7 +34,9 @@ app.use(
 // Routes
 app.use("/", authRoutes); // Authentication routes
 app.use("/api/feedback", feedbackRoutes);
-app.use("/api/noticias", noticiaRoutes); // Noticias routes
+//app.use("/api/noticias", noticiaRoutes); // Noticias routes
+app.use("/api/noticias", gestionNoticiasRoutes); // <--- Agrega esta línea
+
 
 // Global error handler
 app.use((err, req, res, next) => {

@@ -52,15 +52,17 @@ const Noticias = () => {
 
   // Filtrar noticias por búsqueda
   useEffect(() => {
-    const filtered = noticias.filter(
+  const filtered = noticias
+    .filter(Boolean)
+    .filter(
       (noticia) =>
-        noticia.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.contenido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.categoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.autor.toLowerCase().includes(searchTerm.toLowerCase()),
+        (noticia.titulo || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (noticia.contenido || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (noticia.categoria || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (noticia.autor || "").toLowerCase().includes(searchTerm.toLowerCase())
     )
-    setFilteredNoticias(filtered)
-  }, [noticias, searchTerm])
+  setFilteredNoticias(filtered)
+}, [noticias, searchTerm])
 
   // ===== FUNCIONES =====
 

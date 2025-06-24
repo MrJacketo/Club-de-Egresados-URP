@@ -16,6 +16,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Feedback from "./pages/feedback.jsx";
 import NoticiasPage from './pages/Noticiaspage.jsx';
 import SidebarPiero from './components/SidebarPiero.jsx';
+import GestionNoticias from './pages/GestionNoticias.jsx'
 
 
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -47,6 +48,7 @@ function App() {
           <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
           <Route path='/noticias' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
           <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
+          <Route path='/gestion-noticias' element={<PrivateRoute><GestionNoticias /></PrivateRoute>} />
 
         </Routes>
       </div>

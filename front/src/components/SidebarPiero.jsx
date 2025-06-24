@@ -78,6 +78,19 @@ export default function SidebarPiero() {
               Bienvenido
             </span>
           </Link>
+          <Link
+            to="/gestion-noticias"
+            className={`p-3 rounded-lg flex items-center gap-3 text-gray-200 ${
+              location.pathname === "/gestion-noticias"
+                ? "bg-teal-600/80 text-white shadow-lg"
+                : "hover:bg-teal-500/20 hover:text-teal-300 transition"
+            }`}
+          >
+            <Newspaper size={24} />
+            <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
+              Gestionar Noticias
+            </span>
+          </Link>
         </nav>
 
         {/* Botón visual con tres puntitos */}
