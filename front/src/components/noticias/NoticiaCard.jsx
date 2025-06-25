@@ -46,21 +46,22 @@ const NoticiaCard = ({ noticia, onClick }) => {
     >
       {/* Imagen de la noticia */}
       <div className="h-48 overflow-hidden relative">
-        {noticia.imagen ? (
+        {noticia.imagenUrl ? (
           <img
-            src={noticia.imagen || "/placeholder.svg?height=200&width=400"}
+            src={noticia.imagenUrl}
             alt={noticia.titulo}
             onError={handleImageError}
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           />
-        ) : null}
+        ) : (
         <div
           className="w-full h-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white text-3xl font-bold"
-          style={{ display: noticia.imagen ? "none" : "flex" }}
+          style={{ display: "flex" }}
         >
           <span>URP</span>
         </div>
+        )}
       </div>
 
       {/* Contenido de la noticia */}

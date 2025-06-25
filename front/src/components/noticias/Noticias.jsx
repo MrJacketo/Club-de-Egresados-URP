@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react"
 import { onAuthStateChanged } from "firebase/auth"
 import { auth } from "../../firebase"
 
+
 // Componentes
 import NoticiasHeader from "./NoticiasHeader.jsx"
 import NoticiasSearch from "./NoticiasSearch.jsx"

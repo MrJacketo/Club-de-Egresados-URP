@@ -15,6 +15,14 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
     imagen: null,
   })
   const [previewImagen, setPreviewImagen] = useState(null)
+  const [imagenInfo, setImagenInfo] = useState(null)
+
+
+
+
+
+
+
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
@@ -44,6 +52,7 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
         imagen: null,
       })
       setPreviewImagen(null)
+      setImagenInfo(null)
     }
     setErrors({})
   }, [noticia, isOpen])
@@ -70,10 +79,22 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
         imagen: file,
       }))
 
-      // Crear preview
+      // Crear preview y obtener información de la imagen
       const reader = new FileReader()
       reader.onload = (e) => {
         setPreviewImagen(e.target.result)
+
+        const img = new window.Image()
+        img.onload = () => {
+          setImagenInfo({
+            width: img.width,
+            height: img.height,
+            size: file.size,
+            name: file.name,
+            type: file.type,
+          })
+        }
+        img.src = e.target.result
       }
       reader.readAsDataURL(file)
     }
@@ -85,6 +106,7 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
       imagen: null,
     }))
     setPreviewImagen(null)
+    setImagenInfo(null)
   }
 
   const validarFormulario = () => {
@@ -234,9 +256,19 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
                         className="w-full h-48 object-cover rounded-lg"
                       />
                       <div className="mt-2 text-sm text-gray-600">
-                        1600 x 900px | 240.56 KB
-                        <br />
-                        imagen_imagen_prueba.png
+                        {imagenInfo 
+                           ?(
+                            <>
+                              {imagenInfo.width} x {imagenInfo.height}px&nbsp;|&nbsp;
+                              {(imagenInfo.size / 1024 < 1024
+                                  ? `${(imagenInfo.size / 1024).toFixed(2)} KB`
+                                  : `${(imagenInfo.size / 1024 / 1024).toFixed(2)} MB`
+                              )}
+                              <br />
+                              {imagenInfo.name}
+                            </>
+                           )
+                           : "Cargando información..."}
                       </div>
                       <button
                         type="button"
@@ -304,14 +336,6 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
               </div>
             </div>
           </div>
-
-
-
-
-
-
-
-
 
           {/* Botones */}
           <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">

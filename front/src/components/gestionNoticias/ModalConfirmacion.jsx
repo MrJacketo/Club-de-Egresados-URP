@@ -5,7 +5,7 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, noticia, loading }) => 
   if (!isOpen || !noticia) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg max-w-md w-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -49,9 +49,9 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, noticia, loading }) => 
           <button
             onClick={() => onConfirm(noticia._id)}
             disabled={loading}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            className="px-4 py-2 bg-transparent text-red-600 border border-red-500 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
           >
-            {loading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>}
+            {loading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>}
             Eliminar Noticia
           </button>
         </div>
