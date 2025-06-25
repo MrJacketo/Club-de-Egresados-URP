@@ -57,7 +57,7 @@ function App() {
           <Route path="/foro-egresados" element={<ForoEgresados />} />
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/GestionMembresiaAdmin" element={<GestionMembresiaAdmin/>} />
+          <Route path="/admin/membresias" element={<GestionMembresiaAdmin/>} />
 
         </Routes>
       </div>

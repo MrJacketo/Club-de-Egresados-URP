@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { AdminSidebarProvider, useAdminSidebar } from '../../context/adminSidebarContext';
+import AdminSidebar from '../../components/AdminSidebar';
 import { 
   Search, Users, Calendar, DollarSign, TrendingUp, Eye, Edit3, Trash2, 
   UserX, UserCheck, Download, RefreshCw, AlertTriangle, CheckCircle, Clock, X
@@ -260,7 +262,7 @@ const Paginacion = ({ paginaActual, totalPaginas, onCambioPagina, totalItems, it
   );
 };
 
-export default function GestionMembresiasAdmin() {
+const GestionMembresiaAdmin = () => {
   const [membresias, setMembresias] = useState([]);
   const [filtros, setFiltros] = useState({ busqueda: '', estado: 'todos' });
   const [paginaActual, setPaginaActual] = useState(1);
@@ -279,7 +281,8 @@ export default function GestionMembresiasAdmin() {
   });
 
   const itemsPorPagina = 10;
-
+  const { collapsed } = useAdminSidebar();
+  
   useEffect(() => {
     const fetchMembresias = async () => {
       setLoadingDatos(true);
@@ -374,149 +377,170 @@ export default function GestionMembresiasAdmin() {
   };
 
   if (loadingDatos) {
-    return <div className="h-screen w-full flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Cargando membresías...</p>
+    return (
+      <div className="flex">
+        <AdminSidebar />
+        <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} flex items-center justify-center`}>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Cargando membresías...</p>
+          </div>
+        </div>
       </div>
-    </div>;
+    );
   }
+
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden admin-panel rounded-2xl">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Membresías</h1>
-        </div>
+    <div className="flex">
+      <AdminSidebar />
+      <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} overflow-auto h-screen`}>
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Membresías</h1>
+          </div>
 
-        {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <EstadisticaCard
-            titulo="Total Membresías"
-            valor={estadisticas.totalMembresias}
-            icon={Users}
-            color="gray"
-          />
-          <EstadisticaCard
-            titulo="Activas"
-            valor={estadisticas.membresiasActivas}
-            icon={CheckCircle}
-            color="green"
-          />
-          <EstadisticaCard
-            titulo="Vencidas/Inactivas"
-            valor={estadisticas.membresiasInactivas}
-            icon={AlertTriangle}
-            color="red"
-          />
-          <EstadisticaCard
-            titulo="Ingresos Mensuales"
-            valor={`S/ ${estadisticas.ingresosMensuales.toLocaleString()}`}
-            icon={DollarSign}
-            color="green"
-          />
-        </div>
+          {/* Estadísticas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <EstadisticaCard
+              titulo="Total Membresías"
+              valor={estadisticas.totalMembresias}
+              icon={Users}
+              color="gray"
+            />
+            <EstadisticaCard
+              titulo="Activas"
+              valor={estadisticas.membresiasActivas}
+              icon={CheckCircle}
+              color="green"
+            />
+            <EstadisticaCard
+              titulo="Vencidas/Inactivas"
+              valor={estadisticas.membresiasInactivas}
+              icon={AlertTriangle}
+              color="red"
+            />
+            <EstadisticaCard
+              titulo="Ingresos Mensuales"
+              valor={`S/ ${estadisticas.ingresosMensuales.toLocaleString()}`}
+              icon={DollarSign}
+              color="green"
+            />
+          </div>
 
-        {/* Filtros */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Buscar por nombre, email o código..."
-                value={filtros.busqueda}
+          {/* Filtros */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre, email o código..."
+                  value={filtros.busqueda}
+                  onChange={(e) => {
+                    setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
+                    setPaginaActual(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+                />
+              </div>
+
+              <select
+                value={filtros.estado}
                 onChange={(e) => {
-                  setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
+                  setFiltros(prev => ({ ...prev, estado: e.target.value }));
                   setPaginaActual(1);
                 }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-              />
-            </div>
-
-            <select
-              value={filtros.estado}
-              onChange={(e) => {
-                setFiltros(prev => ({ ...prev, estado: e.target.value }));
-                setPaginaActual(1);
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-            >
-              <option value="todos">Todos los estados</option>
-              <option value="activa">Activas</option>
-              <option value="inactiva">Inactivas</option>
-            </select>
-
-            <div className="flex gap-2">
-              <button className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900">
-                <Download size={16} className="mr-2" />
-                Exportar
-              </button>
-              <button 
-                onClick={handleActualizarDatos}
-                className="flex items-center px-4 py-2 text-white bg-gray-100 rounded-lg hover:bg-gray-200"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
               >
-                <RefreshCw size={16} className="mr-2" />
-                Actualizar
-              </button>
+                <option value="todos">Todos los estados</option>
+                <option value="activa">Activas</option>
+                <option value="inactiva">Inactivas</option>
+              </select>
+
+              <div className="flex gap-2">
+                {/*
+                  <button className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900">
+                  <Download size={16} className="mr-2" />
+                  Exportar
+                  </button>
+                */}
+                <button 
+                  onClick={handleActualizarDatos}
+                  className="flex items-center px-4 py-2 text-white bg-gray-100 rounded-lg hover:bg-gray-200"
+                >
+                  <RefreshCw size={16} className="mr-2" />
+                  Actualizar
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Tabla */}
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficios</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {membresiasActuales.length > 0 ? (
-                  membresiasActuales.map((membresia) => (
-                    <FilaMembresia
-                      key={membresia.id}
-                      membresia={membresia}
-                      onVerDetalles={handleVerDetalles}
-                      onEditarDetalles={handleEditar}
-                    />
-                  ))
-                ) : (
+          {/* Tabla */}
+          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
                   <tr>
-                    <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                      No se encontraron membresías que coincidan con los filtros
-                    </td>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficios</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {membresiasActuales.length > 0 ? (
+                    membresiasActuales.map((membresia) => (
+                      <FilaMembresia
+                        key={membresia.id}
+                        membresia={membresia}
+                        onVerDetalles={handleVerDetalles}
+                        onEditarDetalles={handleEditar}
+                      />
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                        No se encontraron membresías que coincidan con los filtros
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {membresiasFiltradas.length > 0 && (
+              <Paginacion
+                paginaActual={paginaActual}
+                totalPaginas={totalPaginas}
+                onCambioPagina={setPaginaActual}
+                totalItems={membresiasFiltradas.length}
+                itemsPorPagina={itemsPorPagina}
+              />
+            )}
           </div>
-
-          {membresiasFiltradas.length > 0 && (
-            <Paginacion
-              paginaActual={paginaActual}
-              totalPaginas={totalPaginas}
-              onCambioPagina={setPaginaActual}
-              totalItems={membresiasFiltradas.length}
-              itemsPorPagina={itemsPorPagina}
-            />
-          )}
         </div>
-      </div>
 
-      <ModalDetalles
-        membresia={membresiaSeleccionada}
-        onClose={handleCerrarModal}
-        onCambiarEstado={handleCambiarEstado}
-        loading={loading}
-        modoEdicion={modoEdicion}
-      />
+        <ModalDetalles
+          membresia={membresiaSeleccionada}
+          onClose={handleCerrarModal}
+          onCambiarEstado={handleCambiarEstado}
+          loading={loading}
+          modoEdicion={modoEdicion}
+        />
+      </div>
     </div>
   );
-}
+};
+
+const GestionMembresiasAdminWrapper = () => {
+  return (
+    <AdminSidebarProvider>
+      <GestionMembresiaAdmin />
+    </AdminSidebarProvider>
+  );
+};
+
+export default GestionMembresiasAdminWrapper;
