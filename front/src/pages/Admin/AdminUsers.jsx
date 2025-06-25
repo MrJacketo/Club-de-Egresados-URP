@@ -64,6 +64,7 @@ const AmdinUsersContent = () => {
       setTotalUsers(data.totalUsers);
       setActiveUsers(data.activeUsers);
       setActiveMembers(data.activeMembers);
+      console.log(data)
     } catch (error) {
       console.error(
         "Error al obtener usuarios:",
@@ -94,7 +95,6 @@ const AmdinUsersContent = () => {
         {/*Header*/}
         <div className="flex justify-between mb-5">
           <h1 className="text-4xl font-bold">Usuarios</h1>
-          <button>Añadir Usuario</button>
         </div>
 
         {/*Contenido*/}

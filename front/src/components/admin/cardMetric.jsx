@@ -6,9 +6,7 @@ const CardMetric = ({ title, value, percent, icon }) => {
       <h3 className="text-base font-semibold">{title}</h3>
       <div className="flex justify-between items-end w-full">
         <p className="text-4xl font-bold">{value}</p>
-        <div className="py-[1px] px-[8px] text-[15px] rounded-xl bg-gray-100">
-          {percent}
-        </div>
+        
       </div>
     </div>
   );

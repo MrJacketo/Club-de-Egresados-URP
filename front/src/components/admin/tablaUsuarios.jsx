@@ -60,6 +60,7 @@ const TablaUsuarios = ({ users, onEdit, onToggleActive }) => {
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Registro</th>
               <th className="px-4 py-3">Estado</th>
+              <th className="px-4 py-3">Membresía</th>
               <th className="px-4 py-3 text-center">Acciones</th>
             </tr>
           </thead>
@@ -94,14 +95,19 @@ const TablaUsuarios = ({ users, onEdit, onToggleActive }) => {
                       </span>
                     )}
                   </td>
+                  <td>
+                    {user.isMember ? (
+                      <span className="inline-block px-2 py-[2px] text-xs bg-blue-100 text-blue-700 rounded-full">
+                        Activo
+                      </span>
+                    ) : (
+                      <span className="inline-block px-2 py-[2px] text-xs bg-gray-100 text-gray-700 rounded-full">
+                        Inactivo
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 flex items-center text-center space-x-6">
-                    <div
-                      onClick={() => handleEdit(user)}
-                      className="text-blue-600 hover:text-blue-800 text-sm cursor-pointer"
-                    >
-                      <Edit style={{ fontSize: "20px", color: "#13B89F" }} />
-                    </div>
-
+                   
                     <div
                       className="cursor-pointer"
                       onClick={() => {

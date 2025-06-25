@@ -29,8 +29,8 @@ const createOrUpdateUserProfile = async (req, res) => {
 
 // Get user
 const getUserProfile = async (req, res) => {
-  const {uid} = req.params; // Assuming you pass the user ID
-  try{ 
+  const { uid } = req.params; // Assuming you pass the user ID
+  try {
     // Find the user by firebaseUid
     const user = await User.findOne({ firebaseUid: uid });
     if (!user) {
@@ -38,7 +38,7 @@ const getUserProfile = async (req, res) => {
     }
     res.json(user);
 
-  }catch(error){
+  } catch (error) {
     console.error("Error obteniendo perfil de usuario:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
@@ -51,14 +51,29 @@ const getAllUsers = async (req, res) => {
     //obtenemos todos los usuarios
     const users = await User.find();
 
+    // Obtener todas las membresías activas
+    const membresiasActivas = await Membresia.find({ estado: 'activa' });
+
+    // Agregar la propiedad isMember a cada usuario
+    // Crear un Set de UIDs con membresía activa para búsqueda rápida
+    const uidsConMembresiaActiva = new Set(
+      membresiasActivas.map((m) => m.firebaseUid)
+    );
+
+    // Añadir campo isMember a cada usuario
+    const usersConMembresia = users.map((user) => ({
+      ...user.toObject(),
+      isMember: uidsConMembresiaActiva.has(user.firebaseUid),
+    }));
+
     // Calcular totales
     const totalUsers = users.length;
     const activeUsers = await User.countDocuments({ activo: true });
-    const activeMembers = await Membresia.countDocuments({ estado: 'activa' });
+    const activeMembers = membresiasActivas.length;
 
 
     res.json({
-      users,
+      users : usersConMembresia,
       totalUsers,
       activeUsers,
       activeMembers
@@ -90,7 +105,7 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-const disableUser   = async (req, res) => {
+const disableUser = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -104,8 +119,8 @@ const disableUser   = async (req, res) => {
     await user.save();
     res.json({ message: "Usuario deshabilitado exitosamente", user });
   } catch (error) {
-      console.error("Error deshabilitando usuario:", error);
-      res.status(500).json({ error: "Error interno del servidor" });
+    console.error("Error deshabilitando usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
