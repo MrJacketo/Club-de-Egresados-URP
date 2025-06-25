@@ -4,7 +4,6 @@ const cors = require('cors');
 const mongoose = require('mongoose'); // Keep MongoDB connection for future use
 const cookieParser = require('cookie-parser');
 const feedbackRoutes = require("./routes/feedbackRoutes")
-const noticiaRoutes = require("./routes/noticiaRoutes");
 const authRoutes = require("./routes/authRoutes");
 const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes"); // <--- Agrega esta línea
 
@@ -21,9 +20,9 @@ mongoose
     .catch((err) => console.error('Error al conectar MongoDB', err));
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Aumenta el límite a 10mb para manejar imágenes en noticias
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' })); // También aquí aumentamos el límite para formularios que envían imágenes
 app.use(
     cors({
         credentials: true,
@@ -33,8 +32,7 @@ app.use(
 
 // Routes
 app.use("/", authRoutes); // Authentication routes
-app.use("/api/feedback", feedbackRoutes);
-//app.use("/api/noticias", noticiaRoutes); // Noticias routes
+app.use("/api/feedback", feedbackRoutes); // Feedback routes
 app.use("/api/noticias", gestionNoticiasRoutes); // <--- Agrega esta línea
 
 

@@ -3,12 +3,7 @@ import apiClient from "./apiClient"
 // Crear nueva noticia
 export const crearNoticia = async (noticiaData) => {
   try {
-    console.log("Enviando datos:", noticiaData)
-
-    const response = await apiClient.post("/api/noticias", noticiaData)
-
-    console.log("Respuesta del servidor:", response.data)
-
+    const response = await apiClient.post("/api/noticias", noticiaData); // No uses multipart
     if (response.data.success) {
       return response.data
     } else {

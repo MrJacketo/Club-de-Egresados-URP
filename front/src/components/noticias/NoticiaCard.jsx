@@ -1,4 +1,5 @@
 "use client"
+import { Star } from "lucide-react"
 
 const NoticiaCard = ({ noticia, onClick }) => {
   // ===== FUNCIONES AUXILIARES =====
@@ -9,17 +10,6 @@ const NoticiaCard = ({ noticia, onClick }) => {
       month: "long",
       day: "numeric",
     })
-  }
-
-  const getCategoryColor = (categoria) => {
-    const colors = {
-      general: "#6B7280",
-      economia: "#3B82F6",
-      tecnologia: "#8B5CF6",
-      deportes: "#F97316",
-      salud: "#10B981",
-    }
-    return colors[categoria] || colors.general
   }
 
   const truncateText = (text, maxLength) => {
@@ -43,68 +33,67 @@ const NoticiaCard = ({ noticia, onClick }) => {
     <article
       className="bg-white rounded-xl overflow-hidden shadow-lg cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl border border-gray-100 h-full flex flex-col"
       onClick={handleCardClick}
+      style={{ maxWidth: 340, margin: "auto" }}
     >
       {/* Imagen de la noticia */}
-      <div className="h-48 overflow-hidden relative">
+      <div className="h-56 w-full bg-gray-100 flex items-center justify-center overflow-hidden">
         {noticia.imagenUrl ? (
           <img
             src={noticia.imagenUrl}
             alt={noticia.titulo}
             onError={handleImageError}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            className="w-full h-full object-cover"
+            style={{ objectFit: "cover" }}
           />
         ) : (
-        <div
-          className="w-full h-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white text-3xl font-bold"
-          style={{ display: "flex" }}
-        >
-          <span>URP</span>
-        </div>
+          <div
+            className="w-full h-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white text-3xl font-bold"
+            style={{ display: "flex" }}
+          >
+            <span>URP</span>
+          </div>
         )}
       </div>
 
       {/* Contenido de la noticia */}
-      <div className="p-6 flex-1 flex flex-col">
-        {/* Badges */}
-        <div className="flex gap-2 mb-3 flex-wrap">
-          <span
-            className="px-3 py-1 rounded-full text-white text-xs font-medium capitalize"
-            style={{ backgroundColor: getCategoryColor(noticia.categoria) }}
-          >
-            {noticia.categoria.charAt(0).toUpperCase() + noticia.categoria.slice(1)}
+      <div className="p-4 flex-1 flex flex-col">
+        {/* Categoría y Estado */}
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-xs font-semibold px-2 py-1 rounded bg-green-100 text-green-800">
+            {noticia.categoria}
           </span>
-          {noticia.destacado && (
-            <span className="px-3 py-1 bg-gradient-to-r from-yellow-200 to-yellow-300 text-yellow-800 rounded-full text-xs font-medium border border-yellow-400">
-              ⭐ Destacado
+          {noticia.estado === "Destacado" ? (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
+              <Star className="w-3 h-3 mr-1" />
+              Destacado
+            </span>
+          ) : (
+            <span className="text-xs font-semibold px-2 py-1 rounded bg-gray-200 text-gray-700">
+              {noticia.estado}
             </span>
           )}
         </div>
 
         {/* Título */}
-        <h3 className="text-lg font-bold text-gray-900 mb-3 leading-tight min-h-[3.5rem]">
+        <h3 className="text-base font-bold text-gray-900 mb-2 leading-tight">
           {truncateText(noticia.titulo, 60)}
         </h3>
 
         {/* Resumen */}
-        <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-1 min-h-[4.5rem]">
-          {truncateText(noticia.resumen || noticia.contenido, 120)}
+        <p className="text-gray-700 text-sm mb-4 leading-relaxed flex-1">
+          {truncateText(noticia.resumen || noticia.contenido, 100)}
         </p>
 
-        {/* Metadata */}
-        <div className="flex justify-between items-center text-xs text-gray-500 pt-3 border-t border-gray-100 mt-auto">
-          <span className="flex items-center gap-1">
-            <span aria-hidden="true">👤</span>
-            <span>{noticia.autor}</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span aria-hidden="true">📅</span>
-            <span>{formatDate(noticia.createdAt)}</span>
+        {/* Fecha centrada */}
+        <div className="w-full flex justify-center items-center mt-auto pt-2">
+          <span className="text-xs text-gray-500 text-center">
+            {formatDate(noticia.fechaPublicacion || noticia.createdAt)}
           </span>
         </div>
       </div>
     </article>
-  )
+  );
 }
 
 export default NoticiaCard

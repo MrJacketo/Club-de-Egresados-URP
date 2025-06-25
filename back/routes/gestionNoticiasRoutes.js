@@ -9,6 +9,7 @@ const {
   cambiarEstadoNoticia,
   obtenerEstadisticas,
 } = require("../controllers/gestionNoticiasController");
+
 // Si tienes autenticación, descomenta estas líneas:
 // const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 
@@ -34,7 +35,7 @@ router.get("/", obtenerNoticias);
 // Obtener noticia por ID
 router.get("/:id", obtenerNoticiaPorId);
 
-// Crear nueva noticia
+// Crear nueva noticia (con imagen)
 router.post("/", crearNoticia);
 
 // Actualizar noticia

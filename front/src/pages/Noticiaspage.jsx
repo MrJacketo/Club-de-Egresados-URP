@@ -5,10 +5,10 @@ import { useState, useEffect, useCallback } from "react"
 import NoticiasHeader from "../components/noticias/NoticiasHeader"
 import NoticiasSearch from "../components/noticias/NoticiasSearch"
 import NoticiasList from "../components/noticias/NoticiasList"
-import { obtenerNoticias } from "../api/noticiasApi"
+import { obtenerNoticias } from "../api/gestionNoticiasApi"
 
 const NoticiasPage = () => {
-  // ===== ESTADOS =====
+
   const [noticias, setNoticias] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -18,8 +18,6 @@ const NoticiasPage = () => {
   // Usuario simulado para demostración
   const [user] = useState({ email: "egresado@urp.edu.pe" })
 
-  // ===== EFECTOS =====
-
   // Cargar noticias reales del backend
   useEffect(() => {
     const fetchNoticias = async () => {
@@ -28,8 +26,9 @@ const NoticiasPage = () => {
       try {
         const response = await obtenerNoticias()
         // Si tu backend responde { noticias: [...] }
-        setNoticias(response.data.noticias || [])
+        setNoticias(response.noticias || [])
       } catch (err) {
+        console.error("Error al cargar noticias:", err)
         setError("No se pudieron cargar las noticias.")
         setNoticias([])
       } finally {
@@ -41,14 +40,17 @@ const NoticiasPage = () => {
 
   // Filtrar noticias por búsqueda
   useEffect(() => {
-    const filtered = noticias.filter(
-      (noticia) =>
-        (noticia.titulo || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (noticia.contenido || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (noticia.categoria || "").toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    setFilteredNoticias(filtered)
-  }, [noticias, searchTerm])
+    const filtered = noticias
+      .filter(Boolean) // Filtra noticias nulas o undefined
+      .filter((noticia) =>
+        [noticia.titulo, noticia.contenido, noticia.categoria]
+          .map((campo) => (typeof campo === "string" ? campo : ""))
+          .some((campo) =>
+            campo.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+      );
+    setFilteredNoticias(filtered);
+  }, [noticias, searchTerm]);
 
   // ===== HANDLERS =====
 

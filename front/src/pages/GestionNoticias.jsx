@@ -64,15 +64,15 @@ const GestionNoticias = () => {
       } else {
         setMensaje({ tipo: "error", texto: resultado.message })
       }
-    } catch (error) {
+    } catch {
       setMensaje({ tipo: "error", texto: "Error inesperado al procesar la noticia" })
     }
   }
 
   // Confirmar eliminación
-  const handleConfirmarEliminacion = async (id) => {
+  const handleConfirmarEliminacion = async () => {
     try {
-      const resultado = await eliminarNoticia(id)
+      const resultado = await eliminarNoticia(noticiaSeleccionada._id)
 
       if (resultado.success) {
         setMensaje({ tipo: "success", texto: resultado.message })
@@ -84,7 +84,7 @@ const GestionNoticias = () => {
       } else {
         setMensaje({ tipo: "error", texto: resultado.message })
       }
-    } catch (error) {
+    } catch { // <-- usa _ si no usas el error
       setMensaje({ tipo: "error", texto: "Error inesperado al eliminar la noticia" })
     }
   }
@@ -175,7 +175,7 @@ const GestionNoticias = () => {
             setModalConfirmacionAbierto(false);
             setNoticiaSeleccionada(null);
           }}
-          onConfirm={(id) => handleConfirmarEliminacion(noticiaSeleccionada._id)}
+          onConfirm={handleConfirmarEliminacion}
           noticia={noticiaSeleccionada}
           loading={loading}
         />

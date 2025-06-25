@@ -3,9 +3,7 @@ const Noticia = require("../models/Noticia")
 // Crear noticia
 const crearNoticia = async (req, res) => {
   try {
-    console.log("Datos recibidos:", req.body)
-
-    const { titulo, contenido, categoria, tipoContenido, fechaPublicacion, destacada, imagenUrl } = req.body
+    const { titulo, contenido, categoria, tipoContenido, fechaPublicacion, destacada, imagenUrl } = req.body;// <-- imagenUrl aquí
 
     // Validaciones básicas
     if (!titulo || !contenido || !categoria || !tipoContenido) {
@@ -23,11 +21,11 @@ const crearNoticia = async (req, res) => {
       tipoContenido,
       estado: destacada ? "Destacado" : "Normal",
       fechaPublicacion: fechaPublicacion ? new Date(fechaPublicacion) : new Date(),
-      imagenUrl: imagenUrl || null,
+      imagenUrl: imagenUrl || null, // Ya no da error porque está definida
       activa: true,
-    })
+    });
 
-    const noticiaGuardada = await nuevaNoticia.save()
+    const noticiaGuardada = await nuevaNoticia.save();
 
     res.status(201).json({
       success: true,
@@ -124,44 +122,48 @@ const obtenerNoticiaPorId = async (req, res) => {
 // Actualizar noticia
 const actualizarNoticia = async (req, res) => {
   try {
-    const { id } = req.params
-    const datosActualizacion = { ...req.body }
+    const { id } = req.params;
+    const datosActualizacion = { ...req.body };
 
-    // Actualizar fecha de modificación
-    datosActualizacion.fechaActualizacion = new Date()
+    // Si hay imagenUrl en el body, actualízalo
+    if (typeof datosActualizacion.imagenUrl !== "undefined") {
+      // Si el usuario subió una nueva imagen, será base64
+      // Si no, será el valor anterior o null
+    }
 
-    // Si se marca como destacada, cambiar estado
+    datosActualizacion.fechaActualizacion = new Date();
+
     if (datosActualizacion.destacada !== undefined) {
-      datosActualizacion.estado = datosActualizacion.destacada ? "Destacado" : "Normal"
-      delete datosActualizacion.destacada
+      datosActualizacion.estado = datosActualizacion.destacada ? "Destacado" : "Normal";
+      delete datosActualizacion.destacada;
     }
 
     const noticiaActualizada = await Noticia.findByIdAndUpdate(id, datosActualizacion, {
       new: true,
       runValidators: true,
-    })
+    });
 
     if (!noticiaActualizada) {
       return res.status(404).json({
         success: false,
         error: "Noticia no encontrada",
-      })
+      });
     }
 
     res.json({
       success: true,
       message: "Noticia actualizada exitosamente",
       noticia: noticiaActualizada,
-    })
+    });
   } catch (error) {
-    console.error("Error al actualizar noticia:", error)
+    console.error("Error al actualizar noticia:", error);
     res.status(500).json({
       success: false,
       error: "Error al actualizar noticia",
       details: error.message,
-    })
+    });
   }
-}
+};
 
 // Eliminar noticia (soft delete)
 const eliminarNoticia = async (req, res) => {
