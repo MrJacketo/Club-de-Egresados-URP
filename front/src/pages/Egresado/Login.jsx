@@ -5,6 +5,7 @@ import { auth, googleProvider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
 import { UserContext } from "../../context/userContext";
 import { getGraduateProfileRequest } from "../../api/perfilEgresadoApi";
+import { getUserRequest } from "../../api/userAdminApi";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,9 +17,17 @@ export default function Login() {
       // Sign in with Google
       const result = await signInWithPopup(auth, googleProvider);
       setUser(result.user); // Update user context with Firebase user
-
+      const firebaseUser = result.user;
       // Wait for the Firebase ID token
       const token = await auth.currentUser.getIdToken(true); // Force refresh the token
+
+      const userFromDB = await getUserRequest(firebaseUser.uid);
+
+      console.log("Usuario desde la base de datos:", userFromDB);
+      if (!userFromDB.activo) {
+        toast.error("Tu cuenta está desactivada. Contacta al administrador.");
+        return; // No continuar
+      }
 
       // Check if the user's profile exists
       const profileResponse = await getGraduateProfileRequest(token); // Pass the token to the API request
@@ -37,7 +46,9 @@ export default function Login() {
 
       // Handle specific errors
       if (error.code === "auth/unauthorized-domain") {
-        toast.error("El dominio no está autorizado. Contacta al administrador.");
+        toast.error(
+          "El dominio no está autorizado. Contacta al administrador."
+        );
       } else if (error.message.includes("Failed to fetch profile")) {
         toast.error("No se pudo obtener el perfil. Intenta nuevamente.");
       } else {

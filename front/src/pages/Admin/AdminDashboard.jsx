@@ -18,18 +18,18 @@ import {
 } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 
-// Registrar componentes de Chart.js
-ChartJS.register(
-  CategoryScale, 
-  LinearScale, 
-  BarElement, 
-  Title, 
-  Tooltip, 
-  Legend,
-  ArcElement,
-  PointElement,
-  LineElement
-);
+  // Registrar componentes de Chart.js
+  ChartJS.register(
+    CategoryScale, 
+    LinearScale, 
+    BarElement, 
+    Title, 
+    Tooltip, 
+    Legend,
+    ArcElement,
+    PointElement,
+    LineElement
+  );
 
 const AdminDashboard = () => {
   return (
