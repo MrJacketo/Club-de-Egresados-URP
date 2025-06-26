@@ -75,48 +75,57 @@ const FilaMembresia = ({ membresia, onVerDetalles, onEditarDetalles }) => {
   
   return (
     <tr className="hover:bg-gray-50">
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div>
-          <div className="text-sm font-medium text-gray-900">{membresia.usuario?.nombre}</div>
-          <div className="text-sm text-gray-500">{membresia.usuario?.email}</div>
-          <div className="text-xs text-gray-400">Código: {membresia.usuario?.codigo}</div>
+      <td className="px-4 py-4 whitespace-nowrap max-w-[200px]">
+        <div className="truncate">
+          <div className="text-sm font-medium text-gray-900 truncate">{membresia.usuario?.nombre}</div>
+          <div className="text-xs text-gray-500 truncate">{membresia.usuario?.email}</div>
+          <div className="text-xs text-gray-400">#{membresia.usuario?.codigo}</div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <EstadoBadge estado={membresia.estado} />
         {membresia.estado === 'activa' && diasRestantes < 30 && diasRestantes > 0 && (
-          <div className="text-xs text-orange-600 mt-1">Vence en {diasRestantes} días</div>
+          <div className="text-xs text-orange-600 mt-1">Vence en {diasRestantes}d</div>
         )}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        <div className="flex items-center text-green-600">
-          <Calendar size={14} className="mr-1" />
+      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+        <div className="flex items-center text-green-600 text-xs">
+          <Calendar size={12} className="mr-1" />
           {formatDate(membresia.fechaActivacion)}
         </div>
-        <div className="flex items-center text-red-600 mt-1">
-          <Calendar size={14} className="mr-1" />
+        <div className="flex items-center text-red-600 mt-1 text-xs">
+          <Calendar size={12} className="mr-1" />
           {formatDate(membresia.fechaVencimiento)}
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-4 py-4 whitespace-nowrap">
         <BarraProgreso usado={membresia.beneficiosUsados || 0} total={membresia.totalBeneficios || 5} />
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         S/ {membresia.precio || 0}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-        <div className="flex items-center gap-2">
-          <button onClick={() => onVerDetalles(membresia)} className="text-teal-600 hover:text-teal-900">
-            <Eye size={16} />
+      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
+        <div className="flex items-center gap-1">
+          <button 
+            onClick={() => onVerDetalles(membresia)} 
+            className="text-teal-600 hover:text-teal-900 p-1"
+            title="Ver detalles"
+          >
+            <Eye size={14} />
           </button>
-          <button onClick={() => onEditarDetalles(membresia)} className="text-blue-600 hover:text-blue-900">
-            <Edit3 size={16} />
+          <button 
+            onClick={() => onEditarDetalles(membresia)} 
+            className="text-blue-600 hover:text-blue-900 p-1"
+            title="Editar"
+          >
+            <Edit3 size={14} />
           </button>
           <button
             onClick={() => handleEliminar(membresia.usuario.codigo)}
-            className="text-red-600 hover:text-red-900"
+            className="text-red-600 hover:text-red-900 p-1"
+            title="Eliminar"
           >
-            <Trash2 size={16} />
+            <Trash2 size={14} />
           </button>
         </div>
       </td>
@@ -560,7 +569,7 @@ const handleExportar = () => {
       <button 
         onClick={handleActualizarDatos}
         disabled={loadingDatos}
-        className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+        className="flex items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
       >
         <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
         Actualizar
