@@ -9,7 +9,7 @@ const membresiaRoutes = require("./routes/membresiaRoutes");
 const pagoRoutes = require('./routes/pagoRoutes');
 const beneficiosRoutes = require('./routes/beneficiosRoutes');
 const feedbackRoutes = require("./routes/feedbackRoutes")
-const noticiaRoutes = require("./routes/noticiaRoutes");
+const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
 const app = express();
@@ -38,7 +38,7 @@ app.use(
 app.use("/", authRoutes); // Authentication routes
 app.use("/api", perfilRoutes); // Perfil de egresado routes
 app.use("/api/feedback", feedbackRoutes);
-app.use("/api/noticias", noticiaRoutes); // Noticias routes
+app.use("/api/noticias", gestionNoticiasRoutes); // Noticias routes
 app.use("/api/membresia", membresiaRoutes); //RUTAS MEMBRESIAS
 app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS

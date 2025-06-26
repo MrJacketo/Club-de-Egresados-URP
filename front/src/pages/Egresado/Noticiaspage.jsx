@@ -5,46 +5,64 @@ import { useState, useEffect, useCallback } from "react"
 import NoticiasHeader from "../../components/noticias/NoticiasHeader"
 import NoticiasSearch from "../../components/noticias/NoticiasSearch"
 import NoticiasList from "../../components/noticias/NoticiasList"
-
-// Datos
-import { noticiasDemo } from "../../demo/noticiasDemo"
+import { obtenerNoticias } from "../../api/gestionNoticiasApi"
 
 const NoticiasPage = () => {
-  // ===== ESTADOS =====
-  const [noticias, setNoticias] = useState(noticiasDemo)
-  const [loading, setLoading] = useState(false)
+
+  const [noticias, setNoticias] = useState([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
-  const [filteredNoticias, setFilteredNoticias] = useState(noticiasDemo)
-  const [usingDemo] = useState(true)
+  const [filteredNoticias, setFilteredNoticias] = useState([])
 
   // Usuario simulado para demostración
   const [user] = useState({ email: "egresado@urp.edu.pe" })
 
-  // ===== EFECTOS =====
+  // Cargar noticias reales del backend
+  useEffect(() => {
+    const fetchNoticias = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await obtenerNoticias()
+        // Si tu backend responde { noticias: [...] }
+        setNoticias(response.noticias || [])
+      } catch (err) {
+        console.error("Error al cargar noticias:", err)
+        setError("No se pudieron cargar las noticias.")
+        setNoticias([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchNoticias()
+  }, [])
 
   // Filtrar noticias por búsqueda
   useEffect(() => {
-    const filtered = noticias.filter(
-      (noticia) =>
-        noticia.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.contenido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.categoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.autor.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
-    setFilteredNoticias(filtered)
-  }, [noticias, searchTerm])
+    const filtered = noticias
+      .filter(Boolean) // Filtra noticias nulas o undefined
+      .filter((noticia) =>
+        [noticia.titulo, noticia.contenido, noticia.categoria]
+          .map((campo) => (typeof campo === "string" ? campo : ""))
+          .some((campo) =>
+            campo.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+      );
+    setFilteredNoticias(filtered);
+  }, [noticias, searchTerm]);
 
   // ===== HANDLERS =====
 
   const handleNoticiaClick = useCallback((id) => {
-    console.log("Noticia seleccionada:", id)
+    // Aquí puedes navegar al detalle de la noticia si lo deseas
     alert(`Abriendo noticia: ${id}`)
   }, [])
 
   const handleRetry = useCallback(() => {
     setError(null)
-    console.log("Reintentando conexión...")
+    // Puedes volver a llamar a fetchNoticias aquí si lo deseas
+    window.location.reload()
   }, [])
 
   const handleSearchChange = useCallback((newSearchTerm) => {
@@ -62,7 +80,7 @@ const NoticiasPage = () => {
 
       <div className="relative z-10 p-8">
         {/* Header con información de estado */}
-        <NoticiasHeader user={user} error={error} usingDemo={usingDemo} onRetry={handleRetry} />
+        <NoticiasHeader user={user} error={error} onRetry={handleRetry} />
 
         {/* Barra de búsqueda */}
         <NoticiasSearch
@@ -83,11 +101,6 @@ const NoticiasPage = () => {
                 ? `Mostrando ${filteredNoticias.length} de ${noticias.length} noticias`
                 : `Total: ${noticias.length} noticias disponibles`}
             </p>
-            {usingDemo && (
-              <p className="text-white/60 text-xs mt-2 italic">
-                💡 Esta es una demostración del sistema de noticias URPex
-              </p>
-            )}
           </div>
         </footer>
       </div>

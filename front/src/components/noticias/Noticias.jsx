@@ -13,8 +13,7 @@ import {
   obtenerNoticiasConAuthRequest,
   verificarConectividadRequest,
   verificarAutenticacionRequest,
-} from "../../api/noticiasApi.js"
-import { noticiasDemo } from "../../demo/noticiasDemo.js"
+} from "../../api/gestionNoticiasApi.js"
 
 // Estilos
 import "./Noticias.css"
@@ -26,7 +25,6 @@ const Noticias = () => {
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredNoticias, setFilteredNoticias] = useState([])
-  const [usingDemo, setUsingDemo] = useState(false)
   const [user, setUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
 
@@ -35,7 +33,6 @@ const Noticias = () => {
   // Escuchar cambios en autenticación
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Estado de autenticación:", currentUser ? "Autenticado" : "No autenticado")
       setUser(currentUser)
       setAuthLoading(false)
     })
@@ -52,13 +49,15 @@ const Noticias = () => {
 
   // Filtrar noticias por búsqueda
   useEffect(() => {
-    const filtered = noticias.filter(
-      (noticia) =>
-        noticia.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.contenido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.categoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        noticia.autor.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
+    const filtered = noticias
+      .filter(Boolean)
+      .filter(
+        (noticia) =>
+          (noticia.titulo || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (noticia.contenido || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (noticia.categoria || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (noticia.autor || "").toLowerCase().includes(searchTerm.toLowerCase())
+      )
     setFilteredNoticias(filtered)
   }, [noticias, searchTerm])
 
@@ -68,13 +67,10 @@ const Noticias = () => {
     try {
       setLoading(true)
       setError(null)
-      setUsingDemo(false)
 
       // Verificar autenticación
       if (!user) {
-        console.warn("Usuario no autenticado, usando datos de demostración")
-        setNoticias(noticiasDemo)
-        setUsingDemo(true)
+        setNoticias([])
         setError("Necesitas iniciar sesión para ver las noticias actualizadas.")
         return
       }
@@ -82,38 +78,25 @@ const Noticias = () => {
       // Verificar conectividad
       const isConnected = await verificarConectividadRequest()
       if (!isConnected) {
-        console.warn("Backend no disponible, usando datos de demostración")
-        setNoticias(noticiasDemo)
-        setUsingDemo(true)
-        setError("Backend no disponible. Mostrando datos de demostración.")
+        setNoticias([])
+        setError("Backend no disponible. Intenta más tarde.")
         return
       }
 
       // Verificar token válido
       const isAuthenticated = await verificarAutenticacionRequest()
       if (!isAuthenticated) {
-        console.warn("Token inválido, usando datos de demostración")
-        setNoticias(noticiasDemo)
-        setUsingDemo(true)
+        setNoticias([])
         setError("Sesión expirada. Por favor, inicia sesión nuevamente.")
         return
       }
 
       // Obtener datos reales
       const data = await obtenerNoticiasConAuthRequest()
-      if (!data || data.length === 0) {
-        console.warn("No hay noticias en el backend")
-        setNoticias(noticiasDemo)
-        setUsingDemo(true)
-      } else {
-        setNoticias(data)
-        console.log("Noticias cargadas exitosamente:", data.length)
-      }
+      setNoticias(Array.isArray(data) ? data : [])
     } catch (err) {
-      console.error("Error al cargar noticias:", err)
       setError(err.message)
-      setNoticias(noticiasDemo)
-      setUsingDemo(true)
+      setNoticias([])
     } finally {
       setLoading(false)
     }
@@ -122,7 +105,6 @@ const Noticias = () => {
   // ===== HANDLERS =====
 
   const handleNoticiaClick = useCallback((id) => {
-    console.log("Noticia seleccionada:", id)
     // TODO: Implementar navegación al detalle
     alert(`Abriendo noticia: ${id}`)
   }, [])
@@ -156,7 +138,7 @@ const Noticias = () => {
   return (
     <main className="noticias-container">
       <div className="noticias-content">
-        <NoticiasHeader user={user} error={error} usingDemo={usingDemo} onRetry={handleRetry} />
+        <NoticiasHeader user={user} error={error} onRetry={handleRetry} />
 
         <NoticiasSearch
           searchTerm={searchTerm}
@@ -175,14 +157,6 @@ const Noticias = () => {
                 ? `Mostrando ${filteredNoticias.length} de ${noticias.length} noticias`
                 : `Total: ${noticias.length} noticias disponibles`}
             </p>
-            {usingDemo && (
-              <p className="footer-demo-info">
-                💡{" "}
-                {!user
-                  ? "Inicia sesión para ver noticias reales del sistema"
-                  : "Verifica que tu backend esté ejecutándose en el puerto 8000"}
-              </p>
-            )}
           </div>
         </footer>
       </div>

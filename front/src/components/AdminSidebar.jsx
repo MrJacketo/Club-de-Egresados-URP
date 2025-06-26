@@ -68,9 +68,9 @@ export default function AdminSidebar() {
           </Link>
 
           <Link
-            to="/admin/noticias"
+            to="/admin/gestion-noticias"
             className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
-              location.pathname === "/admin/noticias"
+              location.pathname === "/admin/gestion-noticias"
                 ? "bg-blue-600/80 text-white shadow-lg"
                 : "hover:bg-blue-500/20 hover:text-blue-700 transition"
             }`}
