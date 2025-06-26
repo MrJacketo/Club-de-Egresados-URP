@@ -375,6 +375,85 @@ const GestionMembresiaAdmin = () => {
       setLoadingDatos(false);
     }
   };
+  // 1. AGREGAR EL ESTADO - Agrega esto con los otros estados del componente GestionMembresiaAdmin
+const [loadingExport, setLoadingExport] = useState(false);
+
+// 2. FUNCIONES DE EXPORTACIÓN - Agrega estas funciones antes del return del componente
+const generarCSV = (datos) => {
+  const headers = [
+    'Nombre Usuario',
+    'Email', 
+    'Código',
+    'Estado',
+    'Fecha Activación',
+    'Fecha Vencimiento',
+    'Beneficios Usados',
+    'Total Beneficios',
+    'Precio'
+  ];
+
+  const filas = datos.map(membresia => [
+    membresia.usuario?.nombre || 'N/A',
+    membresia.usuario?.email || 'N/A', 
+    membresia.usuario?.codigo || 'N/A',
+    membresia.estado,
+    formatDate(membresia.fechaActivacion),
+    formatDate(membresia.fechaVencimiento),
+    membresia.beneficiosUsados || 0,
+    membresia.totalBeneficios || 5,
+    `S/ ${membresia.precio || 0}`
+  ]);
+
+  const csvContent = [
+    headers.join(','),
+    ...filas.map(fila => fila.map(campo => `"${campo}"`).join(','))
+  ].join('\n');
+
+  return csvContent;
+};
+
+const descargarCSV = (csvContent, nombreArchivo = 'membresias_export.csv') => {
+  const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', nombreArchivo);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const handleExportar = () => {
+  try {
+    setLoadingExport(true);
+    
+    // Usar los datos filtrados actuales
+    const datosParaExportar = membresiasFiltradas;
+    
+    if (datosParaExportar.length === 0) {
+      alert('No hay datos para exportar');
+      return;
+    }
+    
+    const csvContent = generarCSV(datosParaExportar);
+    const fecha = new Date().toISOString().split('T')[0];
+    const nombreArchivo = `membresias_${fecha}.csv`;
+    
+    descargarCSV(csvContent, nombreArchivo);
+    
+    // Mostrar mensaje de éxito
+    alert(`${datosParaExportar.length} membresías exportadas exitosamente`);
+    
+  } catch (error) {
+    console.error('Error al exportar:', error);
+    alert('Error al exportar los datos');
+  } finally {
+    setLoadingExport(false);
+  }
+};
 
   if (loadingDatos) {
     return (
@@ -428,53 +507,67 @@ const GestionMembresiaAdmin = () => {
             />
           </div>
 
-          {/* Filtros */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Buscar por nombre, email o código..."
-                  value={filtros.busqueda}
-                  onChange={(e) => {
-                    setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
-                    setPaginaActual(1);
-                  }}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-                />
-              </div>
+         {/* Filtros */}
+<div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+      <input
+        type="text"
+        placeholder="Buscar por nombre, email o código..."
+        value={filtros.busqueda}
+        onChange={(e) => {
+          setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
+          setPaginaActual(1);
+        }}
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+      />
+    </div>
 
-              <select
-                value={filtros.estado}
-                onChange={(e) => {
-                  setFiltros(prev => ({ ...prev, estado: e.target.value }));
-                  setPaginaActual(1);
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-              >
-                <option value="todos">Todos los estados</option>
-                <option value="activa">Activas</option>
-                <option value="inactiva">Inactivas</option>
-              </select>
+    <select
+      value={filtros.estado}
+      onChange={(e) => {
+        setFiltros(prev => ({ ...prev, estado: e.target.value }));
+        setPaginaActual(1);
+      }}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+    >
+      <option value="todos">Todos los estados</option>
+      <option value="activa">Activas</option>
+      <option value="inactiva">Inactivas</option>
+    </select>
 
-              <div className="flex gap-2">
-                {/*
-                  <button className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900">
-                  <Download size={16} className="mr-2" />
-                  Exportar
-                  </button>
-                */}
-                <button 
-                  onClick={handleActualizarDatos}
-                  className="flex items-center px-4 py-2 text-white bg-gray-100 rounded-lg hover:bg-gray-200"
-                >
-                  <RefreshCw size={16} className="mr-2" />
-                  Actualizar
-                </button>
-              </div>
-            </div>
-          </div>
+    <div className="flex gap-2 justify-end">
+      <button 
+        onClick={handleExportar}
+        disabled={loadingExport || loadingDatos}
+        className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
+        title={`Exportar ${membresiasFiltradas.length} registros`}
+      >
+        {loadingExport ? (
+          <>
+            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+            Exportando
+          </>
+        ) : (
+          <>
+            <Download size={20} className="mr-2" />
+            Exportar
+          </>
+        )}
+      </button>
+      
+      <button 
+        onClick={handleActualizarDatos}
+        disabled={loadingDatos}
+        className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+      >
+        <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
+        Actualizar
+      </button>
+    </div>
+  </div>
+</div>
 
           {/* Tabla */}
           <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
