@@ -129,8 +129,8 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading, modoEdici
   const porcentajeBeneficios = Math.round(((membresia.beneficiosUsados || 0) / (membresia.totalBeneficios || 5) * 100));
   
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+<div className="fixed inset-0 bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 bg-opacity-95 flex items-center justify-center p-4 z-50">
+<div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-gray-900">Detalles de Membresía</h3>
           <button onClick={onClose} className="text-white hover:text-gray-600 p-1">
@@ -372,6 +372,84 @@ export default function GestionMembresiasAdmin() {
       setLoadingDatos(false);
     }
   };
+  const generarCSV = (datos) => {
+    const headers = [
+      'Nombre Usuario',
+      'Email', 
+      'Código',
+      'Estado',
+      'Fecha Activación',
+      'Fecha Vencimiento',
+      'Beneficios Usados',
+      'Total Beneficios',
+      'Precio'
+    ];
+  
+    const filas = datos.map(membresia => [
+      membresia.usuario?.nombre || 'N/A',
+      membresia.usuario?.email || 'N/A', 
+      membresia.usuario?.codigo || 'N/A',
+      membresia.estado,
+      formatDate(membresia.fechaActivacion),
+      formatDate(membresia.fechaVencimiento),
+      membresia.beneficiosUsados || 0,
+      membresia.totalBeneficios || 5,
+      `S/ ${membresia.precio || 0}`
+    ]);
+  
+    const csvContent = [
+      headers.join(','),
+      ...filas.map(fila => fila.map(campo => `"${campo}"`).join(','))
+    ].join('\n');
+  
+    return csvContent;
+  };
+  
+  // 2. Función para descargar CSV
+  const descargarCSV = (csvContent, nombreArchivo = 'membresias_export.csv') => {
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', nombreArchivo);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  // 3. Función manejadora del botón exportar
+  const handleExportar = () => {
+    try {
+      setLoadingExport(true);
+      
+      // Usar los datos filtrados actuales
+      const datosParaExportar = membresiasFiltradas;
+      
+      if (datosParaExportar.length === 0) {
+        alert('No hay datos para exportar');
+        return;
+      }
+      
+      const csvContent = generarCSV(datosParaExportar);
+      const fecha = new Date().toISOString().split('T')[0];
+      const nombreArchivo = `membresias_${fecha}.csv`;
+      
+      descargarCSV(csvContent, nombreArchivo);
+      
+      // Opcional: mostrar mensaje de éxito
+      alert(`${datosParaExportar.length} membresías exportadas exitosamente`);
+      
+    } catch (error) {
+      console.error('Error al exportar:', error);
+      alert('Error al exportar los datos');
+    } finally {
+      setLoadingExport(false);
+    }
+  };
+  const [loadingExport, setLoadingExport] = useState(false);
 
   if (loadingDatos) {
     return <div className="h-screen w-full flex items-center justify-center">
@@ -448,10 +526,25 @@ export default function GestionMembresiasAdmin() {
             </select>
 
             <div className="flex gap-2">
-              <button className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900">
-                <Download size={16} className="mr-2" />
-                Exportar
-              </button>
+              
+            <button 
+  onClick={handleExportar}
+  disabled={loadingExport || loadingDatos}
+  className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
+  title={`Exportar ${membresiasFiltradas.length} registros`}
+>
+  {loadingExport ? (
+    <>
+      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+      Exportando
+    </>
+  ) : (
+    <>
+      <Download size={16} className="mr-2" />
+      Exportar
+    </>
+  )}
+</button>
               <button 
                 onClick={handleActualizarDatos}
                 className="flex items-center px-4 py-2 text-white bg-gray-100 rounded-lg hover:bg-gray-200"
