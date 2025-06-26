@@ -91,6 +91,8 @@ export default function AdminSidebar() {
             </span>
           </Link>
 
+          {/*}
+
           <Link
             to="/admin/beneficios"
             className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
@@ -102,6 +104,7 @@ export default function AdminSidebar() {
               Beneficios
             </span>
           </Link>
+          */}
         </nav>
 
         <div className="mt-auto">
