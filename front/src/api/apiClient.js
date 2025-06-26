@@ -10,9 +10,9 @@ apiClient.interceptors.request.use(async (config) => {
   if (user) {
     const token = await user.getIdToken(); // Retrieve Firebase ID token
     config.headers.Authorization = `Bearer ${token}`; // Attach token to Authorization header
-  } else {
+  } /*/else {
     console.error("No user is logged in");
-  }
+  } CAMBIO TEMPORAL, DEBIDO A QUE EL ADMIN TODAVIA NO ES UN USER/*/
   return config;
 });
 
