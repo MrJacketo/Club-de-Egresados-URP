@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { getOfertasRequest } from "../../../api/ofertaLaboralApi";
 import CardOfertaLaboral from "../../../components/OfertaLaboral/CardOfertaLaboral";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import FiltrosOferta from "../../../components/OfertaLaboral/filtrosOferta";
 import useFiltrosOferta from "../../../Hooks/useFiltroOfertas";
 import { tiempoRelativo, DiasTranscurridos } from "../../../utils/tiempoRelativo";
 import toast from "react-hot-toast";
+import { UserContext } from "../../../context/userContext";
 
 import ModalFormularioPostulacion from "../../../components/OfertaLaboral/ModalFormularioPostulacion";
 import ModalMensaje from "../../../components/ModalMensaje";
@@ -36,7 +37,7 @@ export default function OfertaLaboral() {
   const navigate = useNavigate();
   const [ofertaActual, setOfertaSeleccionada] = useState(null);
   const [yaPostulado, setYaPostulado] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user } = useContext(UserContext);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [ofertas, setOfertas] = useState([]);
@@ -51,7 +52,6 @@ export default function OfertaLaboral() {
   const [ofertasPostuladas, setOfertasPostuladas] = useState([]);
 
   const handlePostulacion = async (data) => {
-    const user = JSON.parse(localStorage.getItem("user"));
     const file = data.cv?.[0] || null;
 
     setIsLoading(true); // empieza la carga
@@ -61,7 +61,6 @@ export default function OfertaLaboral() {
         idOferta: ofertaActual._id,
         correo: data.correo,
         numero: data.telefono,
-        uid: user.uid,
         cvFile: file,
       });
 
@@ -90,9 +89,17 @@ export default function OfertaLaboral() {
   //fetch ara obtener las ofertas totales
   const fetchOfertas = async () => {
     try {
+      console.log('fetchOfertas - user:', user);
+      console.log('fetchOfertas - user.id:', user?.id);
+      
+      if (!user?.id) {
+        console.log('Usuario no está disponible aún, saltando fetchOfertas');
+        return;
+      }
+
       const [ofTotales, ofCreadas] = await Promise.all([
         getOfertasRequest(),
-        getOfertasCreadasPorUsuario(user.uid),
+        getOfertasCreadasPorUsuario(user.id),
       ]);
 
       //Asignamos las ofertas
@@ -110,11 +117,15 @@ export default function OfertaLaboral() {
 
   //Obtener las ofertas al cargar el componente
   useEffect(() => {
-    fetchOfertas();
-    if (user?.uid) {
-      getOfertasPostuladasPorUsuario(user.uid).then(setOfertasPostuladas);
+    console.log('useEffect ejecutado - user:', user);
+    if (user?.id) {
+      console.log('Usuario disponible, ejecutando fetchOfertas');
+      fetchOfertas();
+      getOfertasPostuladasPorUsuario(user.id).then(setOfertasPostuladas);
+    } else {
+      console.log('Usuario no disponible aún');
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     setOfertaSeleccionada(ofertasFiltradas[0] || null);

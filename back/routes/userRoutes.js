@@ -7,12 +7,12 @@ const {
   updateUserProfile,
   disableUser
 } = require('../controllers/userController');
-const verifyFirebaseToken = require('../middleware/verifyFirebaseToken');
+const verifyJWTToken = require('../middleware/verifyJWTToken');
 
-router.post('/admin/user',verifyFirebaseToken, createOrUpdateUserProfile);
+router.post('/admin/user',verifyJWTToken, createOrUpdateUserProfile);
 router.get('/:uid',getUserProfile);
-router.get('/',verifyFirebaseToken, getAllUsers);
-router.put('/update-user-profile',verifyFirebaseToken, updateUserProfile);
-router.put('/disable/:userId', verifyFirebaseToken,disableUser);
+router.get('/',verifyJWTToken, getAllUsers);
+router.put('/update-user-profile',verifyJWTToken, updateUserProfile);
+router.put('/disable/:userId', verifyJWTToken,disableUser);
 
 module.exports = router;

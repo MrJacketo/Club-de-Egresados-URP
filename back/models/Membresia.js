@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const membresiaSchema = new mongoose.Schema({
-  firebaseUid: { type: String, required: true, unique: true }, 
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true }, // Changed from firebaseUid
   estado: {
     type: String,
     enum: ["activa", "inactiva", "vencida", "pendiente"],

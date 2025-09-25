@@ -4,24 +4,31 @@ import { Link } from "react-router-dom";
 import apiClient from "../../api/apiClient"; // Axios instance to fetch user data
 
 export default function Dashboard() {
-  const { user } = useContext(UserContext); // Firebase user from context
-  const [userName, setUserName] = useState("");
+  const { user, userName } = useContext(UserContext); // JWT user from context
+  const [userDisplayName, setUserDisplayName] = useState("");
 
   useEffect(() => {
     const fetchUserName = async () => {
       if (user) {
         try {
-          // Fetch the user's name from the backend
-          const response = await apiClient.get("/user-name");
-          setUserName(response.data.name);
+          // First try to use userName from context
+          if (userName) {
+            setUserDisplayName(userName);
+          } else {
+            // Fallback: Fetch the user's name from the backend
+            const response = await apiClient.get("/auth/user-name");
+            setUserDisplayName(response.data.name);
+          }
         } catch (error) {
           console.error("Error fetching user name:", error);
+          // Fallback to user name from JWT user object
+          setUserDisplayName(user?.name || "Usuario");
         }
       }
     };
 
     fetchUserName();
-  }, [user]);
+  }, [user, userName]);
 
   return (
     <div className=" bg-gradient-to-br flex flex-col items-center justify-center px-4 py-12 pt-35">
@@ -39,7 +46,7 @@ export default function Dashboard() {
         {/* Welcome Content */}
         <div className="w-full md:w-1/2 text-center md:text-left">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">
-            ¡Bienvenido{userName ? `, ${userName}` : ""}!
+            ¡Bienvenido{userDisplayName ? `, ${userDisplayName}` : ""}!
           </h1>
           <p className="text-base text-gray-600 mb-5">
             Este es tu espacio como egresado URP. Accede a beneficios, conecta con otros profesionales,

@@ -1,42 +1,93 @@
 const PerfilEgresado = require("../models/PerfilEgresado");
+const User = require("../models/User");
+
+// Helper function to get enum values from User schema
+const getUserSchemaEnums = () => {
+  const userSchema = User.schema;
+  return {
+    carreras: userSchema.paths.carrera.enumValues || [],
+    gradosAcademicos: userSchema.paths.gradoAcademico.enumValues || []
+  };
+};
 
 // Create or update graduate profile
 const createOrUpdatePerfil = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
-  const profileData = req.body;
-
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: "Usuario no autenticado" });
+    }
+
+    const userId = req.user._id;
+    const data = req.body;
+
+    // Profile data only (academic data is now handled by authController)
+    const profileData = {};
+
+    // Only handle profile-specific data, exclude academic fields and nombreCompleto
+    const excludedFields = ['anioEgreso', 'carrera', 'gradoAcademico', 'nombreCompleto'];
+    Object.keys(data).forEach(key => {
+      if (!excludedFields.includes(key)) {
+        profileData[key] = data[key];
+      }
+    });
+
+    console.log('=== CREATE/UPDATE PROFILE ===');
+    console.log('User ID:', userId);
+    console.log('Profile data to save:', profileData);
+
     // Check if the profile already exists
-    let profile = await PerfilEgresado.findOne({ firebaseUid });
+    let profile = await PerfilEgresado.findOne({ userId });
 
     if (profile) {
       // Update existing profile
       Object.assign(profile, profileData);
-      profile.updatedAt = Date.now();
       await profile.save();
-      return res.json({ message: "Perfil actualizado exitosamente", profile });
+    } else {
+      // Create a new profile
+      profile = new PerfilEgresado({ userId, ...profileData });
+      await profile.save();
     }
 
-    // Create a new profile
-    profile = new PerfilEgresado({ firebaseUid, ...profileData });
-    await profile.save();
-    res.json({ message: "Perfil creado exitosamente", profile });
+    // Get updated user data to return complete info
+    const updatedUser = await User.findById(userId).select('-password');
+    
+    res.json({ 
+      message: profile.isNew ? "Perfil creado exitosamente" : "Perfil actualizado exitosamente", 
+      profile,
+      user: updatedUser 
+    });
   } catch (error) {
     console.error("Error creando/actualizando perfil:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
+    res.status(500).json({ error: "Error interno del servidor", details: error.message });
   }
 };
 
 // Get graduate profile
 const getPerfil = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
+  const userId = req.user._id;
 
   try {
-    const profile = await PerfilEgresado.findOne({ firebaseUid });
-    if (!profile) {
-      return res.status(404).json({ error: "Perfil no encontrado" });
+    // Get both profile and user data
+    const profile = await PerfilEgresado.findOne({ userId });
+    const user = await User.findById(userId).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
-    res.json(profile);
+
+    // Combine user academic data with profile data
+    const completeProfile = {
+      // User academic data
+      nombreCompleto: user.name,
+      anioEgreso: user.anioEgreso,
+      carrera: user.carrera,
+      gradoAcademico: user.gradoAcademico,
+      // Profile data (if exists)
+      ...(profile ? profile.toObject() : {}),
+      userId: user._id
+    };
+
+    res.json(completeProfile);
   } catch (error) {
     console.error("Error obteniendo perfil:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -46,28 +97,15 @@ const getPerfil = async (req, res) => {
 // Get options for the form
 const getOptions = (req, res) => {
   try {
+    // Get enums from User schema to maintain consistency
+    const userEnums = getUserSchemaEnums();
+    
+    console.log('=== OPTIONS REQUEST ===');
+    console.log('Grados académicos desde User schema:', userEnums.gradosAcademicos);
+    
     const options = {
-      carreras: [
-        "Administración y Gerencia",
-        "Administración de Negocios Globales",
-        "Arquitectura",
-        "Biología",
-        "Contabilidad y Finanzas",
-        "Derecho y Ciencia Política",
-        "Economía",
-        "Ingeniería Civil",
-        "Ingeniería Electrónica",
-        "Ingeniería Industrial",
-        "Ingeniería Informática",
-        "Ingeniería Mecatrónica",
-        "Marketing Global y Administración Comercial",
-        "Medicina Humana",
-        "Medicina Veterinaria",
-        "Psicología",
-        "Traducción e Interpretación",
-        "Turismo, Hotelería y Gastronomía",
-      ],
-      gradosAcademicos: ["Bachiller", "Titulado", "Magíster", "Doctorado"],
+      carreras: userEnums.carreras,
+      gradosAcademicos: userEnums.gradosAcademicos,
       aniosExperiencia: ["0–1 años", "2–3 años", "4–5 años", "Más de 5 años"],
       areasExperiencia: [
         "Finanzas",

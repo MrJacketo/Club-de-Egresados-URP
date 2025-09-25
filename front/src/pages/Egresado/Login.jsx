@@ -1,99 +1,150 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import { auth, googleProvider } from "../../firebase";
-import { signInWithPopup } from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 import { getGraduateProfileRequest } from "../../api/perfilEgresadoApi";
-import { getUserRequest } from "../../api/userAdminApi";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { login } = useContext(UserContext);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  const [loading, setLoading] = useState(false);
 
-  // Login with Google using Firebase
-  const handleGoogleLogin = async () => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!formData.email || !formData.password) {
+      toast.error("Por favor completa todos los campos");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Sign in with Google
-      const result = await signInWithPopup(auth, googleProvider);
-      setUser(result.user); // Update user context with Firebase user
-      const firebaseUser = result.user;
-      // Wait for the Firebase ID token
-      const token = await auth.currentUser.getIdToken(true); // Force refresh the token
-
-      const userFromDB = await getUserRequest(firebaseUser.uid);
-
-      console.log("Usuario desde la base de datos:", userFromDB);
-      if (!userFromDB.activo) {
+      // Login with JWT
+      const response = await login(formData.email, formData.password);
+      
+      // Check if user is active
+      if (!response.user.activo) {
         toast.error("Tu cuenta está desactivada. Contacta al administrador.");
-        return; // No continuar
+        setLoading(false);
+        return;
       }
 
-      // Check if the user's profile exists
-      const profileResponse = await getGraduateProfileRequest(token); // Pass the token to the API request
-
-      if (!profileResponse) {
-        // If the profile doesn't exist, navigate to the profile creation form
-        navigate("/perfil-egresado-form");
-        toast("Por favor, completa tu perfil.");
+      // Check user role and redirect accordingly
+      if (response.user.rol === 'admin') {
+        // Redirect admin users to admin panel
+        navigate("/admin");
+        toast.success("Bienvenido, Administrador");
       } else {
-        // If the profile exists, navigate to the welcome page
-        navigate("/welcome-egresado");
-        toast.success("Inicio de sesión exitoso");
+        // For egresado users, check if profile exists
+        try {
+          const profileResponse = await getGraduateProfileRequest();
+          
+          if (!profileResponse) {
+            // If the profile doesn't exist, navigate to the profile creation form
+            navigate("/perfil-egresado-form");
+            toast("Por favor, completa tu perfil.");
+          } else {
+            // If the profile exists, navigate to the welcome page
+            navigate("/welcome-egresado");
+            toast.success("Inicio de sesión exitoso");
+          }
+        } catch (profileError) {
+          // Profile doesn't exist, redirect to profile form
+          navigate("/perfil-egresado-form");
+          toast("Por favor, completa tu perfil.");
+        }
       }
+
     } catch (error) {
-      console.error("Error al iniciar sesión con Google:", error);
-
-      // Handle specific errors
-      if (error.code === "auth/unauthorized-domain") {
-        toast.error(
-          "El dominio no está autorizado. Contacta al administrador."
-        );
-      } else if (error.message.includes("Failed to fetch profile")) {
-        toast.error("No se pudo obtener el perfil. Intenta nuevamente.");
-      } else {
-        toast.error("Error al iniciar sesión con Google.");
-      }
+      console.error("Error al iniciar sesión:", error);
+      toast.error(error.message || "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex justify-center items-center pt-35">
-      <div className="w-[90%] md:w-[80%] max-w-6xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden bg-white z-10 relative h-[350px] md:h-[450px]">
-        {/* Left Column: Google Login */}
+      <div className="w-[90%] md:w-[80%] max-w-6xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden bg-white z-10 relative h-[500px] md:h-[450px]">
+        {/* Left Column: Login Form */}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-6 md:p-10">
-          <div className="text-center">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-              Bienvenido
+              Iniciar Sesión
             </h2>
             <p className="text-gray-500">
-              Inicia sesión con tu cuenta de Google para continuar
+              Ingresa tu email y contraseña para continuar
             </p>
           </div>
 
-          <div className="mt-8">
+          <form onSubmit={handleLogin} className="w-full max-w-sm space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="tu@email.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border text-black  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
             <button
-              onClick={handleGoogleLogin}
-              className="w-full py-4 text-lg font-semibold text-white rounded-lg hover:bg-emerald-700 active:bg-emerald-800 transition-all duration-300 flex items-center justify-center"
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 text-lg font-semibold text-white rounded-lg hover:bg-emerald-700 active:bg-emerald-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: "#008f4c" }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              Iniciar sesión con Google
+              {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
-          </div>
+
+            <div className="text-center mt-4 space-y-2">
+              <p className="text-gray-600">
+                ¿No tienes cuenta?{" "}
+                <Link to="/register" className="text-emerald-600 hover:text-emerald-700 font-medium">
+                  Regístrate aquí
+                </Link>
+              </p>
+              <div className="border-t pt-2">
+                <p className="text-xs text-gray-500">
+                  <span className="font-medium">Administradores:</span> Usar credenciales institucionales
+                </p>
+              </div>
+            </div>
+          </form>
         </div>
 
         {/* Right Column: Welcome Message */}

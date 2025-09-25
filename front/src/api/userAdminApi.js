@@ -1,5 +1,5 @@
 import apiClient from "./apiClient";
-import { auth } from "../firebase";
+// Firebase removed - now using JWT authentication
 
 //Obtener todos los usuarios registrados
 export const getUsersRequest = async () => {

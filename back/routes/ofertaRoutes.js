@@ -11,27 +11,24 @@ const { createOrUpdateOferta,
     getPostulantesDeOferta,
     getOfertasCreadasPorUsuario,
   verificarPostulacion } = require("../controllers/ofertaController");
-const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
+const verifyJWTToken = require("../middleware/verifyJWTToken");
 
-router.post("/oferta", verifyFirebaseToken, createOrUpdateOferta);
+router.post("/oferta", verifyJWTToken, createOrUpdateOferta);
 //Postular a una oferta laboral
-router.post("/oferta/:id/postular", verifyFirebaseToken, upload.single("cv"), (req, res) => {
-  console.log("Ruta /oferta/:id/postular llamada con id:", req.params.id);
-  postularOferta(req, res);
-});
+router.post("/oferta/:id/postular", verifyJWTToken, upload.single("cv"), postularOferta);
 
-router.get('/postulaciones/:uid',verifyFirebaseToken,verificarPostulacion);
+router.get('/postulaciones/:uid',verifyJWTToken,verificarPostulacion);
 
 //Obtener postulantes de cada oferta
-router.get("/oferta/:idOferta/postulantes", verifyFirebaseToken, getPostulantesDeOferta);
+router.get("/oferta/:idOferta/postulantes", verifyJWTToken, getPostulantesDeOferta);
 //Obtener ofertas creadas por un usuario
-router.get("/ofertas/usuario/:uid", verifyFirebaseToken, getOfertasCreadasPorUsuario);
+router.get("/ofertas/usuario/:uid", verifyJWTToken, getOfertasCreadasPorUsuario);
 
-router.put("/oferta/:id", verifyFirebaseToken, createOrUpdateOferta);
-router.get("/oferta/:id", verifyFirebaseToken, getOferta);
-router.get("/ofertas", verifyFirebaseToken, getOfertas);
-router.patch("/oferta/:id/deshabilitar", verifyFirebaseToken, disableOferta);
-router.delete("/oferta/:id", verifyFirebaseToken, deleteOferta);
-router.get("/oferta/options", verifyFirebaseToken, getOptions);
+router.put("/oferta/:id", verifyJWTToken, createOrUpdateOferta);
+router.get("/oferta/:id", verifyJWTToken, getOferta);
+router.get("/ofertas", verifyJWTToken, getOfertas);
+router.patch("/oferta/:id/deshabilitar", verifyJWTToken, disableOferta);
+router.delete("/oferta/:id", verifyJWTToken, deleteOferta);
+router.get("/oferta/options", verifyJWTToken, getOptions);
 
 module.exports = router;

@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Gift, ExternalLink, Ticket, BookOpen, ShoppingBag, CheckCircle } from 'lucide-react';
-import { auth } from "../../firebase";
+// Firebase removed - now using JWT authentication
 import apiClient from '../../api/apiClient';
 import { getBeneficiosRequest, getBeneficiosRedimidosRequest } from '../../api/beneficiosApi';
+import { useUser } from '../../context/userContext';
 
 
 export default function BeneficiosVista() {
   const [beneficios, setBeneficios] = useState([]);
   const [beneficiosReclamados, setBeneficiosReclamados] = useState([]);
+  const { user } = useUser();
 
   const fetchDatos = async () => {
     try {
-      const user = auth.currentUser;
       if (!user) return;
 
       const [beneficiosAll, redimidos] = await Promise.all([
@@ -19,9 +20,9 @@ export default function BeneficiosVista() {
         getBeneficiosRedimidosRequest()
       ]);
 
-      const idsReclamados = redimidos.beneficiosRedimidos.map((b) => b.beneficioId._id);
+      const idsReclamados = (redimidos?.beneficiosRedimidos || []).map((b) => b.beneficioId._id);
 
-      const beneficiosFormateados = beneficiosAll.map((b) => ({
+      const beneficiosFormateados = (beneficiosAll || []).map((b) => ({
         id: b._id,
         nombre: b.titulo,
         detalle: b.descripcion,
@@ -29,7 +30,7 @@ export default function BeneficiosVista() {
         reclamado: idsReclamados.includes(b._id)
       }));
 
-      const beneficiosReclamadosFormateados = redimidos.beneficiosRedimidos.map((item) => ({
+      const beneficiosReclamadosFormateados = (redimidos?.beneficiosRedimidos || []).map((item) => ({
         id: item.beneficioId._id,
         nombre: item.beneficioId.titulo,
         tipo: item.beneficioId.tipo,
@@ -46,14 +47,10 @@ export default function BeneficiosVista() {
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchDatos();
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+    if (user) {
+      fetchDatos();
+    }
+  }, [user]);
 
   const getIconByType = (tipo) => {
     switch (tipo) {
@@ -83,24 +80,13 @@ export default function BeneficiosVista() {
 
   const reclamarBeneficio = async (beneficioId) => {
     try {
-      const user = auth.currentUser;
       if (!user) {
         alert("Debes iniciar sesión para reclamar un beneficio.");
         return;
       }
 
-      const token = await user.getIdToken();
-
-      const response = await apiClient.post(
-        "/api/beneficios/redimir",
-        { beneficioId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
-      );
+      // JWT authentication handled by apiClient
+      const response = await apiClient.post("/api/beneficios/redimir", { beneficioId });
 
       if (response.data.success) {
         await fetchDatos();

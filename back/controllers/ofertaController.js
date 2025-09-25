@@ -4,7 +4,8 @@ const Postulacion = require("../models/Postulacion");
 const PublicacionOfertas = require("../models/PublicacionOfertas");
 const { AREAS_LABORALES, TIPOS_CONTRATO, MODALIDAD, REQUISITOS, ESTADO } = require('../enums/OfertaLaboral.enum');
 const { v4: uuidv4 } = require("uuid");
-const bucket = require("../firebase");
+// Firebase bucket removed - using local file storage instead
+// const bucket = require("../firebase");
 
 
 // Crear o actualizar una oferta laboral
@@ -25,7 +26,7 @@ const createOrUpdateOferta = async (req, res) => {
     }
 
     // Si no hay id, crear oferta y asociar perfil
-    const perfil = await User.findOne({ firebaseUid: uid });
+    const perfil = await User.findById(uid);
     if (!perfil) {
       return res.status(404).json({ error: 'Perfil de egresado no encontrado' });
     }
@@ -135,18 +136,27 @@ const getOptions = (req, res) => {
 
 //postular oferta
 const postularOferta = async (req, res) => {
+  console.log('postularOferta called with id:', req.params.id);
+  console.log('postularOferta req.user:', req.user);
+  console.log('postularOferta req.body:', req.body);
+  console.log('postularOferta req.file:', req.file);
+  
   const { id } = req.params;
-  const { correo, numero, uid } = req.body;
+  const { correo, numero } = req.body;
 
   if (!req.file) {
     return res.status(400).json({ error: 'Se requiere el archivo PDF del CV.' });
   }
 
   try {
+    // Get user from JWT token
+    const userId = req.user._id;
+    console.log('userId from JWT:', userId);
+    
     // Ejecutar en paralelo
     const [oferta, perfil] = await Promise.all([
       OfertaLaboral.findById(id),
-      User.findOne({ firebaseUid: uid }),
+      User.findById(userId),
     ]);
 
     if (!oferta) {
@@ -203,8 +213,8 @@ const verificarPostulacion = async (req, res) => {
   const { uid } = req.params;
 
   try {
-    // Buscar el perfil por el UID de Firebase
-    const perfil = await User.findOne({ firebaseUid: uid });
+    // Buscar el perfil por el ID de usuario
+    const perfil = await User.findById(uid);
     if (!perfil) return res.status(404).json({ error: 'Perfil no encontrado' });
 
     // Buscar todas las postulaciones realizadas por este perfil
@@ -256,8 +266,8 @@ const getOfertasCreadasPorUsuario = async (req, res) => {
   const { uid } = req.params;
 
   try {
-    // Buscar el perfil del usuario por su UID de Firebase
-    const perfil = await User.findOne({ firebaseUid: uid });
+    // Buscar el perfil del usuario por su ID
+    const perfil = await User.findById(uid);
     if (!perfil) {
       return res.status(404).json({ error: 'Perfil de usuario no encontrado' });
     }

@@ -14,7 +14,7 @@ const obtenerPublicaciones = async (req, res) => {
 const crearPublicacion = async (req, res) => {
   try {
     const nuevaPublicacion = new Publicacion({
-      autor: req.user.firebaseUid,
+      autor: req.user._id, // Changed from firebaseUid to _id
       contenido: req.body.contenido,
       fechaCreacion: new Date(),
       oculto: false,

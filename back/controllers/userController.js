@@ -2,25 +2,21 @@ const User = require("../models/User");
 const Membresia = require("../models/Membresia")
 // Create or update user profile
 const createOrUpdateUserProfile = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
+  const userId = req.user._id;
   const userData = req.body;
 
   try {
     // Check if the user already exists
-    let user = await User.findOne({ firebaseUid });
+    let user = await User.findById(userId);
 
     if (user) {
       // Update existing user profile
       Object.assign(user, userData);
-      user.updatedAt = Date.now();
       await user.save();
       return res.json({ message: "Perfil de usuario actualizado exitosamente", user });
     }
 
-    // Create a new user profile
-    user = new User({ firebaseUid, ...userData });
-    await user.save();
-    res.json({ message: "Perfil de usuario creado exitosamente", user });
+    return res.status(404).json({ error: "Usuario no encontrado" });
   } catch (error) {
     console.error("Error creando/actualizando perfil de usuario:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -29,10 +25,10 @@ const createOrUpdateUserProfile = async (req, res) => {
 
 // Get user
 const getUserProfile = async (req, res) => {
-  const { uid } = req.params; // Assuming you pass the user ID
+  const { uid } = req.params; // User ID
   try {
-    // Find the user by firebaseUid
-    const user = await User.findOne({ firebaseUid: uid });
+    // Find the user by ID
+    const user = await User.findById(uid);
     if (!user) {
       return res.status(404).json({ error: "Perfil de usuario no encontrado" });
     }
@@ -57,13 +53,13 @@ const getAllUsers = async (req, res) => {
     // Agregar la propiedad isMember a cada usuario
     // Crear un Set de UIDs con membresía activa para búsqueda rápida
     const uidsConMembresiaActiva = new Set(
-      membresiasActivas.map((m) => m.firebaseUid)
+      membresiasActivas.map((m) => m.userId) // Changed from firebaseUid to userId
     );
 
     // Añadir campo isMember a cada usuario
     const usersConMembresia = users.map((user) => ({
       ...user.toObject(),
-      isMember: uidsConMembresiaActiva.has(user.firebaseUid),
+      isMember: uidsConMembresiaActiva.has(user._id.toString()), // Changed from firebaseUid to _id
     }));
 
     // Calcular totales
@@ -86,17 +82,16 @@ const getAllUsers = async (req, res) => {
 
 // Update user profile
 const updateUserProfile = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
+  const userId = req.user._id;
   const userData = req.body;
 
   try {
-    const user = await User.findOne({ firebaseUid });
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "Perfil de usuario no encontrado" });
     }
 
     Object.assign(user, userData);
-    user.updatedAt = Date.now();
     await user.save();
     res.json({ message: "Perfil de usuario actualizado exitosamente", user });
   } catch (error) {

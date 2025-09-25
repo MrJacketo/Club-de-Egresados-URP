@@ -1,4 +1,4 @@
-import { auth } from "../firebase";
+// Firebase removed - now using JWT authentication
 import apiClient from "./apiClient";
 // Crear o actualizar una oferta laboral
 
@@ -6,7 +6,8 @@ import apiClient from "./apiClient";
 export const createOrUpdateOfertaRequest = async (ofertaData) => {
     try {
 
-        const uid = JSON.parse(localStorage.getItem('user')).uid;
+        const user = JSON.parse(localStorage.getItem('user'));
+        const uid = user?.id;
 
         // Añadir el UID al objeto enviado
         const dataConUid = { ofertaData, uid };
@@ -61,11 +62,8 @@ export const disableOfertaRequest = async (id) => {
 //Eliminar una oferta laboral por ID
 export const deleteOfertaRequest = async (id) => {
     try {
-        const response = await apiClient.delete(`/api/oferta/${id}`, {
-            headers: {
-                Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
-            },
-        });
+        // JWT authentication handled by apiClient
+        const response = await apiClient.delete(`/api/oferta/${id}`);
         return response.data;
     } catch (error) {
         console.error("Error al eliminar oferta laboral:", error.response?.data || error.message);
@@ -85,12 +83,12 @@ export const getOptionsRequest = async () => {
 };
 
 // Postular a una oferta laboral (con archivo PDF adjunto)
-export const postularOfertaRequest = async ({ idOferta, correo, numero, uid, cvFile }) => {
+export const postularOfertaRequest = async ({ idOferta, correo, numero, cvFile }) => {
     try {
         const formData = new FormData();
         formData.append("correo", correo);
         formData.append("numero", numero);
-        formData.append("uid", uid);
+        // User ID will be extracted from JWT token on backend
         formData.append("cv", cvFile); // archivo pdf
         const response = await apiClient.post(`/api/oferta/${idOferta}/postular`, formData);
 
@@ -101,10 +99,10 @@ export const postularOfertaRequest = async ({ idOferta, correo, numero, uid, cvF
     }
 };
 
-export const getOfertasPostuladasPorUsuario = async (uid) => {
+export const getOfertasPostuladasPorUsuario = async (userId) => {
     try {
-        const response = await apiClient.get(`/api/postulaciones/${uid}`);
-        return response.data.ofertasPostuladas; // Array de IDs
+        const response = await apiClient.get(`/api/postulaciones/${userId}`);
+        return response.data.ofertasPostuladas; // Array of IDs
     } catch (error) {
         console.error('Error al obtener ofertas postuladas:', error);
         return [];

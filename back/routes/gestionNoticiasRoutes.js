@@ -10,24 +10,23 @@ const {
   obtenerEstadisticas,
 } = require("../controllers/gestionNoticiasController");
 
-// Si tienes autenticación, descomenta estas líneas:
-// const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
+const verifyJWTToken = require("../middleware/verifyJWTToken");
 
-// Middleware para verificar que el usuario es administrador (puedes personalizarlo)
-/*const verificarAdmin = (req, res, next) => {
-  // Si tienes roles, verifica aquí. Por ahora, solo verifica autenticación.
+// Middleware para verificar que el usuario es administrador
+const verificarAdmin = (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({
       success: false,
       message: "Usuario no autenticado",
     });
   }
+  // Add admin role check here if needed
   next();
-};*/
+};
 
-// Si usas autenticación, descomenta estas líneas:
-// router.use(verifyFirebaseToken);
-// router.use(verificarAdmin);
+// Aplicar middleware de autenticación
+router.use(verifyJWTToken);
+// router.use(verificarAdmin); // Uncomment if admin verification needed
 
 // Obtener todas las noticias con filtros
 router.get("/", obtenerNoticias);

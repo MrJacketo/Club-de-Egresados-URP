@@ -35,7 +35,7 @@ app.use(
 );
 
 // Routes
-app.use("/", authRoutes); // Authentication routes
+app.use("/auth", authRoutes); // Authentication routes
 app.use("/api", perfilRoutes); // Perfil de egresado routes
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/noticias", gestionNoticiasRoutes); // Noticias routes

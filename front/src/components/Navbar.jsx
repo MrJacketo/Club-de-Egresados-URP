@@ -1,17 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
-import { auth } from "../firebase"; // Import Firebase auth
-import { signOut } from "firebase/auth";
 
 export default function Navbar() {
-  const { user, setUser, setUserName, logout } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Sign out from Firebase
-      logout(); // Clear user context
+      logout(); // Clear user context and JWT token
       navigate("/login"); // Redirect to login page
     } catch (error) {
       console.error("Error during logout:", error);
@@ -35,7 +32,7 @@ export default function Navbar() {
           {user ? (
             <>
               <span className="text-gray-200">
-                Hola, {user.displayName || "Usuario"} !
+                Hola, {user.name?.split(' ')[0] || "Usuario"} !
               </span>
               <button
                 onClick={() => navigate("/welcome-egresado")}

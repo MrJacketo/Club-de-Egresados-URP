@@ -1,63 +1,97 @@
-import axios from "axios";
-import { createContext, useState, useEffect } from "react";
-import { auth } from "../firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { createContext, useState, useEffect, useContext } from "react";
+import auth from "../auth";
 
 export const UserContext = createContext({});
 
 export function UserContextProvider({ children }) {
   const [user, setUser] = useState(() => {
     // Retrieve user from localStorage on initialization
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
+    return auth.getUser();
   });
   const [userName, setUserName] = useState(() => {
-    // Retrieve userName from localStorage on initialization
-    return localStorage.getItem("userName") || "";
+    // Retrieve userName from user data
+    const userData = auth.getUser();
+    return userData?.name || "";
   });
   const [loading, setLoading] = useState(true); // Loading state for authentication
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        try {
-          // Fetch additional user data (e.g., name) from the backend
-          const token = await currentUser.getIdToken();
-          const response = await axios.get("http://localhost:8000/user-name", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          const userName = response.data.name;
-
-          // Update user and userName in state and localStorage
+    const initializeAuth = async () => {
+      try {
+        // Check if user is authenticated
+        if (auth.isAuthenticated()) {
+          // Try to get current user data from server
+          const currentUser = await auth.getCurrentUser();
           setUser(currentUser);
-          setUserName(userName);
-          localStorage.setItem("user", JSON.stringify(currentUser));
-          localStorage.setItem("userName", userName);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          logout(); // Clear user data if there's an error
+          setUserName(currentUser.name);
+        } else {
+          // No token found, user is not authenticated
+          setUser(null);
+          setUserName("");
         }
-      } else {
-        logout(); // Clear user data if no user is logged in
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        // Token might be expired or invalid, clear auth data
+        logout();
+      } finally {
+        setLoading(false);
       }
-      setLoading(false); // Authentication check is complete
-    });
+    };
 
-    return () => unsubscribe();
+    initializeAuth();
   }, []);
 
-  const logout = async () => {
-    await signOut(auth);
+  const login = async (email, password) => {
+    try {
+      const response = await auth.login(email, password);
+      setUser(response.user);
+      setUserName(response.user.name);
+      return response;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  const register = async (name, email, password) => {
+    try {
+      const response = await auth.register(name, email, password);
+      setUser(response.user);
+      setUserName(response.user.name);
+      return response;
+    } catch (error) {
+      console.error("Register error:", error);
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    auth.logout();
     setUser(null);
     setUserName("");
-    localStorage.removeItem("user");
-    localStorage.removeItem("userName");
   };
 
   return (
-    <UserContext.Provider value={{ user, userName, setUser, logout, loading }}>
+    <UserContext.Provider value={{ 
+      user, 
+      userName, 
+      setUser, 
+      login, 
+      register, 
+      logout, 
+      loading,
+      isAuthenticated: auth.isAuthenticated()
+    }}>
       {children}
     </UserContext.Provider>
   );
+}
+
+// Custom hook to use the UserContext
+export function useUser() {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserContextProvider");
+  }
+  return context;
 }

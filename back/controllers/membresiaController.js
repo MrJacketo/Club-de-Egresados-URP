@@ -4,9 +4,9 @@ const BeneficioRedimido = require("../models/BeneficioRedimido");
 
 // GET MEMBRESIAS
 const getMembresia = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
+  const userId = req.user._id;
   try {
-    const membresia = await Membresia.findOne({ firebaseUid });
+    const membresia = await Membresia.findOne({ userId });
 
     if (!membresia) {
       return res.status(200).json({
@@ -27,11 +27,11 @@ const getMembresia = async (req, res) => {
 
 // PUT MEMBRESIAS / UPDATE MEMBRESIAS
 const activateMembresia = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
+  const userId = req.user._id;
 
   try {
     const membresia = await Membresia.findOneAndUpdate(
-      { firebaseUid },
+      { userId },
       {
         estado: "activa",
         fechaActivacion: new Date(),
@@ -56,26 +56,24 @@ const activateMembresia = async (req, res) => {
 // GET ALL MEMBRESIAS (ADMIN)
 const getAllMembresias = async (req, res) => {
   try {
-    const membresias = await Membresia.find().lean();
+    const membresias = await Membresia.find().populate('userId', 'name email').lean();
 
-    const firebaseUids = membresias.map(m => m.firebaseUid);
-    const usuarios = await User.find({ firebaseUid: { $in: firebaseUids } }).lean();
-    const usuariosPorUid = Object.fromEntries(usuarios.map(u => [u.firebaseUid, u]));
+    const userIds = membresias.map(m => m.userId);
     const beneficiosRedimidos = await BeneficioRedimido.aggregate([
-      { $match: { firebaseUid: { $in: firebaseUids } } },
-      { $group: { _id: "$firebaseUid", cantidad: { $sum: 1 } } }
+      { $match: { userId: { $in: userIds } } },
+      { $group: { _id: "$userId", cantidad: { $sum: 1 } } }
     ]);
-    const beneficiosPorUid = Object.fromEntries(beneficiosRedimidos.map(b => [b._id, b.cantidad]));
+    const beneficiosPorUid = Object.fromEntries(beneficiosRedimidos.map(b => [b._id.toString(), b.cantidad]));
     const datosFinales = membresias.map(m => {
-      const usuario = usuariosPorUid[m.firebaseUid];
-      const beneficiosUsados = beneficiosPorUid[m.firebaseUid] || 0;
+      const usuario = m.userId;
+      const beneficiosUsados = beneficiosPorUid[m.userId.toString()] || 0;
 
       return {
         id: m._id.toString(),
         usuario: {
           nombre: usuario?.name || "Desconocido",
           email: usuario?.email || "",
-          codigo: usuario?.firebaseUid || "Sin código",
+          codigo: usuario?._id.toString() || "Sin código",
         },
         estado: m.estado,
         fechaActivacion: m.fechaActivacion,
@@ -109,14 +107,14 @@ const updateMembresiaEstado = async (req, res) => {
     }
 
     // Buscar usuario para validar que existe
-    const user = await User.findOne({ firebaseUid: userId });
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
     // Actualizar o crear membresía
     const membresia = await Membresia.findOneAndUpdate(
-      { firebaseUid: userId },
+      { userId },
       { estado },
       { new: true, upsert: true }
     );
@@ -137,9 +135,9 @@ const updateMembresiaEstado = async (req, res) => {
 };
 
 const deleteMembresia = async (req, res) => {
-  const firebaseUid = req.params.userId;
+  const userId = req.params.userId;
   try {
-    const membresia = await Membresia.findOneAndDelete({ firebaseUid });
+    const membresia = await Membresia.findOneAndDelete({ userId });
     if (!membresia) {
       return res.status(404).json({ error: "Membresía no encontrada" });
     }

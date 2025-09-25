@@ -16,6 +16,7 @@ import PerfilEgresadoForm from './components/PerfilEgresadoForm.jsx';
 import GestionarMembresia from './pages/Egresado/GestionarMembresia'; // ajusta la ruta
 import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx'; // ajusta la ruta
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
 import Sidebar from './components/Sidebar.jsx';
 import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
@@ -58,10 +59,10 @@ function App() {
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
           <Route path="/foro-egresados" element={<ForoEgresados />} />
           {/* Rutas de administrador */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path='/admin/egresados' element={<AdminUsers/>} />        
-          <Route path="/admin/membresias" element={<GestionMembresiaAdmin/>} />
-          <Route path='/admin/gestion-noticias' element={<GestionNoticias/>} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
+          <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
+          <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
           
         </Routes>
       </div>

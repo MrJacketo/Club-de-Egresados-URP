@@ -1,17 +1,10 @@
 import apiClient from "./apiClient";
-import { auth } from "../firebase";
+// Firebase removed - now using JWT authentication
 
 export const getGraduateProfileRequest = async () => {
   try {
-    // Get the current user's ID token
-    const token = await auth.currentUser.getIdToken();
-
-    // Make the API request with the token in the Authorization header
-    const response = await apiClient.get("/api/get-perfil-egresado", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // JWT authentication handled by apiClient
+    const response = await apiClient.get("/api/get-perfil-egresado");
 
     return response.data; // Return the profile data if it exists
   } catch (error) {

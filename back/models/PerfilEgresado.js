@@ -1,62 +1,9 @@
 const mongoose = require("mongoose");
 
 const perfilEgresadoSchema = new mongoose.Schema({
-  firebaseUid: { type: String, required: true, unique: true }, // Firebase UID
-  nombreCompleto: { type: String, required: true },
-  anioEgreso: { type: Number, required: true },
-  carrera: {
-    type: String,
-    required: true,
-    enum: [
-      "Administración y Gerencia",
-      "Administración de Negocios Globales",
-      "Arquitectura",
-      "Biología",
-      "Contabilidad y Finanzas",
-      "Derecho y Ciencia Política",
-      "Economía",
-      "Ingeniería Civil",
-      "Ingeniería Electrónica",
-      "Ingeniería Industrial",
-      "Ingeniería Informática",
-      "Ingeniería Mecatrónica",
-      "Marketing Global y Administración Comercial",
-      "Medicina Humana",
-      "Medicina Veterinaria",
-      "Psicología",
-      "Traducción e Interpretación",
-      "Turismo, Hotelería y Gastronomía",
-    ],
-  },
-  gradoAcademico: {
-    type: String,
-    enum: ["Bachiller", "Titulado", "Magíster", "Doctorado"],
-  },
-  experienciaLaboral: {
-    aniosExperiencia: {
-      type: String,
-      enum: ["0–1 años", "2–3 años", "4–5 años", "Más de 5 años"],
-    },
-    areasExperiencia: [
-      {
-        type: String,
-        enum: [
-          "Finanzas",
-          "Marketing",
-          "Desarrollo de software",
-          "Recursos Humanos",
-          "Logística",
-          "Atención al cliente",
-          "Legal",
-          "Educación",
-        ],
-      },
-    ],
-    tipoEmpresa: {
-      type: String,
-      enum: ["Pública", "Privada", "ONG", "Startup", "Multinacional"],
-    },
-  },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true }, // Reference to User
+  // nombreCompleto, anioEgreso, carrera, gradoAcademico moved to User model
+  // experienciaLaboral removed - not needed for profile
   interesesProfesionales: {
     areasInteres: [
       {
@@ -99,7 +46,7 @@ const perfilEgresadoSchema = new mongoose.Schema({
         },
         nivel: {
           type: String,
-          enum: ["Básico", "Intermedio", "Avanzado"],
+          enum: ["Básico", "Intermedio", "Avanzado", "Nativo"],
         },
       },
     ],

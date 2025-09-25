@@ -12,8 +12,8 @@ const handleSubscription = async (req, res) => {
 
     try {
       /*/ PARA DATOS REALES DEL USER
-      const { firebaseUid } = req.user;
-      const usuario = await Usuario.findOne({ firebaseUid });
+      const userId = req.user._id; // Changed from firebaseUid
+      const usuario = await Usuario.findById(userId); // Changed to findById
 
       if (!usuario || !usuario.email) {
         return res.status(404).json({ error: "Usuario no encontrado o sin email" });
@@ -31,7 +31,7 @@ const handleSubscription = async (req, res) => {
                 },                reason: "Subscripcion anual",
                 back_url: "https://1f8f-38-25-16-212.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
                 notification_url: "https://3e24-38-25-16-212.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
-                external_reference: req.user.firebaseUid 
+                external_reference: req.user._id.toString() // Changed from firebaseUid to _id
             }
         });
 
@@ -55,12 +55,12 @@ const handleWebhook = async (req, res) => {
 
         const payment = new mercadopago.Payment(config);
         const paymentData = await payment.get({ id: paymentId });
-        const externalReference = paymentData.external_reference; // el firebaseUid
+        const externalReference = paymentData.external_reference; // el userId
         const status = paymentData.status;
 
         if (status === "approved" && externalReference) {
           const membresia = await Membresia.findOneAndUpdate(
-            { firebaseUid: externalReference },
+            { userId: externalReference }, // Changed from firebaseUid to userId
             {
               estado: "activa",
               fechaActivacion: new Date(),
@@ -94,15 +94,15 @@ const handleWebhook = async (req, res) => {
 // Función para simular pagos localmente (para desarrollo)
 const simulatePagoAprobado = async (req, res) => {
   try {
-    const { firebaseUid } = req.user;
+    const userId = req.user._id; // Changed from firebaseUid
     
-    if (!firebaseUid) {
-      return res.status(400).json({ error: "Se requiere firebaseUid" });
+    if (!userId) {
+      return res.status(400).json({ error: "Se requiere userId" });
     }
 
     // Actualizar o crear la membresía
     const membresia = await Membresia.findOneAndUpdate(
-      { firebaseUid },
+      { userId }, // Changed from firebaseUid
       {
         estado: "activa",
         fechaActivacion: new Date(),
@@ -112,7 +112,7 @@ const simulatePagoAprobado = async (req, res) => {
     );
 
     if (membresia) {
-      console.log("Membresía activada para el usuario con UID:", firebaseUid);
+      console.log("Membresía activada para el usuario con ID:", userId); // Changed from firebaseUid
       return res.status(200).json({ 
         success: true, 
         message: "Pago simulado correctamente",

@@ -1,23 +1,10 @@
 import apiClient from "./apiClient";
-import { auth } from "../firebase";
+// Firebase removed - now using JWT authentication
 
 export const getMembresiaRequest = async () => {
   try {
-    await auth.authStateReady();
-    const user = auth.currentUser;
-
-    if (!user) {
-      return {
-        estado: "inactiva",
-        fechaActivacion: null,
-        fechaVencimiento: null,
-      };
-    }
-
-    const token = await user.getIdToken();
-    const response = await apiClient.get("/api/membresia", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    // User authentication handled by JWT token in apiClient
+    const response = await apiClient.get("/api/membresia");
 
     return response.data || {
       estado: "inactiva",
@@ -81,12 +68,8 @@ export const updateMembresiaEstadoRequest = async (userId, nuevoEstado) => {
 
 export const activateMembresiaRequest = async () => {
   try {
-    const token = await auth.currentUser?.getIdToken();
-    const response = await apiClient.put(
-      "/api/membresia/activate",
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    // JWT authentication handled by apiClient
+    const response = await apiClient.put("/api/membresia/activate");
     return response.data;
   } catch (error) {
     console.error("Error activando membresía:", error.message);
@@ -96,10 +79,8 @@ export const activateMembresiaRequest = async () => {
 
 export const createOrUpdateMembresiaRequest = async (membresiaData) => {
   try {
-    const token = await auth.currentUser?.getIdToken();
-    const response = await apiClient.post("/api/membresia", membresiaData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    // JWT authentication handled by apiClient
+    const response = await apiClient.post("/api/membresia", membresiaData);
     return response.data;
   } catch (error) {
     console.error("Error actualizando membresía:", error.message);
@@ -108,9 +89,9 @@ export const createOrUpdateMembresiaRequest = async (membresiaData) => {
 };
 
 //ADMIN
-export const eliminarMembresiaAdmin = async (firebaseUid) => {
+export const eliminarMembresiaAdmin = async (userId) => {
   try {
-    const response = await apiClient.delete(`/api/membresia/deleteMembresia/${firebaseUid}`);
+    const response = await apiClient.delete(`/api/membresia/deleteMembresia/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error eliminando membresía desde admin:", error);

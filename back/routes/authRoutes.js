@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-const verifyFirebaseToken = require('../middleware/verifyFirebaseToken');
-const { test, registerUser, loginUser, getUserName } = require('../controllers/authController');
+const verifyJWTToken = require('../middleware/verifyJWTToken');
+const { test, registerUser, loginUser, getUserName, getCurrentUser, updateUserAcademicData } = require('../controllers/authController');
 
 // Middleware
 router.use(
@@ -18,6 +18,8 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 
 // Protected routes
-router.get('/user-name', verifyFirebaseToken, getUserName);
+router.get('/user-name', verifyJWTToken, getUserName);
+router.get('/current-user', verifyJWTToken, getCurrentUser);
+router.put('/update-academic-data', verifyJWTToken, updateUserAcademicData);
 
 module.exports = router;

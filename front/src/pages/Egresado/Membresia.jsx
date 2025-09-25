@@ -1,16 +1,17 @@
 import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle } from "lucide-react"
-import { auth } from "../../firebase";
+// Firebase removed - now using JWT authentication
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/userContext";
 
 export default function Membresia() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const handleObtenerMembresia = async () => {
     try {
       setLoading(true);
-      const user = auth.currentUser;
       if (!user) {
         alert("Debes iniciar sesión para obtener la membresía.");
         return;

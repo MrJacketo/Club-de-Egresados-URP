@@ -1,5 +1,6 @@
-import { auth } from "../firebase"; // Ajusta la ruta según corresponda
+// Firebase removed - now using JWT authentication
 import apiClient from "./apiClient"; // Este debe estar configurado con axios
+import auth from "../auth"; // JWT auth system
 
 //metodos de gestionar feedback
 export const getBeneficios = async (filtros = {}) => {
@@ -45,17 +46,14 @@ export const getTemasCursos = async () => {
 // metodos de ver-beneficios
 export const getBeneficiosRequest = async () => {
   try {
-    await auth.authStateReady();
-    const user = auth.currentUser;
+    // Check if user is authenticated
+    if (!auth.isAuthenticated()) {
+      console.log("Usuario no autenticado");
+      return [];
+    }
 
-    if (!user) return [];
-
-    const token = await auth.currentUser?.getIdToken();
-    const response = await apiClient.get("/api/beneficios/ver-beneficios", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // JWT token is automatically added by apiClient interceptor
+    const response = await apiClient.get("/api/beneficios/ver-beneficios");
     return response.data;
   } catch (error) {
     console.error("Error al obtener beneficios:", error);
@@ -65,37 +63,32 @@ export const getBeneficiosRequest = async () => {
 
 export const getBeneficiosRedimidosRequest = async () => {
   try {
-    await auth.authStateReady();
-    const user = auth.currentUser;
+    // Check if user is authenticated
+    if (!auth.isAuthenticated()) {
+      console.log("Usuario no autenticado");
+      return { beneficiosRedimidos: [] };
+    }
 
-    if (!user) return [];
-
-    const token = await user.getIdToken();
-    const response = await apiClient.get("/api/beneficios/mis-beneficios", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.data || [];
+    // JWT token is automatically added by apiClient interceptor
+    const response = await apiClient.get("/api/beneficios/mis-beneficios");
+    return response.data || { beneficiosRedimidos: [] };
   } catch (error) {
     console.error("Error al obtener beneficios redimidos:", error);
-    return [];
+    return { beneficiosRedimidos: [] };
   }
 };
 
 export const redimirBeneficioRequest = async (beneficioId) => {
   try {
-    const token = await auth.currentUser?.getIdToken();
+    // Check if user is authenticated
+    if (!auth.isAuthenticated()) {
+      throw new Error("Usuario no autenticado");
+    }
 
+    // JWT token is automatically added by apiClient interceptor
     const response = await apiClient.post(
       "/api/membresia/redimir",
-      { beneficioId },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { beneficioId }
     );
 
     return response.data;

@@ -3,10 +3,10 @@ const Beneficio = require("../models/Beneficio");
 
 // Ver beneficios redimidos por el usuario actual
 const getBeneficiosRedimidosPorUsuario = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
+  const userId = req.user._id;
 
   try {
-    const beneficiosRedimidos = await BeneficioRedimido.find({ firebaseUid })
+    const beneficiosRedimidos = await BeneficioRedimido.find({ userId })
       .populate("beneficioId")
       .lean();
 
@@ -26,7 +26,7 @@ const getBeneficiosRedimidosPorUsuario = async (req, res) => {
 
 // Redimir un beneficio
 const redimirBeneficio = async (req, res) => {
-  const firebaseUid = req.user.firebaseUid;
+  const userId = req.user._id;
   const { beneficioId } = req.body;
 
   if (!beneficioId) {
@@ -42,7 +42,7 @@ const redimirBeneficio = async (req, res) => {
 
     // Registrar redención
     const beneficioRedimido = new BeneficioRedimido({
-      firebaseUid,
+      userId,
       beneficioId,
       fecha_redencion: new Date(),
       codigo_unico: beneficio.codigo || null,
