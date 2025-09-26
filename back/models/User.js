@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, default: "Anonymous" },
   profilePicture: { type: String, default: "" },
   activo: { type: Boolean, default: true },
-  rol: { type: String, enum: ["egresado", "admin"], default: "egresado" },
+  rol: { type: String, enum: ["egresado", "admin", "empresa","moderador","inspector_laboral"], default: "egresado" },
   createdAt: { type: Date, default: Date.now },
   
   // Datos académicos del egresado
