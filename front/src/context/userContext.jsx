@@ -32,7 +32,6 @@ export function UserContextProvider({ children }) {
       } catch (error) {
         console.error("Error initializing auth:", error);
         // Token might be expired or invalid, clear auth data
-        logout();
       } finally {
         setLoading(false);
       }
@@ -72,13 +71,13 @@ export function UserContextProvider({ children }) {
   };
 
   return (
-    <UserContext.Provider value={{ 
-      user, 
-      userName, 
-      setUser, 
-      login, 
-      register, 
-      logout, 
+    <UserContext.Provider value={{
+      user,
+      userName,
+      setUser,
+      login,
+      register,
+      logout,
       loading,
       isAuthenticated: auth.isAuthenticated()
     }}>
