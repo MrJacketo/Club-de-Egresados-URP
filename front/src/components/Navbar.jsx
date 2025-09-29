@@ -1,67 +1,94 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useContext, useState } from "react";
 import { UserContext } from "../context/userContext";
+import { ThemeContext } from "../context/ThemeContext";
+import { Home, Star, User, Shield, Newspaper, MessagesSquare, Search, Moon, Sun } from "lucide-react";
+import logo from '../assets/logoUrpex2.svg';
 
 export default function Navbar() {
+  const location = useLocation();
   const { user, logout } = useContext(UserContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleLogout = async () => {
     try {
-      logout(); // Clear user context and JWT token
-      navigate("/login"); // Redirect to login page
+      logout();
+      navigate("/login");
     } catch (error) {
       console.error("Error during logout:", error);
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log('Buscando:', searchTerm);
+    // Aquí va tu lógica de búsqueda
+  };
+
   return (
-    <nav className="bg-black/50 backdrop-blur-sm p-4 shadow-lg fixed top-0 left-0 w-full z-50">
-      <div className="max-w-full mx-auto flex justify-between items-center">
-        <div className="flex items-center">
-          <img src="/logo.png" alt="Logo URP" className="w-12 h-12 mr-2" />
-          <Link
-            to="/"
-            className="text-white font-bold text-xl hover:text-teal-300 transition"
-          >
-            URPex
-          </Link>
+    <nav className="bg-theme-primary fixed top-0 left-0 w-full z-50 shadow-lg transition-theme">
+      <div className="bg-theme-primary text-theme-primary flex justify-between items-center p-4 transition-theme">
+        
+        {/* Logo */}
+        <div>
+          <img className="h-8" src={logo} alt="Logo URP" />
         </div>
 
-        <div className="space-x-6">
+        {/* Barra de búsqueda */}
+        <div className="flex-1 max-w-2xl mx-8">
+          <form onSubmit={handleSearch} className="relative">
+            <Search 
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-secondary" 
+              size={20}
+            />
+            
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar ofertas, noticias, eventos..."
+              className="w-full bg-theme-primary text-theme-primary placeholder:text-theme-secondary pl-10 pr-4 py-2.5 rounded-lg outline-1 outline-[#ffffff39] focus:outline-[#04e68482] focus:outline-2 transition-all"
+            />
+          </form>
+        </div>
+
+        {/* Botón de tema y usuario */}
+        <div className="flex items-center gap-4">
+          {/* Botón cambiar tema */}
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-lg bg-theme-secondary hover:opacity-80 transition-all duration-300"
+            aria-label="Cambiar tema"
+            title={theme === 'light' ? 'Modo oscuro' : 'Modo claro'}
+          >
+            {theme === 'light' ? (
+              <Moon size={20} className="text-theme-primary" />
+            ) : (
+              <Sun size={20} className="text-yellow-400" />
+            )}
+          </button>
+
           {user ? (
             <>
-              <span className="text-gray-200">
-                Hola, {user.name?.split(' ')[0] || "Usuario"} !
+              <span className="text-sm font-medium text-theme-primary">
+                {user.nombre}
               </span>
               <button
-                onClick={() => navigate("/welcome-egresado")}
-                className="text-gray-200 hover:text-teal-300 transition"
-              >
-                Inicio
-              </button>
-              <button
                 onClick={handleLogout}
-                className="text-gray-200 hover:text-teal-300 transition"
+                className="bg-theme-accent hover:opacity-90 text-white px-4 py-2 rounded-lg transition-all font-medium"
               >
-                Log out
+                Cerrar Sesión
               </button>
             </>
           ) : (
-            <>
-              {/* 
-              <Link to="/register" className="text-gray-200 hover:text-teal-300 transition">
-                Register
-              </Link> 
-              */}
-
-              <button
-                onClick={() => navigate("/login")}
-                className="text-gray-200 hover:text-teal-300 transition"
-              >
-                Login
-              </button>
-            </>
+            <Link
+              to="/login"
+              className="bg-theme-accent hover:opacity-90 text-white px-4 py-2 rounded-lg transition-all font-medium"
+            >
+              Iniciar Sesión
+            </Link>
           )}
         </div>
       </div>

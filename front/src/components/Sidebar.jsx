@@ -25,7 +25,7 @@ export default function Sidebar() {
                 : "hover:bg-teal-500/20 hover:text-teal-300 transition"
             }`}
           >
-            <Home size={24} />
+          <Home size={24} />
             <span className="hidden group-hover:inline group-focus-within:inline text-sm font-medium">
               Inicio
             </span>
