@@ -1,62 +1,107 @@
 @import "tailwindcss";
 
-/* Establece los estilos globales */
+/* ========== VARIABLES DE TEMA ========== */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Modo claro (por defecto) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f4f6;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --accent-color: #10b981;
+  --border-color: #e5e7eb;
+  --navbar-bg: #ffffff;
 }
 
+[data-theme="dark"] {
+  /* Modo oscuro */
+  --bg-primary: #13161C;
+  --bg-secondary: #1a1a1a;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --accent-color: #34d399;
+  --border-color: #374151;
+  --navbar-bg: #111827;
+}
 
+/* ========== CLASES PERSONALIZADAS REUTILIZABLES ========== */
+.bg-theme-primary {
+  background-color: var(--bg-primary);
+}
 
-/* Asegúrate de que el cuerpo ocupe toda la pantalla */
+.bg-theme-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-navbar {
+  background-color: var(--navbar-bg);
+}
+
+.bg-theme-accent {
+  background-color: var(--accent-color);
+}
+
+.text-theme-primary {
+  color: var(--text-primary);
+}
+
+.text-theme-secondary {
+  color: var(--text-secondary);
+}
+
+.border-theme {
+  border-color: var(--border-color);
+}
+.border-theme-focus{
+  border-color: var(--accent-color);
+}
+
+.hover-accent:hover {
+  background-color: var(--accent-color);
+  opacity: 0.9;
+}
+
+.focus-accent:focus {
+  outline: none;
+  ring: 2px solid var(--accent-color);
+}
+
+/* ========== ESTILOS GLOBALES ========== */
+* {
+  font-family: 'League Spartan', sans-serif;
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow-x: hidden; /* Esto evita el desbordamiento horizontal */
-  box-sizing: border-box;
-  background: linear-gradient(to bottom right, #4ade80, #10b981, #14b8a6); /* Fondo verde */
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Asegúrate de que el contenedor raíz ocupe toda la pantalla */
 #root {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* Ocultar la barra de desplazamiento pero permitir el desplazamiento */
-html, body {
-  overflow: auto; /* Habilita el desplazamiento */
-}
-
-::-webkit-scrollbar {
-  width: 0px;  /* Oculta la barra de desplazamiento */
-  background: transparent;  /* Fondo transparente */
-}
-
-::-webkit-scrollbar-thumb {
-  background: transparent; /* Oculta el "thumb" (la parte que se mueve) */
-}
-
-/* Para Firefox */
-scrollbar-width none  /* Oculta las barras de desplazamiento en Firefox */
-
-/* Estilo de encabezados y botones */
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: var(--text-primary);
+}
+
+h2 {
+  font-size: 2.4em;
+  color: var(--text-primary);
+}
+
+h3 {
+  font-size: 1.8em;
+  color: var(--text-primary);
 }
 
 button {
@@ -66,54 +111,47 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.25s;
 }
 
-button:hover {
-  border-color: #646cff;
+/* ========== OCULTAR SCROLLBAR ========== */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+::-webkit-scrollbar-thumb {
+  background: transparent;
 }
 
+html {
+  scrollbar-width: none;
+}
 
+/* ========== EDITOR PROSEMIRROR ========== */
 .ProseMirror {
-  color: black;
-  background-color: white;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
   font-family: 'Inter', sans-serif;
   font-size: 15px;
   padding: 0.75rem;
   border-radius: 0.5rem;
   min-height: 200px;
-  border: 1.5px solid rgba(142, 142, 142, 0.501);
-  transition-all duration-200
-
-  &:focus {
-    outline: none;
-    border: 1px solid #25BF7B;
-  }
-
-  &:hover {
-    border-color: #686868bb; 
-  }
+  border: 1.5px solid var(--border-color);
+  transition: all 0.2s;
 }
 
+.ProseMirror:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
 
+.ProseMirror:hover {
+  border-color: var(--text-secondary);
+}
 
-/* Preferencia de esquema claro */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #575353;
-  }
+/* ========== ANIMACIONES Y TRANSICIONES ========== */
+.transition-theme {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

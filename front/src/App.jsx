@@ -28,6 +28,8 @@ import AdminUsers from './pages/Admin/AdminUsers.jsx';
 import GestionMembresiaAdmin from './pages/Admin/GestionMembresiaAdmin.jsx';
 import GestionNoticias from './pages/Admin/GestionNoticias.jsx';
 
+import HomeCursos from './pages/Egresado/Cursos/HomeCursos.jsx';
+import HomeConferencias from './pages/Egresado/Conferencias/HomeConferencias.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -58,6 +60,16 @@ function App() {
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
           <Route path="/foro-egresados" element={<ForoEgresados />} />
+          <Route path='/conferencias' element={<PrivateRoute><HomeConferencias/></PrivateRoute>} />
+
+          {/*Rutas de Egresado*/}
+          <Route path='/cursos' element={<PrivateRoute><HomeCursos/></PrivateRoute>} />
+
+          {/*Ruta de cursos*/}
+          <Route path='/cursos' element={<HomeCursos/>}/>
+
+
+
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
