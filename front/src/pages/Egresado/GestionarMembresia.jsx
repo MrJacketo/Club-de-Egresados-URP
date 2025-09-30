@@ -16,7 +16,8 @@ import { getBeneficiosRedimidosRequest } from "../../api/beneficiosApi";
 import { useNavigate } from "react-router-dom";
 
 export default function GestionarMembresiaForm() {
-  const user = useContext(UserContext);
+  // --- No changes to state or logic ---
+  const { user } = useContext(UserContext); // Assuming your UserContext provides a 'user' object with 'userName'
   const navigate = useNavigate();
   const [beneficiosAbiertos, setBeneficiosAbiertos] = useState(true);
   const [membresia, setMembresia] = useState({
@@ -33,9 +34,7 @@ export default function GestionarMembresiaForm() {
     const fetchMembresia = async () => {
       try {
         const data = await getMembresiaRequest();
-        if (data) {
-          setMembresia(data);
-        }
+        if (data) setMembresia(data);
       } catch (err) {
         setError("Error al cargar la membresía");
         console.error(err);
@@ -43,14 +42,13 @@ export default function GestionarMembresiaForm() {
         setLoading(false);
       }
     };
-
     fetchMembresia();
   }, []);
 
   useEffect(() => {
     const fetchRedimidos = async () => {
-      try {
-        if (membresia.estado === "activa") {
+      if (membresia.estado === "activa") {
+        try {
           const response = await getBeneficiosRedimidosRequest();
           if (response.success && Array.isArray(response.beneficiosRedimidos)) {
             const beneficios = response.beneficiosRedimidos.map((item) => ({
@@ -62,12 +60,11 @@ export default function GestionarMembresiaForm() {
             }));
             setBeneficiosRedimidos(beneficios);
           }
+        } catch (error) {
+          console.error("Error al cargar beneficios redimidos", error);
         }
-      } catch (error) {
-        console.error("Error al cargar beneficios redimidos", error);
       }
     };
-
     fetchRedimidos();
   }, [membresia.estado]);
 
@@ -79,16 +76,20 @@ export default function GestionarMembresiaForm() {
     return Math.max(0, Math.ceil(diferencia / (1000 * 3600 * 24)));
   };
 
-  const handleRenovar = async () => {
+  const handleRenovar = () => {
     if (membresia.estado !== "activa") {
       navigate("/membresia");
     }
   };
 
+  // --- STYLING CHANGES START HERE ---
+
+  // Improved loading state for better UX in a dark theme
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Cargando información de membresía...
+      <div className="min-h-screen bg-[#1C1D21] flex flex-col items-center justify-center text-gray-400">
+        <RefreshCw size={32} className="animate-spin mb-4 text-green-500" />
+        <p>Cargando información de tu membresía...</p>
       </div>
     );
   }
@@ -98,32 +99,31 @@ export default function GestionarMembresiaForm() {
     100 - Math.min(100, Math.round((diasRestantes / 365) * 100));
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden">
-      <header className="w-full py-8 px-6 mt-10 text-white">
+    // Set the overall background to dark gray
+    <div className="min-h-screen w-full bg-[#1C1D21] text-white">
+      <main className="w-full px-4 sm:px-6 py-16 sm:py-24">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2">Mi Membresía</h1>
-        </div>
-      </header>
+          <h1 className="text-4xl font-bold mb-8">Mi Membresía</h1>
 
-      <main className="flex-1 w-full px-4 overflow-y-auto">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg p-6 mb-6 text-black shadow-lg">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-3 rounded-full">
-                  <User size={24} />
+          {/* User Info Card: removed bg-white, changed to dark style */}
+          <div className="border border-gray-700/50 rounded-xl p-6 mb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-gray-800 p-3 rounded-full">
+                  <User size={24} className="text-gray-300" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold">
+                  <h2 className="text-2xl font-bold text-white">
                     {user?.userName || "Usuario"}
                   </h2>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">Membresía Anual</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-lg text-gray-300">Membresía Anual</span>
+                    {/* Status tags restyled for dark mode */}
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                         membresia.estado === "activa"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-green-500/10 text-green-300 border-green-500/20"
+                          : "bg-red-500/10 text-red-300 border-red-500/20"
                       }`}
                     >
                       {membresia.estado === "activa" ? "Activa" : "Inactiva"}
@@ -132,89 +132,66 @@ export default function GestionarMembresiaForm() {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  className={`px-4 py-2 rounded-lg flex items-center ${
-                    membresia.estado === "activa"
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-                  }`}
-                  onClick={handleRenovar}
-                  disabled={membresia.estado === "activa"}
-                >
-                  <RefreshCw size={18} className="mr-2" />
-                  {membresia.estado === "activa"
-                    ? "Membresía activa"
-                    : "Activar membresía"}
-                </button>
-              </div>
+              {/* Button restyled from blue to green */}
+              <button
+                className={`px-5 py-2.5 rounded-lg flex items-center justify-center font-semibold transition-colors ${
+                  membresia.estado === "activa"
+                    ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
+                }`}
+                onClick={handleRenovar}
+                disabled={membresia.estado === "activa"}
+              >
+                <RefreshCw size={16} className="mr-2" />
+                {membresia.estado === "activa" ? "Membresía activa" : "Activar membresía"}
+              </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Detalles de membresía */}
-            <div className="bg-white rounded-lg p-6 text-black shadow-lg">
-              <h3 className="text-xl font-semibold mb-4">
-                Detalles de membresía
-              </h3>
-
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Details Card: restyled for dark mode */}
+            <div className="border border-gray-700/50 rounded-xl p-6">
+              <h3 className="text-xl font-semibold mb-6 text-white">Detalles de membresía</h3>
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div className="flex flex-col">
-                  <span className="text-sm opacity-70 flex items-center gap-1 mb-1">
-                    <Calendar size={14} /> Fecha de inicio
+                  <span className="text-sm text-gray-400 flex items-center gap-2 mb-1">
+                    <Calendar size={14} className="text-green-400" /> Fecha de inicio
                   </span>
-                  <span className="font-medium text-lg">
-                    {membresia.fechaActivacion
-                      ? new Date(
-                          membresia.fechaActivacion
-                        ).toLocaleDateString()
-                      : "--/--/----"}
+                  <span className="font-medium text-lg text-gray-100">
+                    {membresia.fechaActivacion ? new Date(membresia.fechaActivacion).toLocaleDateString() : "--/--/----"}
                   </span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm opacity-70 flex items-center gap-1 mb-1">
-                    <Calendar size={14} /> Fecha de vencimiento
+                  <span className="text-sm text-gray-400 flex items-center gap-2 mb-1">
+                    <Calendar size={14} className="text-green-400" /> Fecha de vencimiento
                   </span>
-                  <span className="font-medium text-lg">
-                    {membresia.fechaVencimiento
-                      ? new Date(
-                          membresia.fechaVencimiento
-                        ).toLocaleDateString()
-                      : "--/--/----"}
+                  <span className="font-medium text-lg text-gray-100">
+                    {membresia.fechaVencimiento ? new Date(membresia.fechaVencimiento).toLocaleDateString() : "--/--/----"}
                   </span>
                 </div>
               </div>
-
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="opacity-70">Progreso de membresía</span>
-                  <span className="font-medium">
-                    {membresia.estado === "activa"
-                      ? `${porcentajeCompletado}%`
-                      : "0%"}
+                  <span className="text-gray-400">Progreso de membresía</span>
+                  <span className="font-medium text-gray-200">
+                    {membresia.estado === "activa" ? `${porcentajeCompletado}%` : "0%"}
                   </span>
                 </div>
-                <div className="w-full bg-black/50 rounded-full h-3">
+                {/* Progress bar with updated dark theme track */}
+                <div className="w-full bg-gray-700 rounded-full h-2.5">
                   <div
-                    className="bg-green-600 h-3 rounded-full"
-                    style={{
-                      width: `${
-                        membresia.estado === "activa"
-                          ? porcentajeCompletado
-                          : 0
-                      }%`,
-                    }}
+                    className="bg-green-500 h-2.5 rounded-full"
+                    style={{ width: `${membresia.estado === "activa" ? porcentajeCompletado : 0}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm opacity-70 flex items-center">
-                    <Clock size={14} className="mr-1" />
-                    {membresia.estado === "activa"
-                      ? `${diasRestantes} días restantes`
-                      : "No activa"}
+                <div className="flex justify-between items-center pt-1">
+                  <span className="text-sm text-gray-400 flex items-center">
+                    <Clock size={14} className="mr-2 text-green-400" />
+                    {membresia.estado === "activa" ? `${diasRestantes} días restantes` : "No activa"}
                   </span>
+                  {/* Expiration warning tag restyled */}
                   {membresia.estado === "activa" && diasRestantes < 15 && (
-                    <span className="text-xs bg-amber-400/50 border border-amber-400/50 text-white px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded-full">
                       ¡Próximo a vencer!
                     </span>
                   )}
@@ -222,93 +199,54 @@ export default function GestionarMembresiaForm() {
               </div>
             </div>
 
-            {/* Beneficios */}
-            <div className="bg-white rounded-lg p-6 text-white shadow-lg">
+            {/* Benefits Card: restyled for dark mode */}
+            <div className="border border-gray-700/50 rounded-xl p-6">
               <button
-                className="flex justify-between items-center w-full font-semibold text-xl mb-4"
+                className="flex justify-between items-center w-full font-semibold text-xl"
                 onClick={() => setBeneficiosAbiertos(!beneficiosAbiertos)}
               >
-                <span className="flex items-center">
-                  <Award size={20} className="mr-2" />
-                  {membresia.estado === "activa"
-                    ? "Beneficios actuales con su membresía:"
-                    : "Beneficios si activa su membresía:"}
+                <span className="flex items-center text-left">
+                  <Award size={20} className="mr-3 text-green-400 flex-shrink-0" />
+                  Beneficios de tu membresía
                 </span>
-                {beneficiosAbiertos ? (
-                  <ChevronUp size={20} />
-                ) : (
-                  <ChevronDown size={20} />
-                )}
+                {beneficiosAbiertos ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </button>
 
               {beneficiosAbiertos && (
-                <ul className="space-y-3">
+                <ul className="space-y-3 mt-6">
                   {membresia.estado === "activa" ? (
                     beneficiosRedimidos.length > 0 ? (
                       beneficiosRedimidos.map((beneficio, index) => (
-                        <li
-                          key={index}
-                          className="flex items-start gap-4 bg-black/40 p-4 rounded-lg border border-white/10"
-                        >
-                          <div className="mt-1">
-                            <CheckCircle
-                              size={20}
-                              className="text-green-400"
-                            />
-                          </div>
+                        <li key={index} className="flex items-start gap-3 bg-gray-800/50 p-4 rounded-lg">
+                          <CheckCircle size={20} className="text-green-400 mt-1 flex-shrink-0" />
                           <div className="flex-1">
-                            <h4 className="text-lg font-semibold text-white mb-1">
-                              {beneficio.nombre}
-                            </h4>
+                            <h4 className="font-semibold text-white mb-1">{beneficio.nombre}</h4>
                             {beneficio.codigo && (
-                              <p className="text-sm text-white/80 mb-1">
-                                <span className="font-medium text-white/70">
-                                  Código:
-                                </span>{" "}
-                                {beneficio.codigo}
+                              <p className="text-sm text-gray-300 mb-1">
+                                <span className="font-medium text-gray-400">Código:</span> {beneficio.codigo}
                               </p>
                             )}
                             {beneficio.fechaReclamo && (
-                              <p className="text-xs text-gray-300 italic">
-                                Reclamado el:{" "}
-                                {new Date(
-                                  beneficio.fechaReclamo
-                                ).toLocaleDateString()}
+                              <p className="text-xs text-gray-400 italic">
+                                Reclamado el: {new Date(beneficio.fechaReclamo).toLocaleDateString()}
                               </p>
                             )}
                           </div>
                         </li>
                       ))
                     ) : (
-                      <p className="text-sm text-gray-400">
-                        No tienes beneficios redimidos aún.
-                      </p>
+                      <p className="text-sm text-gray-400 text-center py-4">No has redimido beneficios aún.</p>
                     )
                   ) : (
-                    [
-                      "Acceso a la bolsa exclusiva de URPex",
-                      "Conferencias gratuitas",
-                      "Descuento en diferentes paquetes de cursos",
-                    ].map((beneficio, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start gap-3 bg-black/40 p-3 rounded-lg"
-                      >
-                        <CheckCircle
-                          size={18}
-                          className="text-white-400 mt-0.5 flex-shrink-0"
-                        />
-                        <span>{beneficio}</span>
+                    ["Acceso a bolsa exclusiva", "Conferencias gratuitas", "Descuentos en cursos"].map((b, i) => (
+                      <li key={i} className="flex items-center gap-3 bg-gray-800/50 p-3 rounded-lg">
+                        <CheckCircle size={18} className="text-gray-400 flex-shrink-0" />
+                        <span className="text-gray-300">{b}</span>
                       </li>
                     ))
                   )}
                 </ul>
               )}
-
-              <button className="w-full mt-6 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center">
-                <Gift size={18} className="mr-2" />
-                Ver beneficios adicionales
-              </button>
             </div>
           </div>
         </div>

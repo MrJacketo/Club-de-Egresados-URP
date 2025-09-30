@@ -1,31 +1,24 @@
-"use client"
-
 import { useState, useEffect, useCallback } from "react"
-// Componentes
 import NoticiasHeader from "../../components/noticias/NoticiasHeader"
 import NoticiasSearch from "../../components/noticias/NoticiasSearch"
 import NoticiasList from "../../components/noticias/NoticiasList"
 import { obtenerNoticias } from "../../api/gestionNoticiasApi"
 
 const NoticiasPage = () => {
-
   const [noticias, setNoticias] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredNoticias, setFilteredNoticias] = useState([])
-
-  // Usuario simulado para demostración
   const [user] = useState({ email: "egresado@urp.edu.pe" })
 
-  // Cargar noticias reales del backend
+  // ... (toda tu lógica de useEffect y handlers permanece igual)
   useEffect(() => {
     const fetchNoticias = async () => {
       setLoading(true)
       setError(null)
       try {
         const response = await obtenerNoticias()
-        // Si tu backend responde { noticias: [...] }
         setNoticias(response.noticias || [])
       } catch (err) {
         console.error("Error al cargar noticias:", err)
@@ -37,11 +30,9 @@ const NoticiasPage = () => {
     }
     fetchNoticias()
   }, [])
-
-  // Filtrar noticias por búsqueda
   useEffect(() => {
     const filtered = noticias
-      .filter(Boolean) // Filtra noticias nulas o undefined
+      .filter(Boolean)
       .filter((noticia) =>
         [noticia.titulo, noticia.contenido, noticia.categoria]
           .map((campo) => (typeof campo === "string" ? campo : ""))
@@ -51,49 +42,36 @@ const NoticiasPage = () => {
       );
     setFilteredNoticias(filtered);
   }, [noticias, searchTerm]);
-
-  // ===== HANDLERS =====
-
   const handleNoticiaClick = useCallback((id) => {
-    // Aquí puedes navegar al detalle de la noticia si lo deseas
     alert(`Abriendo noticia: ${id}`)
   }, [])
-
   const handleRetry = useCallback(() => {
     setError(null)
-    // Puedes volver a llamar a fetchNoticias aquí si lo deseas
     window.location.reload()
   }, [])
-
   const handleSearchChange = useCallback((newSearchTerm) => {
     setSearchTerm(newSearchTerm)
   }, [])
 
-  // ===== RENDER PRINCIPAL =====
   return (
-    <main className="min-h-screen p-8">
-      {/* Efectos de fondo */}
-      <div className="absolute inset-0">
+    <main className="p-8">
+      {/* ===== THE FIX IS HERE ===== */}
+      {/* Change 'absolute' to 'fixed' and add a negative z-index */}
+      <div className="fixed inset-0 -z-10">
         <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
       </div>
 
-      <div className="relative z-10 p-8">
-        {/* Header con información de estado */}
+      {/* The rest of your content remains the same */}
+      <div className="relative z-10">
         <NoticiasHeader user={user} error={error} onRetry={handleRetry} />
-
-        {/* Barra de búsqueda */}
         <NoticiasSearch
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           totalNoticias={noticias.length}
           filteredCount={filteredNoticias.length}
         />
-
-        {/* Lista de noticias */}
         <NoticiasList noticias={filteredNoticias} onNoticiaClick={handleNoticiaClick} loading={loading} />
-
-        {/* Footer con información */}
         <footer className="text-center mt-8">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 max-w-2xl mx-auto">
             <p className="text-white/80 text-sm">

@@ -17,7 +17,6 @@ import GestionarMembresia from './pages/Egresado/GestionarMembresia'; // ajusta 
 import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx'; // ajusta la ruta
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
-import Sidebar from './components/Sidebar.jsx';
 import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
 import NoticiasPage from './pages/Egresado/Noticiaspage.jsx';
@@ -36,7 +35,6 @@ function App() {
   return (
     <UserContextProvider>
       <Navbar />
-      <Sidebar />
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       {/* Contenedor principal sin margen dinámico */}
       <div className="relative pt-16 transition-all duration-300">
