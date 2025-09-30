@@ -31,8 +31,8 @@ export default function Dashboard() {
   }, [user, userName]);
 
   return (
-    <div className=" bg-gradient-to-br flex flex-col items-center justify-center px-4 py-12 pt-35">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl p-6 md:p-8 flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-400 to-teal-500 px-4 py-8">
+      <div className="w-full bg-white/90 backdrop-blur-sm p-6 md:p-8 flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-8">
         
         {/* Welcome Image */}
         <div className="w-full md:w-1/2">
