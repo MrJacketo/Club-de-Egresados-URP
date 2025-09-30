@@ -122,7 +122,7 @@ export default function Login() {
               disabled={loading}
               className="w-full bg-[#00BC4F] hover:bg-[#00BC4F]/90 text-white py-3 lg:py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 text-sm lg:text-base"
             >
-              {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+              {loading ? "Iniciando..." : "Ingresar"}
             </button>
 
             <button
