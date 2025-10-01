@@ -118,10 +118,10 @@ export default function Home() {
                 className="text-4xl md:text-5xl"
                 style={{
                   fontFamily: 'League Spartan, sans-serif',
-                  fontWeight: 700,
-                  lineHeight: '100%',
-                  letterSpacing: '0%',
-                  color: '#5DC554'
+                    fontWeight: 700,
+                    lineHeight: '100%',
+                    letterSpacing: '0%',
+                    color: '#119e04ff'
                 }}
               >
                 Inspiración, Innovación y
@@ -137,10 +137,10 @@ export default function Home() {
                   style={{ 
                     color: '#FFFFFF',
                     fontFamily: 'Inter, sans-serif',
-                    fontWeight: 800
+                    fontWeight: 700
                   }}
                 >
-                  La plataforma <span style={{ color: '#FFFFFF', fontFamily: 'Inter, sans-serif', fontWeight: 700 }}>URPex</span> te permitirá conocer, 
+                  La plataforma <span style={{ color: '#FFFFFF', fontFamily: 'Inter, sans-serif', fontWeight: 700 }}></span> URPex te permitirá conocer, 
                   desarrollar y reforzar no solo tus conocimientos como egresado URP, sino también conectarte de manera más 
                   eficiente a beneficios exclusivos, oportunidades laborales y servicios especializados para tu crecimiento profesional
                 </p>
