@@ -31,7 +31,6 @@ import HomeConferencias from './pages/Egresado/HomeConferencias/HomeConferencias
 import { RotateCcwKey } from 'lucide-react';
 
 import HomeCursos from './pages/Egresado/Cursos/HomeCursos.jsx';
-import HomeConferencias from './pages/Egresado/Conferencias/HomeConferencias.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -62,22 +61,16 @@ function App() {
           <Route path="/MembresiaCompletada" element={<MembresiaSucess />} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios />} />
           <Route path="/foro-egresados" element={<ForoEgresados />} />
-          <Route path='/conferencias' element={<PrivateRoute><HomeConferencias/></PrivateRoute>} />
+          <Route path='/conferencias' element={<PrivateRoute><HomeConferencias /></PrivateRoute>} />
 
           {/*Rutas de Egresado*/}
-          <Route path='/cursos' element={<PrivateRoute><HomeCursos/></PrivateRoute>} />
-
-          {/*Ruta de cursos*/}
-          <Route path='/cursos' element={<HomeCursos/>}/>
-
-
+          <Route path='/cursos' element={<PrivateRoute><HomeCursos /></PrivateRoute>} />
 
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path='/admin/egresados' element={<AdminRoute><AdminUsers /></AdminRoute>} />
           <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin /></AdminRoute>} />
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias /></AdminRoute>} />
-          <Route path='/conferencias' element={<PrivateRoute><HomeConferencias /></PrivateRoute>} />
 
         </Routes>
       </div>
