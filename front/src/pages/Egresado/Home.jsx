@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Home() {
+  // Estados para el carrusel
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const carruselImages = ['/carrusel1.png', '/carrusel2.png', '/carrusel3.png'];
+
+  // Auto-avance del carrusel cada 4 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carruselImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [carruselImages.length]);
+
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
       {/* Navbar superior como en la imagen de referencia */}
@@ -40,13 +52,11 @@ export default function Home() {
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/FONDOHOMEPAGE.png')"
-          }}
-        ></div>
+          style={{ backgroundImage: "url('/FONDOHOMEPAGE.png')" }}
+        />
         
         {/* Overlay oscuro para mejor legibilidad */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/40" />
         
         {/* Content */}
         <div className="relative z-10 text-white px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto h-full flex flex-col justify-center">
@@ -78,21 +88,14 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Logo SOMOS URP - cuadro blanco con 75% transparencia */}
+          {/* Logo SOMOS URP */}
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20">
-            <div 
-              className="px-12 py-4"
-              style={{
-                backgroundColor: '#FFFFFFBF'
-              }}
-            >
+            <div className="px-12 py-4" style={{ backgroundColor: '#FFFFFFBF' }}>
               <div style={{
                 fontFamily: 'League Spartan, sans-serif',
                 fontWeight: 800,
-                fontStyle: 'normal',
                 fontSize: '32px',
                 lineHeight: '100%',
-                letterSpacing: '0%',
                 textAlign: 'center'
               }}>
                 <span style={{ color: '#194F14' }}>SOMOS</span>{' '}
@@ -148,29 +151,24 @@ export default function Home() {
         {/* Contenedor principal con imagen izquierda y contenido derecha */}
         <div className="flex w-full h-96">
             
-          {/* Imagen completa - Sin inclinación */}
+          {/* Imagen completa */}
           <div className="relative w-2/3">
             <div 
               className="w-full h-full bg-cover bg-center"
-              style={{
-                backgroundImage: "url('/IMAGENPARTE2.png')"
-              }}
-            >
-            </div>
+              style={{ backgroundImage: "url('/IMAGENPARTE2.png')" }}
+            />
           </div>
 
-          {/* Contenido derecho - ÉXITO ACADÉMICO sin inclinación */}
+          {/* Contenido derecho - ÉXITO ACADÉMICO */}
           <div className="relative w-1/2">
             <div className="w-full h-full bg-white flex flex-col justify-center p-8">
               <div className="text-left">
-                {/* ÉXITO ACADÉMICO */}
                 <h3 
                   className="text-3xl md:text-4xl mb-6"
                   style={{
                     fontFamily: 'League Spartan, sans-serif',
                     fontWeight: 800,
                     lineHeight: '100%',
-                    letterSpacing: '0%',
                     color: '#0E7E04'
                   }}
                 >
@@ -178,15 +176,12 @@ export default function Home() {
                 </h3>
                 <p 
                   className="text-base leading-relaxed mb-8 text-gray-800"
-                  style={{
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 700
-                  }}
+                  style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700 }}
                 >
-                  En esta plataforma, dispondrás de excelentes herramientas educativas que garantizan un desarrollo 
-                  académico de calidad, permitiéndote afrontar tus cursos con confianza. Con recursos interactivos, 
-                  un equipo de profesores comprometidos y actividades complementarias de primer nivel, buscamos que tu estadía en la 
-                  universidad no solo sea exitosa, sino también una experiencia personal y social memorable.
+                  Como egresado URP, URPex te brinda acceso a una red exclusiva de oportunidades de crecimiento profesional 
+                  y personal. Aprovecha beneficios únicos, conecta con otros profesionales egresados, accede a ofertas 
+                  laborales especializadas y disfruta de descuentos en servicios que potenciarán tu carrera. URPex es tu 
+                  puerta hacia el éxito continuo después de la graduación.
                 </p>
                 <div className="flex justify-center">
                   <Link
@@ -237,7 +232,7 @@ export default function Home() {
                   fontWeight: 800,
                   color: '#659B6038'
                 }}>
-                15
+                8
               </div>
               <div className="flex justify-center mb-4">
                 <img src="/LOGO_FACULTADES.png" alt="Facultades" className="w-16 h-16 group-hover:scale-110 transition-transform duration-300" />
@@ -246,7 +241,7 @@ export default function Home() {
                 Contamos con
               </div>
               <div className="text-white font-medium text-base group-hover:scale-110 transition-transform duration-300">
-                <span style={{ color: '#5DC554' }}>15</span> facultades
+                <span style={{ color: '#5DC554' }}>8</span> facultades
               </div>
             </div>
             
@@ -260,7 +255,7 @@ export default function Home() {
                   fontWeight: 800,
                   color: '#659B6038'
                 }}>
-                23
+                18
               </div>
               <div className="flex justify-center mb-4">
                 <img src="/LOGO_CARRERAS.png" alt="Carreras" className="w-16 h-16 group-hover:scale-110 transition-transform duration-300" />
@@ -269,7 +264,7 @@ export default function Home() {
                 Contamos con
               </div>
               <div className="text-white font-medium text-base group-hover:scale-110 transition-transform duration-300">
-                <span style={{ color: '#5DC554' }}>23</span> carreras
+                <span style={{ color: '#5DC554' }}>18</span> carreras
               </div>
             </div>
             
@@ -314,76 +309,136 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1">
-              {/* TODO: Agregar imagen de beneficios URPex */}
-              {/* Ruta sugerida: '/beneficios-urpex.jpg' */}
-              <div className="w-full h-96 bg-gray-300 rounded-3xl shadow-2xl flex items-center justify-center">
-                <span className="text-gray-600 text-lg">Imagen de beneficios URPex</span>
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            <div className="order-2 lg:order-1 h-full">
+              {/* Carrusel de imágenes */}
+              <div className="relative w-full h-full min-h-[520px] rounded-3xl shadow-2xl overflow-hidden group">
+                {/* Imágenes del carrusel */}
+                <div className="relative w-full h-full">
+                  {carruselImages.map((image, index) => (
+                    <div
+                      key={index}
+                      className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                        index === currentSlide ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`Carrusel ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Indicadores de slides */}
+                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                  {carruselImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className="rounded-full transition-all duration-300"
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        backgroundColor: index === currentSlide ? '#4ade80' : 'rgba(255, 255, 255, 0.7)',
+                        border: 'none',
+                        padding: '0',
+                        transform: index === currentSlide ? 'scale(1.3)' : 'scale(1)',
+                        cursor: 'pointer'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (index !== currentSlide) {
+                          e.target.style.backgroundColor = '#86efac';
+                          e.target.style.transform = 'scale(1.15)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (index !== currentSlide) {
+                          e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+                          e.target.style.transform = 'scale(1)';
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
-              {/* 
-              <img
-                src="/beneficios-urpex.jpg"
-                alt="Beneficios URPex"
-                className="w-full rounded-3xl shadow-2xl transform hover:scale-105 transition-transform duration-500"
-              />
-              */}
             </div>
 
-            <div className="order-1 lg:order-2 space-y-8">
-              <div className="flex items-start space-x-6 group">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Contenido Educativo Exclusivo</h3>
-                  <p className="text-gray-600 text-lg">
-                    Acceso a cursos, workshops y recursos educativos diseñados específicamente para egresados URP.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-6 group">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Descuentos Especiales</h3>
-                  <p className="text-gray-600 text-lg">
-                    Obtén descuentos exclusivos en eventos, conferencias, talleres y servicios de empresas aliadas.
-                  </p>
+            <div className="order-1 lg:order-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Card 1 - Contenido Educativo Exclusivo */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 border border-gray-100">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+                      Contenido Educativo Exclusivo
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Acceso a cursos, workshops y recursos educativos diseñados específicamente para egresados URP.
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-6 group">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Red de Contactos</h3>
-                  <p className="text-gray-600 text-lg">
-                    Conecta con otros egresados URP, expande tu red profesional y descubre nuevas oportunidades.
-                  </p>
+              {/* Card 2 - Descuentos Especiales */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 border border-gray-100">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+                      Descuentos Especiales
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Obtén descuentos exclusivos en eventos, conferencias, talleres y servicios de empresas aliadas.
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-6 group">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 6V9a2 2 0 00-2-2H10a2 2 0 00-2 2v3.1M16 19h6-6zM8 19H2h6z" />
-                  </svg>
+              {/* Card 3 - Red de Contactos */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 border border-gray-100">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+                      Red de Contactos
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Conecta con otros egresados URP, expande tu red profesional y descubre nuevas oportunidades.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Oportunidades Laborales</h3>
-                  <p className="text-gray-600 text-lg">
-                    Acceso preferencial a ofertas de empleo y oportunidades laborales exclusivas para egresados URP.
-                  </p>
+              </div>
+
+              {/* Card 4 - Oportunidades Laborales */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 border border-gray-100">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 6V9a2 2 0 00-2-2H10a2 2 0 00-2 2v3.1M16 19h6-6zM8 19H2h6z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+                      Oportunidades Laborales
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Acceso preferencial a ofertas de empleo y oportunidades laborales exclusivas para egresados URP.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
