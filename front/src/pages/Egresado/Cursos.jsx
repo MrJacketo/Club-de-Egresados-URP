@@ -408,7 +408,7 @@ export default function Cursos() {
   };
 
   return (
-    <div className="min-h-screen mb-10 bg-[#1C1D21]! pt-16 text-white">
+    <div className=" mb-10 pt-16 text-white">
       {notification && (
         <Notification
           notification={notification}

@@ -61,8 +61,6 @@ function App() {
 
 
           <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
-          
-          <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/conferencias" element={<PrivateRoute><Conferencias /></PrivateRoute>} />
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
