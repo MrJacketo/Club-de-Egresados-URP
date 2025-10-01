@@ -27,8 +27,9 @@ import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
 import AdminUsers from './pages/Admin/AdminUsers.jsx';
 import GestionMembresiaAdmin from './pages/Admin/GestionMembresiaAdmin.jsx';
 import GestionNoticias from './pages/Admin/GestionNoticias.jsx';
-
-
+import Cursos from './pages/Egresado/Cursos.jsx';
+import Conferencias from './pages/Egresado/Conferencias.jsx';
+import Footer from './components/footer.jsx';
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
 
@@ -36,7 +37,6 @@ function App() {
   return (
     <UserContextProvider>
       <Navbar />
-      <Sidebar />
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       {/* Contenedor principal sin margen dinámico */}
       <div className="relative pt-16 transition-all duration-300">
@@ -58,6 +58,12 @@ function App() {
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
           <Route path="/foro-egresados" element={<ForoEgresados />} />
+
+
+          <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
+          
+          <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
+          <Route path="/conferencias" element={<PrivateRoute><Conferencias /></PrivateRoute>} />
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
@@ -65,6 +71,7 @@ function App() {
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
           
         </Routes>
+        <Footer/>
       </div>
     </UserContextProvider>
   );

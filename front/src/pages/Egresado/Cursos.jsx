@@ -12,7 +12,7 @@ import {
   Clock,
 } from "lucide-react";
 
-export default function Beneficios() {
+export default function Cursos() {
   const [currentSlide1, setCurrentSlide1] = useState(0);
   const [currentSlide2, setCurrentSlide2] = useState(0);
   const [currentSlide3, setCurrentSlide3] = useState(0);
@@ -293,7 +293,7 @@ export default function Beneficios() {
     if (benef.categoria === "Cursos") {
       return (
         <div className="bg-[#2A2B2F]! rounded-xl! overflow-hidden hover:scale-105 transition-transform duration-300">
-          <div className="relative h-72">
+          <div className="relative h-72 ">
             <img
               src={benef.imagen}
               alt={benef.titulo}
@@ -305,29 +305,24 @@ export default function Beneficios() {
           </div>
 
           <div className="p-5">
-            <h3 className="text-white text-start font-bold text-lg mb-4 line-clamp-2 h-14">
+            <h3 className="text-white mb-2 text-start font-bold text-lg  line-clamp-2">
               {benef.titulo}
             </h3>
 
             <div className="space-y-2 mb-4 text-gray-300 text-sm">
               <div className="flex items-start gap-2">
-                <span className="text-gray-400">🏛️</span>
                 <span>{benef.carrera}</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="text-gray-400">👤</span>
-                <div>
+                <div className="text-start">
                   <span className="font-semibold">Docente: </span>
                   <span>{benef.docente}</span>
-                  <span className="text-gray-400"> | Nivel: {benef.nivel}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">🛡️</span>
+              <div className="flex font-bold items-center gap-2">
                 <span>{benef.modalidad}</span>
               </div>
               <div className="flex items-center gap-2 text-[#00BC4F]! font-semibold">
-                <span>🎯</span>
                 <span>DESCUENTO {benef.descuento} (Válido hasta {benef.validoHasta})</span>
               </div>
               <div className="flex items-center gap-2 text-red-400">
@@ -347,7 +342,7 @@ export default function Beneficios() {
                     : "bg-[#00BC4F]! hover:bg-[#00a544]! text-white"
                 }`}
               >
-                {isReclamado ? "✓ Reclamado" : "Reclamar"}
+                {isReclamado ? "Reclamado" : "Reclamar"}
               </button>
             </div>
           </div>
@@ -383,12 +378,12 @@ export default function Beneficios() {
             )}
           </div>
 
-          <h3 className="text-white text-start font-bold text-lg mb-4 line-clamp-2 h-14">
+          <h3 className="text-white text-start font-bold text-lg  line-clamp-2 mb-2">
             {benef.titulo}
           </h3>
 
           {benef.descripcion && (
-            <p className="text-gray-400 text-sm mb-4 line-clamp-2 h-10">
+            <p className="text-gray-400 text-start text-sm mb-4 line-clamp-2 ">
               {benef.descripcion}
             </p>
           )}
@@ -404,7 +399,7 @@ export default function Beneficios() {
                   : "bg-[#00BC4F]! hover:bg-[#00a544]! text-white"
               }`}
             >
-              {isReclamado ? "✓ Reclamado" : "Reclamar"}
+              {isReclamado ? "Reclamado" : "Reclamar"}
             </button>
           </div>
         </div>
@@ -413,7 +408,7 @@ export default function Beneficios() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1C1D21]! pt-16 text-white">
+    <div className="min-h-screen mb-10 bg-[#1C1D21]! pt-16 text-white">
       {notification && (
         <Notification
           notification={notification}
@@ -423,7 +418,7 @@ export default function Beneficios() {
 
       <div className="max-w-7xl mx-auto px-6">
         <div className="pb-10 text-start">
-          <h1 className="text-6xl font-bold">Beneficios</h1>
+          <h1 className="text-6xl font-bold">Beneficios y Descuentos</h1>
         </div>
 
         {/* Barra de búsqueda y filtros */}
