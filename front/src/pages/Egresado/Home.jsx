@@ -70,7 +70,7 @@ export default function Home() {
               />
             </div>
             
-            <div className="text-right">
+            <div className="text-center">
               <h1 
                 className="text-6xl md:text-8xl lg:text-9xl xl:text-[10rem] mb-8"
                 style={{
