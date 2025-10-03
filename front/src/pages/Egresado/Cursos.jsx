@@ -204,20 +204,20 @@ export default function Cursos() {
   // Componente de notificación
   const Notification = ({ notification, onClose }) => (
     <div className="fixed top-20 right-8 z-50 animate-slide-in">
-      <div className="bg-[#2A2B2F] rounded-lg shadow-2xl p-4 flex items-start gap-3 min-w-[320px] border border-[#00BC4F]">
+      <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-start gap-3 min-w-[320px] border-2 border-green-500">
         <div className="flex-shrink-0">
-          <CheckCircle className="text-[#00BC4F]" size={24} />
+          <CheckCircle className="text-green-500" size={24} />
         </div>
         <div className="flex-1">
-          <h4 className="text-white font-semibold mb-1">
+          <h4 className="text-gray-900 font-semibold mb-1">
             ¡Beneficio Reclamado!
           </h4>
-          <p className="text-gray-300 text-sm">{notification.titulo}</p>
-          <p className="text-[#00BC4F] text-xs mt-1">{notification.tipo}</p>
+          <p className="text-gray-600 text-sm">{notification.titulo}</p>
+          <p className="text-green-500 text-xs mt-1">{notification.tipo}</p>
         </div>
         <button
           onClick={onClose}
-          className="flex-shrink-0 text-gray-400 hover:text-white transition"
+          className="flex-shrink-0 text-gray-400! hover:text-gray-900! transition-all!"
         >
           <X size={20} />
         </button>
@@ -247,21 +247,23 @@ export default function Cursos() {
     };
 
     return (
-      <div className="mb-12">
-        <h2 className="text-3xl text-start font-bold text-[#00BC4F] mb-6">
-          {titulo}
+      <div className="mb-10">
+        <h2 className="text-4xl font-bold text-start mb-6">
+          <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+            {titulo}
+          </span>
         </h2>
         <div className="relative">
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-[#00BC4F]! hover:bg-[#00a544]! text-white p-3 rounded-full! shadow-lg transition border-none!"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl! transition-all duration-300"
           >
             <ChevronLeft size={24} />
           </button>
 
-          <div className="overflow-hidden">
+          <div className="overflow-hidden px-2 py-4">
             <div
-              className="flex transition-transform duration-300 ease-in-out"
+              className="flex transition-transform duration-600 ease-in-out"
               style={{ transform: `translateX(-${currentSlide * 33.333}%)` }}
             >
               {beneficios.map((benef) => (
@@ -278,7 +280,7 @@ export default function Cursos() {
 
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-[#00BC4F]! hover:bg-[#00a544]! text-white p-3 rounded-full! shadow-lg transition border-none!"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
           >
             <ChevronRight size={24} />
           </button>
@@ -292,54 +294,57 @@ export default function Cursos() {
     // Tarjeta de curso con información detallada
     if (benef.categoria === "Cursos") {
       return (
-        <div className="bg-[#2A2B2F]! rounded-xl! overflow-hidden hover:scale-105 transition-transform duration-300">
-          <div className="relative h-72 ">
+        <div className="bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-3 shadow-lg hover:shadow-xl">
+          <div className="relative h-72 overflow-hidden">
             <img
               src={benef.imagen}
               alt={benef.titulo}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
             />
-            <div className="absolute top-3 left-3 bg-[#00BC4F]! text-white px-3 py-1 rounded-full! text-xs font-semibold border-none!">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
+            <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
               {benef.tipo}
             </div>
           </div>
 
-          <div className="p-5">
-            <h3 className="text-white mb-2 text-start font-bold text-lg  line-clamp-2">
+          <div className="p-6 bg-white">
+            <h3 className="text-gray-800 text-start font-bold text-lg mb-3 line-clamp-2 transition-colors duration-300 hover:text-green-500">
               {benef.titulo}
             </h3>
 
-            <div className="space-y-2 mb-4 text-gray-300 text-sm">
+            <div className="space-y-2 mb-4 text-gray-600 text-sm">
               <div className="flex items-start gap-2">
-                <span>{benef.carrera}</span>
+                <span className="font-medium">{benef.carrera}</span>
               </div>
               <div className="flex items-start gap-2">
                 <div className="text-start">
-                  <span className="font-semibold">Docente: </span>
+                  <span className="font-semibold text-gray-700">Docente: </span>
                   <span>{benef.docente}</span>
                 </div>
               </div>
-              <div className="flex font-bold items-center gap-2">
+              <div className="flex font-bold items-center gap-2 text-gray-700">
                 <span>{benef.modalidad}</span>
               </div>
-              <div className="flex items-center gap-2 text-[#00BC4F]! font-semibold">
+              <div className="flex items-center gap-2 text-green-600 font-semibold">
                 <span>DESCUENTO {benef.descuento} (Válido hasta {benef.validoHasta})</span>
               </div>
-              <div className="flex items-center gap-2 text-red-400">
-                <Calendar size={16} />
-                <span>Inicio: {benef.inicio}</span>
+              <div className="flex items-center gap-2 text-gray-500">
+                <Calendar size={16} style={{ color: '#5DC554' }} />
+                <span className="font-medium">Inicio: {benef.inicio}</span>
               </div>
             </div>
 
             <div className="flex items-center justify-between mt-4">
-              <span className="text-[#00BC4F]! font-bold text-lg">Gratis</span>
+              <span className="font-bold text-xl transition-transform duration-300 hover:scale-110" style={{ color: '#5DC554' }}>
+                Gratis
+              </span>
               <button
                 onClick={() => onReclamar(benef)}
                 disabled={isReclamado}
-                className={`px-6 py-2 rounded-full! font-medium transition border-none! ${
+                className={`px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110! transform! hover:-translate-y-1 ${
                   isReclamado
-                    ? "bg-gray-600! text-gray-300! cursor-not-allowed"
-                    : "bg-[#00BC4F]! hover:bg-[#00a544]! text-white"
+                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    : "bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
                 }`}
               >
                 {isReclamado ? "Reclamado" : "Reclamar"}
@@ -352,51 +357,54 @@ export default function Cursos() {
 
     // Tarjeta estándar (Descuentos y Otros)
     return (
-      <div className="bg-[#2A2B2F]! rounded-xl! overflow-hidden hover:scale-105 transition-transform duration-300">
-        <div className="relative h-72">
+      <div className="bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-3 shadow-lg hover:shadow-xl">
+        <div className="relative h-72 overflow-hidden">
           <img
             src={benef.imagen}
             alt={benef.titulo}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
           />
-          <div className="absolute top-3 left-3 bg-[#00BC4F]! text-white px-3 py-1 rounded-full! text-xs font-semibold border-none!">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
+          <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
             {benef.tipo}
           </div>
         </div>
 
-        <div className="p-5">
-          <div className="flex items-center gap-4 text-gray-400 text-sm mb-3">
-            <div className="flex items-center gap-1">
-              <Calendar size={16} />
-              <span>Válido hasta {benef.validoHasta}</span>
+        <div className="p-6 bg-white">
+          <div className="flex items-center gap-4 text-gray-500 text-sm mb-4">
+            <div className="flex items-center gap-2">
+              <Calendar size={16} style={{ color: '#5DC554' }} />
+              <span className="font-medium">Válido hasta {benef.validoHasta}</span>
             </div>
             {benef.hora && (
-              <div className="flex items-center gap-1">
-                <Clock size={16} />
-                <span>{benef.hora}</span>
+              <div className="flex items-center gap-2">
+                <Clock size={16} style={{ color: '#5DC554' }} />
+                <span className="font-medium">{benef.hora}</span>
               </div>
             )}
           </div>
 
-          <h3 className="text-white text-start font-bold text-lg  line-clamp-2 mb-2">
+          <h3 className="text-gray-800 text-start font-bold text-lg  line-clamp-2 mb-4 transition-colors duration-300 hover:text-green-500">
             {benef.titulo}
           </h3>
 
           {benef.descripcion && (
-            <p className="text-gray-400 text-start text-sm mb-4 line-clamp-2 ">
+            <p className="text-gray-600 text-start text-sm mb-4 line-clamp-2">
               {benef.descripcion}
             </p>
           )}
 
           <div className="flex items-center justify-between">
-            <span className="text-[#00BC4F]! font-bold text-lg">Gratis</span>
+            <span className="font-bold text-xl transition-transform duration-300 hover:scale-110" style={{ color: '#5DC554' }}>
+              Gratis
+            </span>
             <button
               onClick={() => onReclamar(benef)}
               disabled={isReclamado}
-              className={`px-6 py-2 rounded-full! font-medium transition border-none! ${
+              className={`px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110 transform hover:-translate-y-1 ${
                 isReclamado
-                  ? "bg-gray-600! text-gray-300! cursor-not-allowed"
-                  : "bg-[#00BC4F]! hover:bg-[#00a544]! text-white"
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
               }`}
             >
               {isReclamado ? "Reclamado" : "Reclamar"}
@@ -408,7 +416,14 @@ export default function Cursos() {
   };
 
   return (
-    <div className=" mb-10 pt-16 text-white">
+    <div className="min-h-screen mb-10 pt-16" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+      <style>
+        {`
+          input:focus { outline: none !important; border-color: #5DC554 !important; }
+          select:focus { outline: none !important; border-color: #5DC554 !important; }
+        `}
+      </style>
+
       {notification && (
         <Notification
           notification={notification}
@@ -416,66 +431,98 @@ export default function Cursos() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="pb-10 text-start">
-          <h1 className="text-6xl font-bold">Beneficios y Descuentos</h1>
+      <div className="max-w-[95%] mx-auto px-4 mt-6">
+        <div className="pb-12 text-start">
+          <h1 className="text-6xl font-bold text-gray-900 mb-2">
+            <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+              Beneficios y Descuentos
+            </span>
+          </h1>
+          <p className="text-xl text-gray-500">
+            Descubre todas las ventajas que tenemos preparadas para impulsar tu carrera profesional
+          </p>
         </div>
 
-        {/* Barra de búsqueda y filtros */}
-        <div className="mb-8 flex gap-4 items-center">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder="Buscar beneficios..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-[#2A2B2F]! text-white px-4 py-3 pl-12 rounded-lg! focus:outline-none focus:ring-2 focus:ring-[#00BC4F]! border-none!"
-            />
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-              size={20}
-            />
-          </div>
+        {/* Barra de búsqueda y filtros mejorada */}
+        <div className="mb-12 bg-white rounded-2xl ">
+          <div className="flex gap-4 items-center">
+            {/* Barra de búsqueda */}
+            <div className="flex-1 relative group">
+              <input
+                type="text"
+                placeholder="Buscar beneficios..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-gray-50 text-gray-800 px-6 py-4 pl-14 rounded-xl transition-all duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg"
+                style={{ outline: 'none', border: '2px solid #e5e7eb' }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#5DC554';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(93, 197, 84, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+              <Search
+                className="absolute left-5 top-1/2 -translate-y-1/2 transition-transform duration-300 group-hover:scale-110"
+                size={22}
+                style={{ color: '#5DC554' }}
+              />
+            </div>
 
-          <div className="relative">
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="bg-[#2A2B2F]! text-white px-4 py-3 pr-10 rounded-lg! focus:outline-none focus:ring-2 focus:ring-[#00BC4F]! cursor-pointer appearance-none border-none!"
-            >
-              <option value="">Todas las categorías</option>
-              <option value="Descuentos">Descuentos</option>
-              <option value="Cursos">Cursos</option>
-              <option value="Otros">Otros Beneficios</option>
-            </select>
-          </div>
+            {/* Filtro de categoría */}
+            <div className="relative group">
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="bg-gray-50 text-gray-800 px-6 py-4 pr-10 rounded-xl cursor-pointer transition-all duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg appearance-none"
+                style={{ outline: 'none', border: '2px solid #e5e7eb' }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#5DC554';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(93, 197, 84, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                <option value="">Todas las categorías</option>
+                <option value="Descuentos">Descuentos</option>
+                <option value="Cursos">Cursos</option>
+                <option value="Otros">Otros Beneficios</option>
+              </select>
+            </div>
 
-          <button
-            onClick={handleSearch}
-            className="bg-[#00BC4F]! hover:bg-[#00a544]! text-white px-6 py-3 rounded-lg! font-medium transition border-none!"
-          >
-            Buscar
-          </button>
-
-          {(searchTerm || selectedType) && (
+            {/* Botón buscar */}
             <button
-              onClick={clearFilters}
-              className="bg-[#2A2B2F]! hover:bg-[#35363B]! text-white px-6 py-3 rounded-lg! font-medium transition border-none!"
+              onClick={handleSearch}
+              className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-2xl"
             >
-              Limpiar
+              Buscar
             </button>
-          )}
+
+            {/* Botón limpiar filtros */}
+            {(searchTerm || selectedType) && (
+              <button
+                onClick={clearFilters}
+                className="bg-gray-100! hover:outline-0! hover:border-none! hover:bg-gray-200! text-gray-600! px-8 py-4 rounded-xl font-bold transition-all! duration-300 hover:shadow-lg"
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mostrar vista filtrada en grid o carruseles */}
         {showFiltered ? (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-[#00BC4F]!">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold" style={{ color: '#5DC554' }}>
                 Resultados de búsqueda ({beneficiosFilterados.length})
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {beneficiosFilterados.map((benef) => (
                 <BeneficioCard
                   key={benef.id}
@@ -486,8 +533,8 @@ export default function Cursos() {
               ))}
             </div>
             {beneficiosFilterados.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-400 text-lg">
+              <div className="text-center py-20">
+                <p className="text-gray-500 text-xl">
                   No se encontraron beneficios con los filtros seleccionados
                 </p>
               </div>

@@ -7,7 +7,6 @@ import {
   Search,
   Filter,
 } from "lucide-react";
-import Footer from "../../components/footer.jsx";
 
 export default function Conferencias() {
   const [currentSlide1, setCurrentSlide1] = useState(0);
@@ -177,7 +176,7 @@ export default function Conferencias() {
     setShowFiltered(false);
   };
 
-  // Componente para cada sección de carrusel, se separara en un componente aparte cuando se haga la conexion con el backend
+  // Componente para cada sección de carrusel
   const CarouselSection = ({
     titulo,
     conferencias,
@@ -199,21 +198,24 @@ export default function Conferencias() {
     };
 
     return (
-      <div className="mb-12">
-        <h2 className="text-3xl text-start font-bold text-[#00BC4F] mb-6">
-          {titulo}
-        </h2>
+      <div className="mb-16">
+        <h2 className="text-4xl font-bold text-start mb-6">
+              <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+                {titulo}
+              </span>
+            </h2>
         <div className="relative">
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-[#00BC4F]! hover:bg-[#00a544]! text-white p-3 rounded-full! shadow-lg transition"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
+            style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)', border: 'none' }}
           >
             <ChevronLeft size={24} />
           </button>
 
-          <div className="overflow-hidden">
+          <div className="overflow-hidden px-2 py-4">
             <div
-              className="flex transition-transform duration-300 ease-in-out"
+              className="flex transition-transform duration-600 ease-in-out"
               style={{ transform: `translateX(-${currentSlide * 33.333}%)` }}
             >
               {conferencias.map((conf) => (
@@ -226,7 +228,8 @@ export default function Conferencias() {
 
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-[#00BC4F]! hover:bg-[#00a544]! text-white p-3 rounded-full! shadow-lg transition"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
+            style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)', border: 'none' }}
           >
             <ChevronRight size={24} />
           </button>
@@ -237,39 +240,49 @@ export default function Conferencias() {
 
   // Componente para cada tarjeta de conferencia
   const ConferenciaCard = ({ conf }) => (
-    <div className="bg-[#2A2B2F] rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300">
-      <div className="relative h-72">
+    <div className="bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-3 shadow-lg hover:shadow-xl"
+      >
+      <div className="relative h-72 overflow-hidden">
         <img
           src={conf.imagen}
           alt={conf.titulo}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
         />
-        <div className="absolute top-3 left-3 bg-[#00BC4F] text-white px-3 py-1 rounded-full text-xs font-semibold">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
+        <div className="absolute top-4 left-4 bg-gradient-to-r! from-green-500! to-teal-500! text-white px-4 py-2 rounded-full! text-xs font-bold shadow-xl"
+          style={{ 
+            background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+            border: 'none'
+          }}>
           {conf.tipo}
         </div>
       </div>
 
-      <div className="p-5">
-        <div className="flex items-center gap-4 text-gray-400 text-sm mb-3">
-          <div className="flex items-center gap-1">
-            <Calendar size={16} />
-            <span>{conf.fecha}</span>
+      <div className="p-6 bg-white">
+        <div className="flex items-center gap-4 text-gray-500 text-sm mb-4">
+          <div className="flex items-center gap-2 ">
+            <Calendar size={16} style={{ color: '#5DC554' }} />
+            <span className="font-medium">{conf.fecha}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Clock size={16} />
-            <span>{conf.hora}</span>
+          <div className="flex items-center gap-2 ">
+            <Clock size={16} style={{ color: '#5DC554' }} />
+            <span className="font-medium">{conf.hora}</span>
           </div>
         </div>
 
-        <h3 className="text-white text-start font-bold text-lg mb-4 line-clamp-2 h-14">
+        <h3 className="text-gray-800 text-start font-bold text-lg mb-5 line-clamp-2 h-14 transition-colors duration-300 hover:text-green-500">
           {conf.titulo}
         </h3>
 
         <div className="flex items-center justify-between">
-          <span className="text-[#00BC4F] font-bold text-lg">
+          <span className="font-bold text-xl transition-transform duration-300 hover:scale-110" style={{ color: '#5DC554' }}>
             {conf.precio}
           </span>
-          <button className="bg-[#00BC4F]! hover:bg-[#00a544]! text-white px-6 py-2 rounded-full! hover:border-none! font-medium transition">
+          <button className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110 transform hover:-translate-y-1"
+            style={{ 
+              background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+              border: 'none'
+            }}>
             Inscríbete
           </button>
         </div>
@@ -278,77 +291,119 @@ export default function Conferencias() {
   );
 
   return (
-    <div className="min-h-screen mb-10 bg-[#1C1D21] pt-16">
-      <div className="max-w-7xl mx-auto">
-        <div className="pb-10 text-start">
-          <h1 className="text-6xl font-bold">Conferencias</h1>
+    <div className="min-h-screen mb-10 pt-16" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+      <style>
+        {`
+          input:focus { outline: none !important; border-color: #5DC554 !important; }
+        `}
+      </style>
+      <div className="max-w-[95%] mx-auto px-4 mt-6">
+        <div className="pb-12 text-start">
+          <h1 className="text-6xl font-bold text-gray-900 mb-2">
+              <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+                Conferencias
+              </span>
+          </h1>
+          <p className="text-xl text-gray-500">
+            Descubre todas las ventajas que tenemos preparadas para impulsar tu
+            carrera profesional
+          </p>
         </div>
-        {/* Barra de búsqueda y filtros */}
-        <div className="mb-8 flex gap-4 items-center">
-          {/* Barra de búsqueda */}
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder="Buscar conferencias..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-[#2A2B2F] text-white px-4 py-3 pl-12 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00BC4F]"
-            />
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-              size={20}
-            />
-          </div>
 
-          {/* Filtro de fecha con calendario */}
-          <div className="relative">
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="bg-[#2A2B2F] text-white px-4 py-3 pl-12 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00BC4F] cursor-pointer"
-            />
-            <Calendar
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-              size={20}
-            />
-          </div>
-
-          {/* Botón buscar */}
-          <button
-            onClick={handleSearch}
-            className="bg-[#00BC4F]! hover:bg-[#00a544]! hover: border-none! text-white px-6 py-3 rounded-lg font-medium transition"
+        {/* Barra de búsqueda y filtros mejorada */}
+        <div className="mb-12 bg-white rounded-2xl "
           >
-            Buscar
-          </button>
+          <div className="flex gap-4 items-center">
+            {/* Barra de búsqueda */}
+            <div className="flex-1 relative group">
+              <input
+                type="text"
+                placeholder="Buscar conferencias..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-gray-50 text-gray-800 px-6 py-4 pl-14 rounded-xl transition-all duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg"
+                style={{ outline: 'none', border: '2px solid #e5e7eb' }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#5DC554';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(93, 197, 84, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+              <Search
+                className="absolute left-5 top-1/2 -translate-y-1/2 transition-transform duration-300 group-hover:scale-110"
+                size={22}
+                style={{ color: '#5DC554' }}
+              />
+            </div>
 
-          {/* Botón limpiar filtros */}
-          {(searchTerm || selectedDate) && (
+            {/* Filtro de fecha con calendario */}
+            <div className="relative group">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="bg-gray-50 text-gray-800 px-6 py-4 pl-14 pr-6 rounded-xl cursor-pointer transition-all duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg"
+                style={{ outline: 'none', border: '2px solid #e5e7eb' }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#5DC554';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(93, 197, 84, 0.1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+              <Calendar
+                className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-300 group-hover:scale-110"
+                size={22}
+                style={{ color: '#5DC554' }}
+              />
+            </div>
+
+            {/* Botón buscar */}
             <button
-              onClick={clearFilters}
-              className="bg-[#2A2B2F]! hover:bg-[#35363B]!  text-white px-6 py-3 rounded-lg font-medium transition"
+              onClick={handleSearch}
+              className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white px-8 py-4 rounded-xl! font-bold transition-all duration-300 hover:shadow-2xl"
+              style={{ 
+                background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+                border: 'none'
+              }}
             >
-              Limpiar
+              Buscar
             </button>
-          )}
+
+            {/* Botón limpiar filtros */}
+            {(searchTerm || selectedDate) && (
+              <button
+                onClick={clearFilters}
+                className="bg-gray-100! hover:bg-gray-200! text-gray-600 px-8 py-4 rounded-xl! font-bold transition-all duration-300 hover:shadow-lg"
+                style={{ border: 'none' }}
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mostrar vista filtrada en grid o carruseles */}
         {showFiltered ? (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-[#00BC4F]">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold" style={{ color: '#5DC554' }}>
                 Resultados de búsqueda ({conferenciasFilteradas.length})
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {conferenciasFilteradas.map((conf) => (
                 <ConferenciaCard key={conf.id} conf={conf} />
               ))}
             </div>
             {conferenciasFilteradas.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-400 text-lg">
+              <div className="text-center py-20">
+                <p className="text-gray-500 text-xl">
                   No se encontraron conferencias con los filtros seleccionados
                 </p>
               </div>
@@ -382,7 +437,6 @@ export default function Conferencias() {
           </>
         )}
       </div>
-
     </div>
   );
 }

@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
 import { UserContextProvider } from './context/userContext.jsx';
 import WelcomeEgresado from './pages/Egresado/WelcomeEgresado.jsx';
-import Beneficios from './pages/Egresado/Beneficios.jsx';
+import Beneficios from './pages/Egresado/MisBeneficios.jsx';
 import Membresia from './pages/Egresado/Membresia.jsx';
 import GuardarOferta from './pages/Egresado/OfertaLaboral/GuardarOferta.jsx';
 import GestionOfertas from './pages/Egresado/OfertaLaboral/GestionOfertas.jsx'
@@ -30,6 +30,10 @@ import GestionNoticias from './pages/Admin/GestionNoticias.jsx';
 import Cursos from './pages/Egresado/Cursos.jsx';
 import Conferencias from './pages/Egresado/Conferencias.jsx';
 import Footer from './components/footer.jsx';
+
+import MisConferencias from './pages/Egresado/MisConferencias.jsx';
+import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
+
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
 
@@ -62,6 +66,10 @@ function App() {
 
           <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/conferencias" element={<PrivateRoute><Conferencias /></PrivateRoute>} />
+          
+
+          <Route path="/mis-conferencias" element={<PrivateRoute><MisConferencias /></PrivateRoute>} />
+          <Route path="/mis-beneficios" element={<PrivateRoute><MisBeneficios /></PrivateRoute>} />
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        

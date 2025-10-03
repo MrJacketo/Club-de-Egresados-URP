@@ -3,7 +3,7 @@ import logo from "../assets/logo3.svg";
 const Footer = () => {
     return (
     
-      <div className="w-full h-12 bg-[#00BC4F] flex justify-center gap-3 items-center">
+      <div className="w-full h-16 mt-16 bg-[#00BC4F] flex justify-center gap-3 items-center">
          <p className="font-bold">
             Todos los derechos reservados URPex
          </p>
