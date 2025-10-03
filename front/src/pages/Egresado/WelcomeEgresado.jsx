@@ -100,6 +100,23 @@ export default function Dashboard() {
             <div className="w-24 h-1 bg-green-500 mx-auto"></div>
           </div>
         </div>
+
+        {/* Flecha indicadora para bajar */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="flex flex-col items-center gap-2 cursor-pointer group" onClick={() => window.scrollTo({top: window.innerHeight, behavior: 'smooth'})}>
+            <div className="text-white/70 text-sm font-medium uppercase tracking-wider group-hover:text-white transition-colors">
+              Explorar más
+            </div>
+            <div className="relative">
+              <div className="w-6 h-6 border-2 border-white/70 rounded-full flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-all duration-300">
+                <svg className="w-4 h-4 text-white/70 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+              <div className="absolute -inset-2 border border-white/20 rounded-full animate-ping opacity-30"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* SECCIÓN 2: Grid de 3 Tarjetas - Diseño Moderno */}
@@ -133,7 +150,7 @@ export default function Dashboard() {
 
       {/* SECCIÓN 3: Artículos Populares + Destacados - MISMO TAMAÑO OCUPANDO TODA LA PANTALLA */}
       <div className="w-full bg-gray-50">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[800px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[720px]">
           
           {/* Columna Izquierda - Artículos Populares MEJORADO */}
           <div className="w-full bg-white p-12 md:p-16 lg:p-20 flex flex-col justify-center relative overflow-hidden">
@@ -180,12 +197,12 @@ export default function Dashboard() {
                   <img
                     src="/Google.png"
                     alt="Becas de prácticas"
-                    className="w-full h-[280px] object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
                 
                 <p className="text-xs text-green-600 font-semibold mb-3 uppercase tracking-wider">
-                  Escrito por: Bachata | Nov 29, 2024
+                  Escrito por: Bachata | Nov 29, 2025
                 </p>
                 
                 <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-green-700 transition-colors">
@@ -209,12 +226,12 @@ export default function Dashboard() {
                   <img
                     src="/Parque Amistad.png"
                     alt="Remodelan Parque"
-                    className="w-full h-[280px] object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
                 
                 <p className="text-xs text-green-600 font-semibold mb-3 uppercase tracking-wider">
-                  Escrito por: Bachata | Nov 29, 2024
+                  Escrito por: Bachata | Nov 29, 2025
                 </p>
                 
                 <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-green-700 transition-colors">
@@ -236,31 +253,27 @@ export default function Dashboard() {
 
           {/* Columna Derecha - Destacados TAMAÑO ORIGINAL */}
           <div className="w-full bg-gray-50 p-8 flex flex-col justify-center">
-            <div className="bg-gradient-to-br from-green-300 via-emerald-300 to-lime-300 rounded-3xl p-12 md:p-16 lg:p-20 shadow-2xl relative overflow-hidden">
+            <div className="rounded-3xl p-12 md:p-16 lg:p-20 shadow-2xl relative overflow-hidden" style={{backgroundColor: '#00BC4F'}}>
               {/* Efectos de fondo modernos */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl"></div>
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
               
-              {/* Título DESTACADOS moderno */}
-              <div className="text-center mb-10 relative z-10">
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <div className="w-12 h-0.5 bg-white/40 rounded-full"></div>
+              {/* Título DESTACADOS CENTRADO SIMÉTRICAMENTE */}
+              <div className="text-center mb-8 relative z-10">
+                <div className="flex items-center justify-center gap-4 mb-2">
+                  <div className="w-12 h-0.5 bg-white rounded-full"></div>
                   <div className="flex gap-1">
                     <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                    <span className="w-2 h-2 bg-white/80 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></span>
-                    <span className="w-2 h-2 bg-white/60 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></span>
+                    <span className="w-2 h-2 bg-white rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></span>
+                    <span className="w-2 h-2 bg-white rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></span>
                   </div>
-                  <div className="w-12 h-0.5 bg-white/40 rounded-full"></div>
+                  <div className="w-12 h-0.5 bg-white rounded-full"></div>
                 </div>
                 
                 <h3 className="text-4xl font-black text-white relative">
                   <span className="drop-shadow-lg tracking-wider">DESTACADOS</span>
-                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-white/50 rounded-full"></div>
+                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-white rounded-full"></div>
                 </h3>
-                
-                {/* Decoración flotante */}
-                <div className="absolute -top-6 left-1/4 w-3 h-3 bg-white/30 rounded-full animate-bounce"></div>
-                <div className="absolute -top-8 right-1/3 w-2 h-2 bg-white/20 rounded-full animate-ping"></div>
               </div>
               
               {/* Grid 2x2 de Destacados */}
@@ -275,14 +288,32 @@ export default function Dashboard() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                       
-                      {/* Contenido sobre la imagen */}
-                      <div className="absolute bottom-0 left-0 right-0 p-5">
-                        <h4 className="text-base font-bold mb-2 text-white line-clamp-2 leading-tight group-hover:text-green-300 transition-colors">
-                          {item.title}
-                        </h4>
-                        <p className="text-xs text-white/80 font-medium">
-                          {item.author}
-                        </p>
+                      {/* Contenido sobre la imagen MEJORADO */}
+                      <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/95 via-black/80 to-transparent">
+                        <div className="transform transition-all duration-300 group-hover:translate-y-[-2px]">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span className="text-xs text-green-400 font-bold uppercase tracking-wider">
+                              {item.author}
+                            </span>
+                          </div>
+                          
+                          <h4 className="text-base font-bold text-white line-clamp-2 leading-tight group-hover:text-green-200 transition-colors mb-3 drop-shadow-lg">
+                            {item.title}
+                          </h4>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex gap-1">
+                              <div className="w-8 h-0.5 bg-green-400 rounded-full group-hover:w-12 transition-all duration-300"></div>
+                              <div className="w-4 h-0.5 bg-green-300/60 rounded-full group-hover:bg-green-300 transition-all duration-300 delay-75"></div>
+                            </div>
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -293,12 +324,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* SECCIÓN 4: Imagen + Cita - MODERNIZADO */}
+      {/* SECCIÓN 4: Imagen + Cita - MÁS ALTA */}
       <div className="w-full bg-gradient-to-b from-gray-50 to-white">
         <div className="grid grid-cols-1 lg:grid-cols-2 shadow-2xl">
           
           {/* Imagen Izquierda */}
-          <div className="relative h-[500px] lg:h-[650px] overflow-hidden">
+          <div className="relative h-[600px] lg:h-[750px] overflow-hidden">
             <img
               src="/URP-BlancoyNegro.png"
               alt="Tradiciones"
@@ -307,18 +338,20 @@ export default function Dashboard() {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-900/20"></div>
           </div>
 
-          {/* Cita Derecha - MODERNIZADA */}
-          <div className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-green-500 p-12 md:p-16 lg:p-20 flex flex-col justify-center relative h-[500px] lg:h-[650px]">
+          {/* Cita Derecha - MENSAJE MOTIVACIONAL PARA EGRESADOS */}
+          <div className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-green-500 p-12 md:p-16 lg:p-20 flex flex-col justify-center relative h-[600px] lg:h-[750px]">
             <div className="text-[120px] font-black absolute top-8 left-8 opacity-10 text-green-400">"</div>
             <div className="text-[120px] font-black absolute bottom-8 right-8 opacity-10 text-green-400">"</div>
             
-            <div className="relative z-10 text-center lg:text-right">
-              <h3 className="text-3xl md:text-5xl font-black leading-tight">
-                <span className="text-green-500">Mis tradiciones</span><br />
-                <span className="text-white text-2xl md:text-3xl font-semibold">MÁS QUE</span><br />
-                <span className="text-6xl md:text-7xl text-green-400">MÍAS</span><br />
-                <span className="text-white text-2xl md:text-3xl font-light">son de este<br />cronista<br />llamado</span><br />
-                <span className="italic font-light text-5xl md:text-6xl text-green-300">pueblo.</span>
+            <div className="relative z-10 text-right flex flex-col justify-center h-full px-6 pr-10">
+              <h3 className="font-black leading-tight max-w-full">
+                <span className="text-green-500 text-4xl md:text-6xl lg:text-7xl block mb-3">Nuestro</span>
+                <span className="text-green-400 text-6xl md:text-7xl lg:text-8xl block mb-4">LEGADO</span>
+                <span className="text-white text-3xl md:text-5xl lg:text-6xl font-semibold block mb-4">TRASCIENDE</span>
+                <span className="text-white text-3xl md:text-5xl lg:text-6xl font-light block mb-3 leading-relaxed">
+                  en cada<br />profesional<br />que formamos
+                </span>
+                <span className="italic font-light text-5xl md:text-6xl lg:text-7xl text-green-300 block">para el mundo.</span>
               </h3>
             </div>
           </div>
@@ -326,10 +359,10 @@ export default function Dashboard() {
       </div>
 
       {/* FOOTER - COLOR SÓLIDO BLANQUESINO CON TOQUE VERDE */}
-      <div className="w-full bg-green-100 py-6">
+      <div className="w-full bg-green-50 py-6">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <p className="text-lg font-bold text-gray-800 tracking-wide">
-            Todos los derechos reservados © 2024 URPex
+            Todos los derechos reservados © 2025 URPex
           </p>
           <p className="text-sm text-gray-600 mt-1">
             Club de Egresados - Universidad Ricardo Palma
