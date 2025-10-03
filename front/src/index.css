@@ -26,7 +26,7 @@ html, body {
   width: 100%;
   overflow-x: hidden; /* Esto evita el desbordamiento horizontal */
   box-sizing: border-box;
-  background: linear-gradient(to bottom right, #4ade80, #10b981, #14b8a6); /* Fondo verde */
+  background:  #1C1D21; /* Fondo verde */
 }
 
 /* Asegúrate de que el contenedor raíz ocupe toda la pantalla */
