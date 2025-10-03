@@ -188,6 +188,20 @@ export default function PerfilEgresadoForm() {
           </label>
           <input type="file" id="photo" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </div>
+        <label
+          htmlFor="photo"
+          className="mt-4 px-4 py-2 bg-[#00BC4F] rounded-lg text-white font-semibold cursor-pointer hover:bg-green-600 transition"
+        >
+          Editar foto de perfil
+        </label>
+        <input
+          type="file"
+          id="photo"
+          accept="image/*"
+          className="hidden"
+          onChange={handlePhotoChange}
+        />
+      </div>
 
         {/* FORMULARIO */}
         <div className="md:w-2/3 bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
