@@ -26,7 +26,7 @@ html, body {
   width: 100%;
   overflow-x: hidden; /* Esto evita el desbordamiento horizontal */
   box-sizing: border-box;
-  background: #1C1D21 /* Fondo negro */
+  background: #353535 /* Fondo negro */
 }
 
 /* Asegúrate de que el contenedor raíz ocupe toda la pantalla */
@@ -66,7 +66,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #2a2929;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -79,7 +79,6 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-
 
 .ProseMirror {
   color: black;

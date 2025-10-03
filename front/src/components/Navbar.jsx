@@ -42,16 +42,14 @@ export default function Navbar() {
   const displayAvatar = user?.avatarUrl || "https://i.imgur.com/WxNkK7J.png";
 
   return (
-    <header className="bg-[#1C1D21] w-full py-3 px-6 shadow-md border-b border-gray-700/50 flex items-center justify-between fixed top-0 left-0 z-50">
+    <header className="bg-[#353535] w-full py-3 px-6 shadow-md border-b border-gray-700/50 flex items-center justify-between fixed top-0 left-0 z-50">
       
-      {/* ===== LEFT SECTION: Logo ===== */}
       <div className="flex items-center gap-3">
         <img src="/newLogo.png" alt="Logo URP" className="w-10 h-10" />
         <Link to="/" className="text-white font-bold text-2xl tracking-wider hidden sm:inline">
         </Link>
       </div>
 
-      {/* ===== CENTER SECTION: Navigation Buttons (Only shows when logged in) ===== */}
       {user && (
         <div className="hidden md:flex items-center justify-center gap-x-4">
           {navItems.map((item) => (
@@ -74,14 +72,14 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* ===== RIGHT SECTION: Shows Profile or Login Button ===== */}
+      {}
       <div>
         {user ? (
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              // ✅ FINAL FIX: Removed the hover:bg-... class
               className="flex items-center gap-3 bg-transparent px-4 py-2 rounded-lg transition-colors"
+              style={{backgroundColor: '#353535'}}
             >
               <img
                 src={displayAvatar}
@@ -98,17 +96,20 @@ export default function Navbar() {
               </div>
             </button>
 
-            {/* --- Dropdown Menu --- */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-52 bg-[#18181B] border border-gray-700 rounded-md shadow-lg py-1 z-50">
-                <Link
-                  to="/perfil-egresado-form"
-                  onClick={() => setDropdownOpen(false)}
-                  className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700/50 "
+              <div className="absolute right-0 mt-2 w-52 bg-[#353535] border border-gray-700 rounded-md shadow-lg py-1 z-50">
+                <button
+                  style={{backgroundColor: '#353535'}}
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    navigate("/perfil-egresado-form")
+                  }}
+                  className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-200 hover:bg-gray-700/50"
                 >
                   Mi Perfil
-                </Link>
+                </button>
                 <button
+                  style={{backgroundColor: '#353535'}}
                   onClick={handleLogout}
                   className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20 focus:outline-none"
                 >
