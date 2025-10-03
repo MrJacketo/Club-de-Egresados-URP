@@ -1,13 +1,4 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  createOrUpdateGraduateProfileRequest,
-  getGraduateProfileRequest,
-  OptionsRequest,
-} from "../api/perfilEgresadoApi";
-import { userApi } from "../api/userApi";
-import { toast } from "react-hot-toast";
-import { useUser } from "../context/userContext";
+import { useState } from "react";
 
 export default function PerfilEgresadoForm() {
   const navigate = useNavigate();
