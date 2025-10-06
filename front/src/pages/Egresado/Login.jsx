@@ -71,7 +71,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white flex font-inter">
+    <div className="relative w-screen h-screen bg-white flex font-inter">
       {/* Izquierda - Login */}
       <div className="flex-1 lg:flex-none lg:w-1/2 xl:w-2/5 bg-[#1C1D21] flex justify-center items-center p-8">
         <div className="w-full max-w-md bg-white rounded-[26px] shadow-2xl p-8 lg:p-10">
@@ -152,7 +152,7 @@ export default function Login() {
       </div>
 
       {/* Derecha - Bienvenida */}
-      <div className="hidden lg:flex relative flex-1 lg:w-1/2 xl:w-3/5 bg-[#00BC4F] justify-center items-center">
+      <div className="relative w-1/2 h-100% bg-[#00BC4F] flex justify-center items-center">
         <div className="absolute inset-0">
           <img
             src="/backgroundcollege.jpg"
@@ -160,22 +160,12 @@ export default function Login() {
             className="w-full h-full object-cover opacity-50"
           />
         </div>
-        <div className="relative text-center text-white px-6 lg:px-8 xl:px-12">
-          <h2 className="text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold leading-tight">
-            Bienvenido al
-          </h2>
-          <h3 className="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold leading-tight">
-            Portal Innova URP
-          </h3>
-          <p className="mt-4 text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
-            Ingresa tu cuenta
-          </p>
-          <div className="mt-8 lg:mt-10 xl:mt-12">
-            <img 
-              src="/URPlogoFull.png" 
-              alt="URP" 
-              className="mx-auto w-40 lg:w-48 xl:w-56 2xl:w-64" 
-            />
+        <div className="relative text-center text-white px-6">
+          <h2 className="text-[65px] font-extrabold">Bienvenido al</h2>
+          <h3 className="text-[60px] ">Portal Innova URP</h3>
+          <p className="mt-2 text-[28px]">Ingresa tu cuenta</p>
+          <div className="mt-10">
+            <img src="/URPlogoFull.png" alt="URP" className="mx-auto w-[200px]" />
           </div>
         </div>
       </div>

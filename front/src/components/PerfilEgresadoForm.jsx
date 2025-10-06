@@ -172,21 +172,18 @@ export default function PerfilEgresadoForm() {
     }
   };
 
-  return (
-    <div className="w-full min-h-screen bg-white text-gray-900 flex flex-col">
-      <main className="flex flex-col md:flex-row flex-1 p-10 gap-10">
-        {/* FOTO */}
-        <div className="flex flex-col items-center md:w-1/3">
-          <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-green-500 shadow-lg bg-white">
-            <img src={photo} alt="Foto de perfil" className="w-full h-full object-cover" />
-          </div>
-          <label
-            htmlFor="photo"
-            className="mt-4 px-4 py-2 bg-green-500 rounded-lg text-white font-semibold cursor-pointer hover:bg-green-600 transition-colors"
-          >
-            Editar foto de perfil
-          </label>
-          <input type="file" id="photo" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+return (
+  <div className="w-full min-h-screen bg-[#1C1D21] text-white flex flex-col ">
+    <main className="flex flex-col md:flex-row flex-1 p-10 gap-10">
+      
+      {/* Columna izquierda: foto */}
+      <div className="flex flex-col items-center md:w-1/3">
+        <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-[#00BC4F] shadow-lg">
+          <img
+            src={photo}
+            alt="Foto de perfil"
+            className="w-full h-full object-cover"
+          />
         </div>
         <label
           htmlFor="photo"
