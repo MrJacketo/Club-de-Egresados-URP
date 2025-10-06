@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 import { getGraduateProfileRequest } from "../../api/perfilEgresadoApi";
 
+
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useContext(UserContext);
@@ -118,7 +119,7 @@ export default function Login() {
               disabled={loading}
               className="w-full bg-[#00BC4F] text-white py-3 rounded-lg font-semibold"
             >
-              {loading ? "Iniciando..." : "Ingresar"}
+              {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
 
             <button
@@ -135,9 +136,14 @@ export default function Login() {
                 to="/register"
                 className="bg-white/10 text-white px-4 py-2 rounded-lg text-sm font-semibold"
               >
-                Registrar
+                Regístrate aquí
               </Link>
             </div>
+                <div>
+                <p className="text-xs text-gray-500">
+                  <span className="font-bold">Administradores:</span> Usar credenciales institucionales
+                </p>
+              </div>
           </form>
         </div>
       </div>
