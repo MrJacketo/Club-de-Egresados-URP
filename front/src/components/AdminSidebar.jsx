@@ -91,6 +91,20 @@ export default function AdminSidebar() {
             </span>
           </Link>
 
+                  <Link
+                    to="/admin/beneficios"
+                    className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+                      location.pathname === "/admin/beneficios"
+                        ? "bg-blue-600/80 text-white shadow-lg"
+                        : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                    }`}
+                  >
+                    <Percent size={24} />
+                    <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+                      Beneficios
+                    </span>
+                  </Link>
+
           {/*}
 
           <Link
