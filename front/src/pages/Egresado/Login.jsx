@@ -122,7 +122,7 @@ export default function Login() {
               disabled={loading}
               className="w-full bg-[#00BC4F] hover:bg-[#00BC4F]/90 text-white py-3 lg:py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 text-sm lg:text-base"
             >
-              {loading ? "Iniciando..." : "Ingresar"}
+              {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
 
             <button
@@ -142,11 +142,11 @@ export default function Login() {
                 Regístrate aquí
               </Link>
             </div>
-            <div className="mt-4">
-              <p className="text-xs text-gray-400 text-center">
-                <span className="font-bold">Administradores:</span> Usar credenciales institucionales
-              </p>
-            </div>
+                <div>
+                <p className="text-xs text-gray-500">
+                  <span className="font-bold">Administradores:</span> Usar credenciales institucionales
+                </p>
+              </div>
           </form>
         </div>
       </div>
