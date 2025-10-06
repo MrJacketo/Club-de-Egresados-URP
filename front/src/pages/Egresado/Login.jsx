@@ -67,7 +67,7 @@ export default function Login() {
   };
 
   return (
-    <div className="relative w-[1366px] h-[787px] bg-white flex">
+    <div className="relative w-screen h-screen bg-white flex font-inter">
       {/* Izquierda - Login */}
       <div className="relative w-[644px] h-full bg-[#1C1D21] flex justify-center items-center">
         <div className="w-[562px] h-[711px] bg-[#1C1D21] rounded-[26px] shadow-2xl p-10">
@@ -143,7 +143,7 @@ export default function Login() {
       </div>
 
       {/* Derecha - Bienvenida */}
-      <div className="relative w-[722px] h-full bg-[#00BC4F] flex justify-center items-center">
+      <div className="relative w-1/2 h-100% bg-[#00BC4F] flex justify-center items-center">
         <div className="absolute inset-0">
           <img
             src="/backgroundcollege.jpg"
@@ -153,8 +153,8 @@ export default function Login() {
         </div>
         <div className="relative text-center text-white px-6">
           <h2 className="text-[65px] font-extrabold">Bienvenido al</h2>
-          <h3 className="text-[60px]">portal innova urp</h3>
-          <p className="mt-2 text-[18px]">Ingresa tu cuenta</p>
+          <h3 className="text-[60px] ">Portal Innova URP</h3>
+          <p className="mt-2 text-[28px]">Ingresa tu cuenta</p>
           <div className="mt-10">
             <img src="/URPlogoFull.png" alt="URP" className="mx-auto w-[200px]" />
           </div>

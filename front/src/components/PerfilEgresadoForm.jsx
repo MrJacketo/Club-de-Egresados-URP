@@ -11,7 +11,7 @@ export default function PerfilEgresadoForm() {
   };
 
 return (
-  <div className="w-full min-h-screen bg-[#1C1D21] text-white flex flex-col">
+  <div className="w-full min-h-screen bg-[#1C1D21] text-white flex flex-col ">
     <main className="flex flex-col md:flex-row flex-1 p-10 gap-10">
       
       {/* Columna izquierda: foto */}
