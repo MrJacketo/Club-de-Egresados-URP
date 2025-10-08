@@ -70,6 +70,8 @@ function App() {
 
           <Route path="/mis-conferencias" element={<PrivateRoute><MisConferencias /></PrivateRoute>} />
           <Route path="/mis-beneficios" element={<PrivateRoute><MisBeneficios /></PrivateRoute>} />
+
+          
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
