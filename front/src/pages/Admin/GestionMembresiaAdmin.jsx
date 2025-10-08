@@ -610,6 +610,75 @@ const handleExportar = () => {
   </div>
 </div>
 
+          {/* Estadísticas */}
+<div className="grid grid-cols-4 gap-6 mb-12">
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Total Membresías</h3>
+    
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.totalMembresias || 0}
+    </p>
+  </div>
+
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Activas</h3>
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.membresiasActivas || 0}
+    </p>
+  </div>
+
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Vencidas / Inactivas</h3>
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.membresiasInactivas || 0}
+    </p>
+  </div>
+
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Ingresos Mensuales</h3>
+    <p className="text-3xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      S/. {estadisticas.ingresosMensuales.toLocaleString()}
+    </p>
+  </div>
+</div>
+
+
+         {/* Filtros */}
+<div className="bg-[#101012] rounded-lg p-6 shadow-sm ">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+    <div className="relative w-[400px]">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+      <input
+        type="text"
+        placeholder="Buscar por nombre, email o código..."
+        value={filtros.busqueda}
+        onChange={(e) => {
+          setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
+          setPaginaActual(1);
+        }}
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+      />
+    </div>
+<div className="ml-[-20px]"></div>
+    <select
+      value={filtros.estado}
+      onChange={(e) => {
+        setFiltros(prev => ({ ...prev, estado: e.target.value }));
+        setPaginaActual(1);
+      }}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+    >
+      <option value="todos">Todos los estados</option>
+      <option value="activa">Activas</option>
+      <option value="inactiva">Inactivas</option>
+    </select>
+
+    <div className="flex gap-2 justify-end">
+
+    </div>
+  </div>
+</div>
+
           {/* Tabla */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
   <table className="w-full">
