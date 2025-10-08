@@ -479,74 +479,15 @@ const handleExportar = () => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex bg-[#1C1D21] min-h-screen text-white">
       <AdminSidebar />
       <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} overflow-auto h-screen`}>
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-[1644px] mx-auto px-8 py-10 relative">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Membresías</h1>
-          </div>
-
-          {/* Estadísticas */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <EstadisticaCard
-              titulo="Total Membresías"
-              valor={estadisticas.totalMembresias}
-              icon={Users}
-              color="gray"
-            />
-            <EstadisticaCard
-              titulo="Activas"
-              valor={estadisticas.membresiasActivas}
-              icon={CheckCircle}
-              color="green"
-            />
-            <EstadisticaCard
-              titulo="Vencidas/Inactivas"
-              valor={estadisticas.membresiasInactivas}
-              icon={AlertTriangle}
-              color="red"
-            />
-            <EstadisticaCard
-              titulo="Ingresos Mensuales"
-              valor={`S/ ${estadisticas.ingresosMensuales.toLocaleString()}`}
-              icon={DollarSign}
-              color="green"
-            />
-          </div>
-
-         {/* Filtros */}
-<div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-    <div className="relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-      <input
-        type="text"
-        placeholder="Buscar por nombre, email o código..."
-        value={filtros.busqueda}
-        onChange={(e) => {
-          setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
-          setPaginaActual(1);
-        }}
-        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-      />
-    </div>
-
-    <select
-      value={filtros.estado}
-      onChange={(e) => {
-        setFiltros(prev => ({ ...prev, estado: e.target.value }));
-        setPaginaActual(1);
-      }}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-    >
-      <option value="todos">Todos los estados</option>
-      <option value="activa">Activas</option>
-      <option value="inactiva">Inactivas</option>
-    </select>
-
-    <div className="flex gap-2 justify-end">
+<div className="mb-8">
+  <div className="flex justify-between items-center mb-6">
+    <h1 className="text-4xl font-extrabold text-[#00BC4F] tracking-wide">Mis Membresías</h1>
+    <div className="flex gap-4">
       <button 
         onClick={handleExportar}
         disabled={loadingExport || loadingDatos}
@@ -565,11 +506,10 @@ const handleExportar = () => {
           </>
         )}
       </button>
-      
-      <button 
+      <button
         onClick={handleActualizarDatos}
         disabled={loadingDatos}
-        className="flex items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+        className="flex items-center px-6 py-3 border-2 border-[#00BC4F] text-[#00BC4F] font-semibold rounded-2xl hover:bg-[#00BC4F]/10"
       >
         <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
         Actualizar
@@ -578,21 +518,90 @@ const handleExportar = () => {
   </div>
 </div>
 
+          {/* Estadísticas */}
+<div className="grid grid-cols-4 gap-6 mb-12">
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Total Membresías</h3>
+    
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.totalMembresias || 0}
+    </p>
+  </div>
+
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Activas</h3>
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.membresiasActivas || 0}
+    </p>
+  </div>
+
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Vencidas / Inactivas</h3>
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.membresiasInactivas || 0}
+    </p>
+  </div>
+
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Ingresos Mensuales</h3>
+    <p className="text-3xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      S/. {estadisticas.ingresosMensuales.toLocaleString()}
+    </p>
+  </div>
+</div>
+
+
+         {/* Filtros */}
+<div className="bg-[#101012] rounded-lg p-6 shadow-sm ">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+    <div className="relative w-[400px]">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+      <input
+        type="text"
+        placeholder="Buscar por nombre, email o código..."
+        value={filtros.busqueda}
+        onChange={(e) => {
+          setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
+          setPaginaActual(1);
+        }}
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+      />
+    </div>
+<div className="ml-[-20px]"></div>
+    <select
+      value={filtros.estado}
+      onChange={(e) => {
+        setFiltros(prev => ({ ...prev, estado: e.target.value }));
+        setPaginaActual(1);
+      }}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+    >
+      <option value="todos">Todos los estados</option>
+      <option value="activa">Activas</option>
+      <option value="inactiva">Inactivas</option>
+    </select>
+
+    <div className="flex gap-2 justify-end">
+
+    </div>
+  </div>
+</div>
+
           {/* Tabla */}
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficios</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+          <div className="bg-[#013617] rounded-lg shadow-sm overflow-hidden">
+<div className="bg-[#101012] rounded-2xl overflow-hidden shadow-lg border border-[#00BC4F]/20">
+  <table className="w-full text-white">
+    <thead className="bg-[#00BC4F]/10 text-[#00BC4F] uppercase text-xs font-bold tracking-wider">
+      <tr>
+        <th className="px-6 py-4 text-left">Usuario</th>
+        <th className="px-6 py-4 text-left">Estado</th>
+        <th className="px-6 py-4 text-left">Fechas</th>
+        <th className="px-6 py-4 text-left">Beneficios</th>
+        <th className="px-6 py-4 text-left">Precio</th>
+        <th className="px-6 py-4 text-left">Acciones</th>
+      </tr>
+    </thead>
+                <tbody className="divide-y divide-[#00BC4F]/10">
                   {membresiasActuales.length > 0 ? (
                     membresiasActuales.map((membresia) => (
                       <FilaMembresia
