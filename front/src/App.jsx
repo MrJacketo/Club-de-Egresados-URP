@@ -27,6 +27,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
 import AdminUsers from './pages/Admin/AdminUsers.jsx';
 import GestionMembresiaAdmin from './pages/Admin/GestionMembresiaAdmin.jsx';
 import GestionNoticias from './pages/Admin/GestionNoticias.jsx';
+import GestionBeneficiosAdmin from './pages/Admin/GestionBeneficiosAdmin.jsx';
 
 
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -62,6 +63,7 @@ function App() {
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
           <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
+          <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
           
         </Routes>

@@ -13,6 +13,17 @@ export const getBeneficios = async (filtros = {}) => {
   }
 }
 
+// Alias para uso de admin en frontend: lista todos los beneficios desde el endpoint público del backend
+export const getBeneficiosAdmin = async (filtros = {}) => {
+  try {
+    const response = await apiClient.get('/api/beneficios/ver-beneficios', { params: filtros });
+    return response.data || [];
+  } catch (err) {
+    console.error('Error getBeneficiosAdmin', err);
+    return [];
+  }
+}
+
 export const enviarFeedback = async (feedbackData) => {
   try {
     const response = await apiClient.post("/feedback", feedbackData)
