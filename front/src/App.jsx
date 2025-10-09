@@ -17,8 +17,7 @@ import GestionarMembresia from './pages/Egresado/GestionarMembresia';
 import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
-import Sidebar from './components/Sidebar.jsx';
-import VerBeneficios from './pages/Egresado/VerBeneficios.jsx';
+import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
 import NoticiasPage from './pages/Egresado/Noticiaspage.jsx';
 import ForoEgresados from '../src/pages/Egresado/ForoEgresados';
