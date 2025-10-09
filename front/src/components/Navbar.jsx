@@ -48,7 +48,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white! shadow-sm ">
+    <nav className="fixed top-0 left-0 w-full z-50 shadow-lg" style={{ backgroundColor: '#1E1E1E' }}>
       <div className="flex justify-between items-center px-6 py-4">
         {/* Logo */}
         <div className="flex items-center">
@@ -61,9 +61,25 @@ export default function Navbar() {
             to="/"
             className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
               location.pathname === "/"
-                ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                ? "text-white shadow-xl"
+                : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
             }`}
+            style={location.pathname === "/" 
+              ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+              : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+            }
+            onMouseEnter={(e) => {
+              if (location.pathname !== "/") {
+                e.target.style.backgroundColor = '#119e04';
+                e.target.style.borderColor = '#119e04';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (location.pathname !== "/") {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.borderColor = '#5DC554';
+              }
+            }}
           >
             <Home size={20} />
             <span>Inicio</span>
@@ -75,9 +91,25 @@ export default function Navbar() {
                 to="/gestion-oferta"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname === "/gestion-oferta"
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "text-white shadow-xl"
+                    : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
+                style={location.pathname === "/gestion-oferta" 
+                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                }
+                onMouseEnter={(e) => {
+                  if (location.pathname !== "/gestion-oferta") {
+                    e.target.style.backgroundColor = '#119e04';
+                    e.target.style.borderColor = '#119e04';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== "/gestion-oferta") {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.borderColor = '#5DC554';
+                  }
+                }}
               >
                 <Star size={20} />
                 <span>Ofertas</span>
@@ -87,9 +119,25 @@ export default function Navbar() {
                 to="/foro-egresados"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname === "/foro-egresados"
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "text-white shadow-xl"
+                    : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
+                style={location.pathname === "/foro-egresados" 
+                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                }
+                onMouseEnter={(e) => {
+                  if (location.pathname !== "/foro-egresados") {
+                    e.target.style.backgroundColor = '#119e04';
+                    e.target.style.borderColor = '#119e04';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== "/foro-egresados") {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.borderColor = '#5DC554';
+                  }
+                }}
               >
                 <MessagesSquare size={20} />
                 <span>Foro</span>
@@ -99,9 +147,25 @@ export default function Navbar() {
                 to="/noticias"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname.startsWith("/noticias")
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "text-white shadow-xl"
+                    : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
+                style={location.pathname.startsWith("/noticias") 
+                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                }
+                onMouseEnter={(e) => {
+                  if (!location.pathname.startsWith("/noticias")) {
+                    e.target.style.backgroundColor = '#119e04';
+                    e.target.style.borderColor = '#119e04';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!location.pathname.startsWith("/noticias")) {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.borderColor = '#5DC554';
+                  }
+                }}
               >
                 <Newspaper size={20} />
                 <span>Noticias</span>
@@ -111,9 +175,25 @@ export default function Navbar() {
                 to="/cursos"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname.startsWith("/cursos")
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "text-white shadow-xl"
+                    : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
+                style={location.pathname.startsWith("/cursos") 
+                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                }
+                onMouseEnter={(e) => {
+                  if (!location.pathname.startsWith("/cursos")) {
+                    e.target.style.backgroundColor = '#119e04';
+                    e.target.style.borderColor = '#119e04';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!location.pathname.startsWith("/cursos")) {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.borderColor = '#5DC554';
+                  }
+                }}
               >
                 <Book size={20} />
                 <span>Beneficios</span>
@@ -123,9 +203,25 @@ export default function Navbar() {
                 to="/conferencias"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname.startsWith("/conferencias")
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "text-white shadow-xl"
+                    : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
+                style={location.pathname.startsWith("/conferencias") 
+                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                }
+                onMouseEnter={(e) => {
+                  if (!location.pathname.startsWith("/conferencias")) {
+                    e.target.style.backgroundColor = '#119e04';
+                    e.target.style.borderColor = '#119e04';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!location.pathname.startsWith("/conferencias")) {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.borderColor = '#5DC554';
+                  }
+                }}
               >
                 <Videotape size={20} />
                 <span>Conferencias</span>
@@ -140,61 +236,73 @@ export default function Navbar() {
             <div>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-3  bg-white! hover:bg-gray-50! px-5 py-3 rounded-xl transition-all duration-300  borde-none! outline-none! focus:outline-none! hover:border-none!"
+                className="flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-300 outline-none focus:outline-none"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }}
               >
                 <img 
                   src={fotoPerfil} 
                   alt="Foto de perfil" 
-                  className="w-10 h-10 rounded-full object-cover ring ring-green-500"
+                  className="w-10 h-10 rounded-full object-cover ring-2"
+                  style={{ ringColor: '#5DC554' }}
                 />
                 <div className="text-left">
-                  <p className="text-gray-800 text-sm font-bold">
+                  <p className="text-white text-sm font-bold">
                     {user.name?.length > 10 ? user.name.substring(0, 15) + '...' : user.name}
                   </p>
-                  <p className="text-gray-500 text-xs font-medium">
+                  <p className="text-xs font-medium" style={{ color: '#5DC554' }}>
                     {user.email?.length > 10 ? user.email.substring(0, 15) + '...' : user.email}
                   </p>
                 </div>
                 <ChevronDown
                   size={18}
-                  className={`text-green-500 transition-transform duration-300 ${
+                  className={`transition-transform duration-300 ${
                     isDropdownOpen ? "rotate-180" : ""
                   }`}
+                  style={{ color: '#5DC554' }}
                 />
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-64 bg-white rounded-3xl shadow-2xl overflow-hidden border-2! border-gray-200!">
+                <div className="absolute right-0 mt-3 w-64 rounded-3xl shadow-2xl overflow-hidden border-2" style={{ backgroundColor: '#1E1E1E', borderColor: '#5DC554' }}>
                   <Link
                     to="/perfil"
                     onClick={() => setIsDropdownOpen(false)}
-                    className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium"
+                    className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium hover:bg-white hover:bg-opacity-20 hover:text-black"
                   >
-                    <User size={20} className="text-green-500" />
+                    <User size={20} style={{ color: '#5DC554' }} />
                     <span>Mi Perfil</span>
                   </Link>
                   <Link
                     to="/VerMembresia"
                     onClick={() => setIsDropdownOpen(false)}
-                    className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium border-t-2! border-gray-100!"
+                    className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
+                    style={{ borderColor: 'rgba(93, 197, 84, 0.3)' }}
                   >
-                    <User size={20} className="text-green-500" />
+                    <User size={20} style={{ color: '#5DC554' }} />
                     <span>Mi Membresía</span>
                   </Link>
                   <Link
                     to="/mis-conferencias"
                     onClick={() => setIsDropdownOpen(false)}
-                    className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium border-t-2! border-gray-100!"
+                    className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
+                    style={{ borderColor: 'rgba(93, 197, 84, 0.3)' }}
                   >
-                    <Calendar size={20} className="text-green-500" />
+                    <Calendar size={20} style={{ color: '#5DC554' }} />
                     <span>Mis Conferencias</span>
                   </Link>
                   <Link
                     to="/mis-beneficios"
                     onClick={() => setIsDropdownOpen(false)}
-                    className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium border-t-2! border-gray-100!"
+                    className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
+                    style={{ borderColor: 'rgba(93, 197, 84, 0.3)' }}
                   >
-                    <Gift size={20} className="text-green-500" />
+                    <Gift size={20} style={{ color: '#5DC554' }} />
                     <span>Mis Beneficios</span>
                   </Link>
                   <Link
@@ -202,7 +310,17 @@ export default function Navbar() {
                       setIsDropdownOpen(false);
                       handleLogout();
                     }}
-                    className="w-full! flex items-center gap-3 px-5 py-4 bg-gradient-to-r! from-green-600! to-teal-600! hover:from-green-700! hover:to-teal-700! text-white transition-all duration-300 font-medium border-t-2! border-gray-100!"
+                    className="w-full flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2"
+                    style={{ 
+                      backgroundColor: '#119e04', 
+                      borderColor: 'rgba(93, 197, 84, 0.3)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = '#0E7E04';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = '#119e04';
+                    }}
                   >
                     <LogOut size={20} className="text-white" />
                     <span>Cerrar Sesión</span>
@@ -213,7 +331,14 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="bg-gradient-to-r! from-green-600! to-teal-600! hover:from-green-700! hover:to-teal-700! text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
+              className="text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
+              style={{ backgroundColor: '#119e04' }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#0E7E04';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#119e04';
+              }}
             >
               Iniciar Sesión
             </Link>

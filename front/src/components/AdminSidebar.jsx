@@ -110,8 +110,8 @@ export default function AdminSidebar() {
                     to="/admin/beneficios"
                     className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
                       location.pathname === "/admin/beneficios"
-                        ? "bg-blue-600/80 text-white shadow-lg"
-                        : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                        ? "bg-white! text-green-600! shadow-lg!"
+                        : "text-white! hover:bg-white/20!"
                     }`}
                   >
                     <Percent size={24} />
