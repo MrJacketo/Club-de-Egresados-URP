@@ -70,11 +70,7 @@ export default function Home() {
               />
             </div>
             
-<<<<<<< HEAD
             <div className="text-center">
-=======
-            <div className="text-right">
->>>>>>> Vidal3
               <h1 
                 className="text-6xl md:text-8xl lg:text-9xl xl:text-[10rem] mb-8"
                 style={{
@@ -122,17 +118,10 @@ export default function Home() {
                 className="text-4xl md:text-5xl"
                 style={{
                   fontFamily: 'League Spartan, sans-serif',
-<<<<<<< HEAD
                     fontWeight: 700,
                     lineHeight: '100%',
                     letterSpacing: '0%',
                     color: '#119e04ff'
-=======
-                  fontWeight: 700,
-                  lineHeight: '100%',
-                  letterSpacing: '0%',
-                  color: '#5DC554'
->>>>>>> Vidal3
                 }}
               >
                 Inspiración, Innovación y
@@ -148,17 +137,10 @@ export default function Home() {
                   style={{ 
                     color: '#FFFFFF',
                     fontFamily: 'Inter, sans-serif',
-<<<<<<< HEAD
                     fontWeight: 700
                   }}
                 >
                   La plataforma <span style={{ color: '#FFFFFF', fontFamily: 'Inter, sans-serif', fontWeight: 700 }}></span> URPex te permitirá conocer, 
-=======
-                    fontWeight: 800
-                  }}
-                >
-                  La plataforma <span style={{ color: '#FFFFFF', fontFamily: 'Inter, sans-serif', fontWeight: 700 }}>URPex</span> te permitirá conocer, 
->>>>>>> Vidal3
                   desarrollar y reforzar no solo tus conocimientos como egresado URP, sino también conectarte de manera más 
                   eficiente a beneficios exclusivos, oportunidades laborales y servicios especializados para tu crecimiento profesional
                 </p>
