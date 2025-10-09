@@ -139,9 +139,9 @@ const AdminDashboardContent = () => {
   };
   if (loading) {
     return (
-      <div className="flex">
+      <div className="flex px-12 py-2">
         <AdminSidebar />
-        <div className="ml-20 lg:ml-64 flex-1">
+        <div className="ml-20  lg:ml-64 flex-1">
           <h1 className="text-2xl font-bold mb-6">Cargando dashboard...</h1>
           <div className="animate-pulse flex flex-col gap-4">
             <div className="h-20 bg-gray-200 rounded"></div>
@@ -160,7 +160,7 @@ const AdminDashboardContent = () => {
       </div>
     );
   }  return (
-    <div className="flex">
+    <div className="flex px-12 py-2">
       <AdminSidebar />
       <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
         <h1 className="text-2xl font-bold mb-6">Panel de Control</h1>
