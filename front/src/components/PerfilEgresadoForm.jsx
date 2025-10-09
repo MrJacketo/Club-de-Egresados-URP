@@ -14,7 +14,6 @@ export default function PerfilEgresadoForm() {
   const { userName } = useUser();
   const [photo, setPhoto] = useState("/default-profile.png");
 
-  // Estado base seguro
   const [userData, setUserData] = useState({
     nombreCompleto: userName || "",
     anioEgreso: "",
@@ -51,7 +50,6 @@ export default function PerfilEgresadoForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  // --- Carga inicial ---
   useEffect(() => {
     const fetchDataAndOptions = async () => {
       try {
@@ -70,22 +68,17 @@ export default function PerfilEgresadoForm() {
 
         const profileResponse = await getGraduateProfileRequest();
         if (profileResponse) {
-          // asegurar estructura completa
           setProfileData({
             interesesProfesionales: {
-              areasInteres:
-                profileResponse.interesesProfesionales?.areasInteres || [],
-              modalidad:
-                profileResponse.interesesProfesionales?.modalidad || "",
-              tipoJornada:
-                profileResponse.interesesProfesionales?.tipoJornada || "",
+              areasInteres: profileResponse.interesesProfesionales?.areasInteres || [],
+              modalidad: profileResponse.interesesProfesionales?.modalidad || "",
+              tipoJornada: profileResponse.interesesProfesionales?.tipoJornada || "",
             },
             habilidades: {
               idiomas: profileResponse.habilidades?.idiomas || [],
             },
             ubicacion: {
-              distritoResidencia:
-                profileResponse.ubicacion?.distritoResidencia || "",
+              distritoResidencia: profileResponse.ubicacion?.distritoResidencia || "",
               disponibilidadReubicacion:
                 profileResponse.ubicacion?.disponibilidadReubicacion || false,
               disponibilidadViajar:
@@ -102,13 +95,11 @@ export default function PerfilEgresadoForm() {
     fetchDataAndOptions();
   }, [userName]);
 
-  // --- Manejo de foto ---
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) setPhoto(URL.createObjectURL(file));
   };
 
-  // --- Handlers ---
   const handleUserChange = (e) => {
     const { name, value } = e.target;
     setUserData((prev) => ({ ...prev, [name]: value }));
@@ -122,7 +113,6 @@ export default function PerfilEgresadoForm() {
     }));
   };
 
-  // --- Idiomas ---
   const addIdioma = () => {
     setProfileData((prev) => ({
       ...prev,
@@ -135,37 +125,26 @@ export default function PerfilEgresadoForm() {
 
   const handleIdiomasChange = (index, field, value) => {
     setProfileData((prev) => {
-      const idiomasSeguros = [...(prev.habilidades?.idiomas || [])];
-      idiomasSeguros[index] = { ...idiomasSeguros[index], [field]: value };
-      return {
-        ...prev,
-        habilidades: { ...prev.habilidades, idiomas: idiomasSeguros },
-      };
+      const updated = [...(prev.habilidades?.idiomas || [])];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, habilidades: { ...prev.habilidades, idiomas: updated } };
     });
   };
 
   const removeIdioma = (index) => {
     setProfileData((prev) => {
-      const seguros = [...(prev.habilidades?.idiomas || [])].filter(
-        (_, i) => i !== index
-      );
-      return {
-        ...prev,
-        habilidades: { ...prev.habilidades, idiomas: seguros },
-      };
+      const updated = (prev.habilidades?.idiomas || []).filter((_, i) => i !== index);
+      return { ...prev, habilidades: { ...prev.habilidades, idiomas: updated } };
     });
   };
 
-  // --- Guardado ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      if (!userData.nombreCompleto.trim())
-        return toast.error("El nombre completo es requerido");
-      if (!userData.anioEgreso)
-        return toast.error("El año de egreso es requerido");
+      if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
+      if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
       if (!userData.carrera) return toast.error("La carrera es requerida");
 
       await userApi.updateAcademicData({
@@ -178,23 +157,16 @@ export default function PerfilEgresadoForm() {
         nombreCompleto: userData.nombreCompleto.trim(),
         interesesProfesionales: {
           ...profileData.interesesProfesionales,
-          modalidad:
-            profileData.interesesProfesionales?.modalidad || "Presencial",
-          tipoJornada:
-            profileData.interesesProfesionales?.tipoJornada ||
-            "Tiempo completo",
+          modalidad: profileData.interesesProfesionales?.modalidad || "Presencial",
+          tipoJornada: profileData.interesesProfesionales?.tipoJornada || "Tiempo completo",
         },
         habilidades: {
           ...profileData.habilidades,
-          idiomas:
-            (profileData.habilidades?.idiomas || []).filter(
-              (i) => i.idioma && i.nivel
-            ) || [],
+          idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
         },
         ubicacion: {
           ...profileData.ubicacion,
-          distritoResidencia:
-            profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
+          distritoResidencia: profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
         },
       };
 
@@ -209,7 +181,6 @@ export default function PerfilEgresadoForm() {
     }
   };
 
-  // --- Render ---
   return (
     <div className="w-full min-h-screen bg-[#1C1D21] text-white flex flex-col">
       <main className="flex flex-col md:flex-row flex-1 p-10 gap-10">
@@ -224,13 +195,7 @@ export default function PerfilEgresadoForm() {
           >
             Editar foto de perfil
           </label>
-          <input
-            type="file"
-            id="photo"
-            accept="image/*"
-            className="hidden"
-            onChange={handlePhotoChange}
-          />
+          <input type="file" id="photo" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </div>
 
         {/* FORMULARIO */}
@@ -238,7 +203,7 @@ export default function PerfilEgresadoForm() {
           <h2 className="text-3xl font-bold mb-8 text-[#00BC4F]">Perfil del Egresado</h2>
 
           <form onSubmit={handleSubmit} className="flex flex-col space-y-6 text-left text-lg">
-            {/* Datos Académicos */}
+            {/* DATOS ACADÉMICOS */}
             <div>
               <label className="text-[#00BC4F] font-semibold block">Nombre completo:</label>
               <input
@@ -284,7 +249,7 @@ export default function PerfilEgresadoForm() {
               />
             </div>
 
-            {/* Áreas de Interés */}
+            {/* INTERESES PROFESIONALES */}
             <div>
               <label className="text-[#00BC4F] font-semibold block mb-2">Áreas de Interés:</label>
               {(profileData.interesesProfesionales?.areasInteres || []).map((area, index) => (
@@ -294,24 +259,27 @@ export default function PerfilEgresadoForm() {
                     onChange={(e) => {
                       const value = e.target.value;
                       setProfileData((prev) => {
-                        const updated = [...(prev.interesesProfesionales?.areasInteres || [])];
-                        updated[index] = value;
+                        const updatedAreasInteres = [...(prev.interesesProfesionales?.areasInteres || [])];
+                        updatedAreasInteres[index] = value;
                         return {
                           ...prev,
                           interesesProfesionales: {
                             ...prev.interesesProfesionales,
-                            areasInteres: updated,
+                            areasInteres: updatedAreasInteres,
                           },
                         };
                       });
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
                   >
                     <option value="">Selecciona un área</option>
-                    {(options.areasInteres || []).map((opt) => (
-                      <option key={opt} value={opt}>{opt}</option>
+                    {options.areasInteres.map((areaOpt) => (
+                      <option key={areaOpt} value={areaOpt}>
+                        {areaOpt}
+                      </option>
                     ))}
                   </select>
+
                   <button
                     type="button"
                     onClick={() =>
@@ -319,9 +287,7 @@ export default function PerfilEgresadoForm() {
                         ...prev,
                         interesesProfesionales: {
                           ...prev.interesesProfesionales,
-                          areasInteres: (prev.interesesProfesionales?.areasInteres || []).filter(
-                            (_, i) => i !== index
-                          ),
+                          areasInteres: prev.interesesProfesionales.areasInteres.filter((_, i) => i !== index),
                         },
                       }))
                     }
@@ -331,6 +297,7 @@ export default function PerfilEgresadoForm() {
                   </button>
                 </div>
               ))}
+
               <button
                 type="button"
                 onClick={() =>
@@ -346,9 +313,44 @@ export default function PerfilEgresadoForm() {
               >
                 + Añadir área
               </button>
+
+              {/* NUEVAS OPCIONES - Modalidad y Jornada */}
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-[#00BC4F]">Modalidad Preferida de Empleo</label>
+                <select
+                  name="modalidad"
+                  value={profileData.interesesProfesionales?.modalidad || ""}
+                  onChange={(e) => handleNestedChange(e, "interesesProfesionales")}
+                  className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
+                >
+                  <option value="">Seleccione una modalidad</option>
+                  {options.modalidades.map((modalidad) => (
+                    <option key={modalidad} value={modalidad}>
+                      {modalidad}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-[#00BC4F]">Tipo de Jornada</label>
+                <select
+                  name="tipoJornada"
+                  value={profileData.interesesProfesionales?.tipoJornada || ""}
+                  onChange={(e) => handleNestedChange(e, "interesesProfesionales")}
+                  className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
+                >
+                  <option value="">Seleccione un tipo de jornada</option>
+                  {options.tiposJornada.map((jornada) => (
+                    <option key={jornada} value={jornada}>
+                      {jornada}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            {/* Idiomas */}
+            {/* IDIOMAS */}
             <div>
               <label className="text-[#00BC4F] font-semibold block mb-2">Idiomas:</label>
               {(profileData.habilidades?.idiomas || []).map((idioma, index) => (
@@ -356,14 +358,14 @@ export default function PerfilEgresadoForm() {
                   <input
                     type="text"
                     placeholder="Idioma"
-                    value={idioma?.idioma || ""}
+                    value={idioma.idioma}
                     onChange={(e) => handleIdiomasChange(index, "idioma", e.target.value)}
                     className="flex-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
                   />
                   <input
                     type="text"
                     placeholder="Nivel"
-                    value={idioma?.nivel || ""}
+                    value={idioma.nivel}
                     onChange={(e) => handleIdiomasChange(index, "nivel", e.target.value)}
                     className="flex-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
                   />
@@ -383,28 +385,96 @@ export default function PerfilEgresadoForm() {
               >
                 + Añadir idioma
               </button>
+
+              {/* NUEVAS OPCIONES - Ubicación */}
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-[#00BC4F]">
+                  Distrito de Residencia
+                </label>
+                <select
+                  name="distritoResidencia"
+                  value={profileData.ubicacion?.distritoResidencia || ""}
+                  onChange={(e) => handleNestedChange(e, "ubicacion")}
+                  className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
+                >
+                  <option value="">Seleccione un distrito</option>
+                  {options.distritosResidencia.map((distrito) => (
+                    <option key={distrito} value={distrito}>
+                      {distrito}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-[#00BC4F]">
+                  Disponibilidad para Reubicación
+                </label>
+                <input
+                  type="checkbox"
+                  name="disponibilidadReubicacion"
+                  checked={profileData.ubicacion?.disponibilidadReubicacion || false}
+                  onChange={(e) =>
+                    setProfileData((prev) => ({
+                      ...prev,
+                      ubicacion: {
+                        ...prev.ubicacion,
+                        disponibilidadReubicacion: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="mt-1"
+                />
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-[#00BC4F]">
+                  Disponibilidad para Viajar
+                </label>
+                <input
+                  type="checkbox"
+                  name="disponibilidadViajar"
+                  checked={profileData.ubicacion?.disponibilidadViajar || false}
+                  onChange={(e) =>
+                    setProfileData((prev) => ({
+                      ...prev,
+                      ubicacion: {
+                        ...prev.ubicacion,
+                        disponibilidadViajar: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="mt-1"
+                />
+              </div>
             </div>
 
-            {/* Botones */}
-            <div className="flex justify-start mt-10 space-x-4">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="px-8 py-3 bg-[#00BC4F] text-white rounded-lg font-semibold hover:bg-green-600 transition"
-              >
-                {isLoading ? "Guardando..." : "Guardar Cambios"}
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="px-8 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
-              >
-                Volver
-              </button>
-            </div>
+           {/* BOTONES */}
+              <div className="flex justify-end space-x-4 mt-8">
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`px-6 py-2 rounded-lg text-white font-semibold transition ${
+                    isLoading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-[#00BC4F] hover:bg-[#009B42]"
+                  }`}
+                >
+                  {isLoading ? "Guardando..." : "Guardar Perfil"}
+                </button>
+              </div>
           </form>
-        </div>
-      </main>
-    </div>
-  );
+          </div>
+          </main>
+          </div>
+);
 }
+
