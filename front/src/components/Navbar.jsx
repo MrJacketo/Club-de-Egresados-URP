@@ -271,7 +271,7 @@ export default function Navbar() {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-3 w-64 rounded-3xl shadow-2xl overflow-hidden border-2" style={{ backgroundColor: '#1E1E1E', borderColor: '#5DC554' }}>
                   <Link
-                    to="/perfil"
+                    to="/perfil-egresado-form"
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium hover:bg-white hover:bg-opacity-20 hover:text-black"
                   >

@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 import { getGraduateProfileRequest } from "../../api/perfilEgresadoApi";
 
+
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useContext(UserContext);
@@ -12,6 +13,7 @@ export default function Login() {
     password: ""
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -31,42 +33,32 @@ export default function Login() {
     }
 
     try {
-      // Login with JWT
       const response = await login(formData.email, formData.password);
-      
-      // Check if user is active
+
       if (!response.user.activo) {
         toast.error("Tu cuenta está desactivada. Contacta al administrador.");
         setLoading(false);
         return;
       }
 
-      // Check user role and redirect accordingly
-      if (response.user.rol === 'admin') {
-        // Redirect admin users to admin panel
+      if (response.user.rol === "admin") {
         navigate("/admin");
         toast.success("Bienvenido, Administrador");
       } else {
-        // For egresado users, check if profile exists
         try {
           const profileResponse = await getGraduateProfileRequest();
-          
           if (!profileResponse) {
-            // If the profile doesn't exist, navigate to the profile creation form
             navigate("/perfil-egresado-form");
             toast("Por favor, completa tu perfil.");
           } else {
-            // If the profile exists, navigate to the welcome page
             navigate("/welcome-egresado");
             toast.success("Inicio de sesión exitoso");
           }
-        } catch (profileError) {
-          // Profile doesn't exist, redirect to profile form
+        } catch {
           navigate("/perfil-egresado-form");
           toast("Por favor, completa tu perfil.");
         }
       }
-
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       toast.error(error.message || "Error al iniciar sesión");
@@ -76,140 +68,111 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center pt-35">
-      <div className="w-[90%] md:w-[80%] max-w-6xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden bg-white z-10 relative h-[500px] md:h-[450px]">
-        {/* Left Column: Login Form */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-6 md:p-10">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-              Iniciar Sesión
-            </h2>
-            <p className="text-gray-500">
-              Ingresa tu email y contraseña para continuar
-            </p>
-          </div>
+    <div className="min-h-screen w-full bg-white flex font-inter">
+      {/* Izquierda - Login */}
+      <div className="flex-1 lg:flex-none lg:w-1/2 xl:w-2/5 bg-[#1C1D21] flex justify-center items-center p-8">
+        <div className="w-full max-w-md bg-white rounded-[26px] shadow-2xl p-8 lg:p-10">
+          <h2 className="text-gray-900 text-3xl lg:text-4xl xl:text-5xl font-extrabold text-center mb-2">
+            Ingresar
+          </h2>
+          <p className="text-gray-600 text-center text-base lg:text-lg mb-6 lg:mb-8">
+            Ingresa los datos de tu cuenta
+          </p>
 
-          <form onSubmit={handleLogin} className="w-full max-w-sm space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4 lg:space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
+              <label className="block text-gray-600 mb-2 text-sm lg:text-base">Codigo</label>
               <input
-                type="email"
-                id="email"
+                type="text"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="tu@email.com"
-                required
+                className="w-full bg-transparent border-b border-gray-300 text-gray-900 py-2 lg:py-3 focus:outline-none focus:border-[#00BC4F] transition-colors text-sm lg:text-base"
+                placeholder="Ingresa tu código"
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Contraseña
-              </label>
+            <div className="relative">
+              <label className="block text-gray-600 mb-2 text-sm lg:text-base">Contraseña</label>
               <input
-                type="password"
-                id="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border text-black  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-transparent border-b border-gray-300 text-gray-900 py-2 lg:py-3 focus:outline-none focus:border-[#00BC4F] transition-colors text-sm lg:text-base pr-8"
                 placeholder="••••••••"
-                required
               />
+              <img
+                src="/ojo.png"
+                alt="ver"
+                className="absolute right-2 bottom-2 lg:bottom-3 w-5 h-5 lg:w-6 lg:h-6 cursor-pointer opacity-50 hover:opacity-80 transition-opacity"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            </div>
+
+            <div className="text-gray-500 text-xs lg:text-sm cursor-pointer hover:text-[#00BC4F] transition-colors">
+              ¿Olvidaste tu contraseña?
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 text-lg font-semibold text-white rounded-lg hover:bg-emerald-700 active:bg-emerald-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: "#008f4c" }}
+              className="w-full bg-[#00BC4F] hover:bg-[#00BC4F]/90 text-white py-3 lg:py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 text-sm lg:text-base"
             >
               {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
 
-            <div className="text-center mt-4 space-y-2">
-              <p className="text-gray-600">
-                ¿No tienes cuenta?{" "}
-                <Link to="/register" className="text-emerald-600 hover:text-emerald-700 font-medium">
-                  Regístrate aquí
-                </Link>
+            <button
+              type="button"
+              className="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 lg:py-4 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm lg:text-base"
+            >
+              <img src="/GoogleLogo.png" alt="Google" className="w-5 h-5 lg:w-6 lg:h-6" />
+              Inicia Sesión con Google
+            </button>
+
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-2 mt-4 lg:mt-6">
+              <span className="text-gray-500 text-xs lg:text-sm">¿No tienes cuenta?</span>
+              <Link
+                to="/register"
+                className="bg-[#00BC4F] hover:bg-[#00BC4F]/90 text-white px-3 lg:px-4 py-2 rounded-lg text-xs lg:text-sm font-semibold transition-colors"
+              >
+                Regístrate aquí
+              </Link>
+            </div>
+            <div className="mt-4">
+              <p className="text-xs text-gray-400 text-center">
+                <span className="font-bold">Administradores:</span> Usar credenciales institucionales
               </p>
-              <div className="border-t pt-2">
-                <p className="text-xs text-gray-500">
-                  <span className="font-medium">Administradores:</span> Usar credenciales institucionales
-                </p>
-              </div>
             </div>
           </form>
         </div>
+      </div>
 
-        {/* Right Column: Welcome Message */}
-        <div
-          className="w-full md:w-1/2 text-white flex flex-col justify-center items-center p-10 relative overflow-hidden"
-          style={{ backgroundColor: "#008f4c" }}
-        >
-          {/* Decorative pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
-              <pattern
-                id="pattern-circles"
-                x="0"
-                y="0"
-                width="20"
-                height="20"
-                patternUnits="userSpaceOnUse"
-                patternContentUnits="userSpaceOnUse"
-              >
-                <circle
-                  id="pattern-circle"
-                  cx="10"
-                  cy="10"
-                  r="1.6"
-                  fill="#fff"
-                ></circle>
-              </pattern>
-              <rect
-                x="0"
-                y="0"
-                width="100%"
-                height="100%"
-                fill="url(#pattern-circles)"
-              ></rect>
-            </svg>
-          </div>
-
-          <div className="relative z-10 max-w-md text-center space-y-4 mt-[-50px]">
-            {/* Icon */}
-            <div className="inline-block p-4 rounded-full bg-white/10 mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-
-            <h2 className="text-4xl font-bold mb-4">¡Hola de nuevo!</h2>
-            <p className="text-lg">
-              Estamos felices de verte nuevamente. Inicia sesión para continuar
-              con tu experiencia.
-            </p>
+      {/* Derecha - Bienvenida */}
+      <div className="hidden lg:flex relative flex-1 lg:w-1/2 xl:w-3/5 bg-[#00BC4F] justify-center items-center">
+        <div className="absolute inset-0">
+          <img
+            src="/backgroundcollege.jpg"
+            alt="background"
+            className="w-full h-full object-cover opacity-50"
+          />
+        </div>
+        <div className="relative text-center text-white px-6 lg:px-8 xl:px-12">
+          <h2 className="text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold leading-tight">
+            Bienvenido al
+          </h2>
+          <h3 className="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold leading-tight">
+            Portal Innova URP
+          </h3>
+          <p className="mt-4 text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
+            Ingresa tu cuenta
+          </p>
+          <div className="mt-8 lg:mt-10 xl:mt-12">
+            <img 
+              src="/URPlogoFull.png" 
+              alt="URP" 
+              className="mx-auto w-40 lg:w-48 xl:w-56 2xl:w-64" 
+            />
           </div>
         </div>
       </div>
