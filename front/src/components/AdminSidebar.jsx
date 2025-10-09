@@ -28,7 +28,7 @@ export default function AdminSidebar() {
       {/* Sidebar */}
       <aside
         className={`group fixed top-[64px] left-0 h-[calc(100vh-64px)] 
-        shadow-xl p-4 z-40 pt-8  bg-[#00BC4F]
+        shadow-xl p-4 z-40 pt-8  bg-[#01a83c]
         transition-all duration-300 flex flex-col justify-between
         ${collapsed ? 'w-20' : 'w-64'}`}
       >
@@ -50,7 +50,7 @@ export default function AdminSidebar() {
             to="/admin"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin"
-                ? "bg-white! text-green-600! shadow-lg!"
+                ? "bg-white! text-[#01a83c]! shadow-lg!"
                 : "text-white! hover:bg-white/20!"
             }`}
             style={{ border: 'none' }}

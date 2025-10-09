@@ -170,7 +170,7 @@ export default function MisConferencias() {
             <X size={24} className="text-gray-800" />
           </button>
           <div className="absolute bottom-4 left-6">
-            <span className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl">
+            <span className="bg-[#01a83c]! text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl">
               {conferencia.tipo}
             </span>
           </div>
@@ -275,7 +275,7 @@ export default function MisConferencias() {
             </div>
             <button
               onClick={onClose}
-              className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-bold transition-all! duration-300 hover:shadow-xl hover:scale-105"
+              className="bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-bold transition-all! duration-300 hover:shadow-xl hover:scale-105"
             >
               Cerrar
             </button>
@@ -301,7 +301,7 @@ export default function MisConferencias() {
       <div className="max-w-[95%] mx-auto px-4 mt-6">
         <div className="pb-12 text-start">
           <h1 className="text-6xl font-bold text-gray-900 mb-2">
-            <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+            <span className="bg-[#01a83c]! bg-clip-text text-transparent">
               Mis Conferencias
             </span>
           </h1>
@@ -377,7 +377,7 @@ export default function MisConferencias() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-green-500 to-teal-500">
+                <tr className="bg-[#01a83c]!">
                   <th className="px-6 py-4 text-left text-white font-bold text-sm">
                     Nombre de la Conferencia
                   </th>
@@ -452,7 +452,7 @@ export default function MisConferencias() {
                     <td className="px-6 py-4 text-center">
                       <button
                         onClick={() => openModal(conf)}
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-full!  text-sm font-bold transition-all! duration-300 hover:shadow-lg hover:scale-105"
+                        className="inline-flex items-center gap-2 bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-full!  text-sm font-bold transition-all! duration-300 hover:shadow-lg hover:scale-105"
                       >
                         <Eye size={16} />
                         Ver Detalle
@@ -477,7 +477,7 @@ export default function MisConferencias() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-full">
+              <div className="bg-[#01a83c]! p-4 rounded-full">
                 <Calendar size={32} className="text-white" />
               </div>
               <div>

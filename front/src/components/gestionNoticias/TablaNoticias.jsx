@@ -42,7 +42,7 @@ const TablaNoticias = ({ noticias, onEditar, onEliminar, loading }) => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gradient-to-r from-green-500 to-teal-500" style={{ background: 'linear-gradient(135deg, #00C853, #00E676)' }}>
+              <tr className="bg-[#01a83c]">
                 <th className="px-6 py-4 text-left text-white font-bold text-sm">
                   Noticia
                 </th>
@@ -96,7 +96,7 @@ const TablaNoticias = ({ noticias, onEditar, onEliminar, loading }) => {
                             className="w-16 h-16 rounded-lg object-cover shadow-md"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-lg bg-[#01a83c] flex items-center justify-center">
                             <FileText className="w-8 h-8 text-white" />
                           </div>
                         )}
@@ -114,7 +114,7 @@ const TablaNoticias = ({ noticias, onEditar, onEliminar, loading }) => {
                     {/* Columna de Categoría */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Tag size={16} style={{ color: '#00C853' }} />
+                        <Tag size={16} style={{ color: '#01a83c' }} />
                         <span className="text-sm font-medium text-gray-700">
                           {noticia.categoria}
                         </span>
@@ -157,8 +157,8 @@ const TablaNoticias = ({ noticias, onEditar, onEliminar, loading }) => {
                       <div className="flex justify-center items-center gap-2">
                         <button
                           onClick={() => onEditar(noticia)}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg! transition-all! duration-300! hover:shadow-md! hover:scale-105!"
-                          style={{ background: '#00C853', border: 'none' }}
+                          className="inline-flex items-center bg-[#01a83c]! gap-2 px-4 py-2 rounded-lg! transition-all! duration-300! hover:shadow-md! hover:scale-105!"
+                          
                           title="Editar noticia"
                         >
                           <Edit className="w-4 h-4" style={{ color: '#fff' }} />

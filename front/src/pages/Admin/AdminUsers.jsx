@@ -122,10 +122,8 @@ const AdminUsersContent = () => {
       >
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl text-start font-bold mb-2">
-            <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+          <h1 className="text-5xl text-start font-bold mb-2 text-[#01a83c]">
               Gestión de Usuarios
-            </span>
           </h1>
         </div>
 
@@ -263,7 +261,7 @@ const AdminUsersContent = () => {
               
               <button
                 onClick={exportToCSV}
-                className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white px-6 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-2 whitespace-nowrap"
+                className="bg-[#01a83c]! hover:to-teal-600! text-white px-6 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-2 whitespace-nowrap"
               >
                 <FileDownload style={{ fontSize: 20 }} />
                 Exportar

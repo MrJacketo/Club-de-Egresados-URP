@@ -117,16 +117,14 @@ const GestionNoticiasContent = () => {
         
           {/* Header de la página */}
           <div className="flex flex-wrap items-center justify-between mb-8">
-            <h1 className="text-5xl! font-bold! mb-2!">
-              <span className="bg-gradient-to-r! from-green-500! to-teal-500! bg-clip-text! text-transparent!">
+            <h1 className="text-5xl! font-bold! mb-2! text-[#01a83c]"> 
                 Gestión de Noticias
-              </span>
             </h1>
             <button
               onClick={handleNuevaNoticia}
               className="flex! items-center! px-6! py-3! text-white! rounded-full! font-bold! transition-all! duration-300! hover:scale-110! transform! hover:-translate-y-1!"
               style={{ 
-                background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+                background: '#01a83c',
                 border: 'none'
               }}
             >

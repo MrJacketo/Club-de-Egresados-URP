@@ -249,14 +249,14 @@ export default function Cursos() {
     return (
       <div className="mb-10">
         <h2 className="text-4xl font-bold text-start mb-6">
-          <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+          <span className="bg-[#01a83c]! bg-clip-text text-transparent">
             {titulo}
           </span>
         </h2>
         <div className="relative">
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl! transition-all duration-300"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl! transition-all duration-300"
           >
             <ChevronLeft size={24} />
           </button>
@@ -280,7 +280,7 @@ export default function Cursos() {
 
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
           >
             <ChevronRight size={24} />
           </button>
@@ -302,7 +302,7 @@ export default function Cursos() {
               className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
-            <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
+            <div className="absolute top-4 left-4 bg-[#01a83c]! text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
               {benef.tipo}
             </div>
           </div>
@@ -344,7 +344,7 @@ export default function Cursos() {
                 className={`px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110! transform! hover:-translate-y-1 ${
                   isReclamado
                     ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                    : "bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
+                    : "bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white"
                 }`}
               >
                 {isReclamado ? "Reclamado" : "Reclamar"}
@@ -365,7 +365,7 @@ export default function Cursos() {
             className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
-          <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
+          <div className="absolute top-4 left-4 bg-[#01a83c]! text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
             {benef.tipo}
           </div>
         </div>
@@ -404,7 +404,7 @@ export default function Cursos() {
               className={`px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110 transform hover:-translate-y-1 ${
                 isReclamado
                   ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
+                  : "bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white"
               }`}
             >
               {isReclamado ? "Reclamado" : "Reclamar"}
@@ -434,7 +434,7 @@ export default function Cursos() {
       <div className="max-w-[95%] mx-auto px-4 mt-6">
         <div className="pb-12 text-start">
           <h1 className="text-6xl font-bold text-gray-900 mb-2">
-            <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+            <span className="bg-[#01a83c]! bg-clip-text text-transparent">
               Beneficios y Descuentos
             </span>
           </h1>
@@ -497,7 +497,7 @@ export default function Cursos() {
             {/* Botón buscar */}
             <button
               onClick={handleSearch}
-              className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-2xl"
+              className="bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-2xl"
             >
               Buscar
             </button>

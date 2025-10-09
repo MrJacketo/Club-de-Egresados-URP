@@ -193,7 +193,7 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
     <div className="fixed! inset-0! backdrop-blur-sm! bg-black/20! flex! items-center! justify-center! z-50! p-4!">
       <div className="bg-white! rounded-2xl! max-w-6xl! w-full! max-h-[90vh]! overflow-y-auto! shadow-2xl!">
         {/* Header */}
-        <div className="flex! items-center! justify-between! p-6! border-b! border-gray-200! sticky! top-0! z-10! bg-white! rounded-t-2xl!" style={{ background: 'linear-gradient(135deg, #00C853, #00E676)' }}>
+        <div className="flex! items-center! justify-between! p-6! border-b! border-gray-200! sticky! top-0! z-10! rounded-t-2xl! bg-[#01a83c]!" >
           <h2 className="text-2xl! font-bold! text-white!">
             {noticia ? "Editar Noticia" : "Nueva Noticia"}
           </h2>
@@ -323,7 +323,7 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
               </div>
 
               {/* Noticia Destacada */}
-              <div className="bg-green-50! border-2! border-green-200! rounded-xl! p-4!">
+              <div className="bg-[#f0fdf4]! border-2! border-green-200! rounded-xl! p-4!">
                 <label className="block! text-sm! font-bold! text-gray-700! mb-3!">
                   Noticia Destacada
                 </label>
@@ -403,7 +403,7 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
                       <label
                         htmlFor="imagen-upload"
                         className="cursor-pointer! px-4! py-2! rounded-lg! text-xs! font-bold! transition-all! duration-300! inline-block! hover:shadow-lg!"
-                        style={{ background: '#00C853', color: '#fff', border: 'none' }}
+                        style={{ background: '#01a83c', color: '#fff', border: 'none' }}
                       >
                         Seleccionar
                       </label>
@@ -515,7 +515,7 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
               type="submit"
               disabled={loading}
               className="px-8! py-3! text-white! rounded-xl! font-bold! transition-all! duration-300! disabled:opacity-50! disabled:cursor-not-allowed! flex! items-center! hover:shadow-xl!"
-              style={{ background: '#00C853', border: 'none' }}
+              style={{ background: '#01a83c', border: 'none' }}
             > 
               {loading && (
                 <div className="animate-spin! rounded-full! h-5! w-5! border-b-2! border-white! mr-2!"></div>

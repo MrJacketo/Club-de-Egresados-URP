@@ -302,7 +302,7 @@ export default function MisBeneficios() {
               <X size={24} className="text-gray-800" />
             </button>
             <div className="absolute bottom-4 left-6">
-              <span className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full! text-sm font-bold shadow-xl">
+              <span className="bg-[#01a83c]! text-white px-4 py-2 rounded-full! text-sm font-bold shadow-xl">
                 {beneficio.tipo}
               </span>
             </div>
@@ -431,7 +431,7 @@ export default function MisBeneficios() {
                 </div>
 
                 {beneficio.codigoDescuento && (
-                  <div className="mt-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl p-4">
+                  <div className="mt-4 bg-[#01a83c]! rounded-xl p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white text-sm font-medium mb-1">
@@ -706,7 +706,7 @@ export default function MisBeneficios() {
                 )}
 
                 {(beneficio.codigoAcceso || beneficio.codigoMembresia) && (
-                  <div className="bg-gradient-to-r from-green-500 to-teal-500 rounded-xl p-4 mb-4">
+                  <div className="bg-[#01a83c]! rounded-xl p-4 mb-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white text-sm font-medium mb-1">
@@ -746,7 +746,7 @@ export default function MisBeneficios() {
               </div>
               <button
                 onClick={onClose}
-                className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
+                className="bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
               >
                 Cerrar
               </button>
@@ -762,7 +762,7 @@ export default function MisBeneficios() {
     <div className="fixed inset-0 bg-[#00000092] backdrop-blur-xs z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-green-500 to-teal-500 p-8 rounded-t-3xl">
+        <div className="relative bg-[#01a83c]! p-8 rounded-t-3xl">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 bg-white! hover:bg-gray-100! p-2 rounded-full! transition-all! duration-300 shadow-lg"
@@ -933,7 +933,7 @@ export default function MisBeneficios() {
             </button>
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-xl hover:scale-105"
+              className="flex-1 bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white px-6 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-xl hover:scale-105"
             >
               Enviar Solicitud
             </button>
@@ -969,7 +969,7 @@ export default function MisBeneficios() {
         <div className="justify-between md:flex md:items-center ">
           <div className="pb-12 text-start">
             <h1 className="text-6xl font-bold text-gray-900 mb-2">
-              <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+              <span className="bg-[#01a83c]! bg-clip-text text-transparent">
                 Mis Beneficios
               </span>
             </h1>
@@ -981,7 +981,7 @@ export default function MisBeneficios() {
           <div className="mb-8 flex justify-end">
             <button
               onClick={() => setModalSolicitudOpen(true)}
-              className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-3"
+              className="bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-3"
             >
               <Gift size={20} />
               Solicitar Nuevo Beneficio
@@ -1058,7 +1058,7 @@ export default function MisBeneficios() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-green-500 to-teal-500">
+                <tr className="bg-[#01a83c]!">
                   <th className="px-6 py-4 text-left text-white font-bold text-sm">
                     Nombre del Beneficio
                   </th>
@@ -1136,7 +1136,7 @@ export default function MisBeneficios() {
                       <td className="px-6 py-4 text-center">
                         <button
                           onClick={() => openModal(benef)}
-                          className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-full! text-sm font-bold transition-all! duration-300 hover:shadow-lg hover:scale-105"
+                          className="inline-flex items-center gap-2 bg-[#01a83c]! hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-full! text-sm font-bold transition-all! duration-300 hover:shadow-lg hover:scale-105"
                         >
                           <Eye size={16} />
                           Ver Detalle
@@ -1162,7 +1162,7 @@ export default function MisBeneficios() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-12">
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-full!">
+              <div className="bg-[#01a83c]! p-4 rounded-full!">
                 <Gift size={32} className="text-white" />
               </div>
               <div>

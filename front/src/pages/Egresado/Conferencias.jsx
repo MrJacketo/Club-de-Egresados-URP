@@ -200,14 +200,14 @@ export default function Conferencias() {
     return (
       <div className="mb-16">
         <h2 className="text-4xl font-bold text-start mb-6">
-              <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+              <span className="bg-[#01a83c]! bg-clip-text text-transparent">
                 {titulo}
               </span>
             </h2>
         <div className="relative">
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-[#01a83c]! hover:from-green-600! hover:to-teal-600! text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
             style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)', border: 'none' }}
           >
             <ChevronLeft size={24} />
@@ -228,7 +228,7 @@ export default function Conferencias() {
 
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-[#01a83c]! hover:from-green-600! hover:to-teal-600! text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
             style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)', border: 'none' }}
           >
             <ChevronRight size={24} />
@@ -249,9 +249,8 @@ export default function Conferencias() {
           className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
-        <div className="absolute top-4 left-4 bg-gradient-to-r! from-green-500! to-teal-500! text-white px-4 py-2 rounded-full! text-xs font-bold shadow-xl"
-          style={{ 
-            background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+        <div className="absolute top-4 left-4 bg-[#01a83c]! text-white px-4 py-2 rounded-full! text-xs font-bold shadow-xl"
+          style={{
             border: 'none'
           }}>
           {conf.tipo}
@@ -278,9 +277,8 @@ export default function Conferencias() {
           <span className="font-bold text-xl transition-transform duration-300 hover:scale-110" style={{ color: '#5DC554' }}>
             {conf.precio}
           </span>
-          <button className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110 transform hover:-translate-y-1"
+          <button className="bg-[#01a83c]! hover:from-green-600! hover:to-teal-600! text-white px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110 transform hover:-translate-y-1"
             style={{ 
-              background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
               border: 'none'
             }}>
             Inscríbete
@@ -300,7 +298,7 @@ export default function Conferencias() {
       <div className="max-w-[95%] mx-auto px-4 mt-6">
         <div className="pb-12 text-start">
           <h1 className="text-6xl font-bold text-gray-900 mb-2">
-              <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+              <span className="bg-[#01a83c]! bg-clip-text text-transparent">
                 Conferencias
               </span>
           </h1>
@@ -366,9 +364,8 @@ export default function Conferencias() {
             {/* Botón buscar */}
             <button
               onClick={handleSearch}
-              className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white px-8 py-4 rounded-xl! font-bold transition-all duration-300 hover:shadow-2xl"
+              className="bg-[#01a83c]! hover:from-green-600! hover:to-teal-600! text-white px-8 py-4 rounded-xl! font-bold transition-all duration-300 hover:shadow-2xl"
               style={{ 
-                background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
                 border: 'none'
               }}
             >

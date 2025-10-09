@@ -62,7 +62,7 @@ const TablaUsuarios = ({ users, onEdit, onToggleActive }) => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gradient-to-r from-green-500 to-teal-500">
+              <tr className="bg-[#01a83c]">
                 <th className="px-6 py-4 text-left text-white font-bold text-sm">
                   Usuario
                 </th>
@@ -109,7 +109,7 @@ const TablaUsuarios = ({ users, onEdit, onToggleActive }) => {
                     {/* Columna de Usuario con avatar */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center shadow-md">
+                        <div className="w-12 h-12 rounded-full bg-[#01a83c] flex items-center justify-center shadow-md">
                           <span className="text-white font-bold text-base">
                             {user.name?.charAt(0).toUpperCase()}
                           </span>
@@ -149,7 +149,7 @@ const TablaUsuarios = ({ users, onEdit, onToggleActive }) => {
                     <td className="px-6 py-4 text-center">
                       {user.activo ? (
                         <span className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold">
-                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <div className="w-2 h-2 bg-[#01a83c] rounded-full animate-pulse"></div>
                           Activo
                         </span>
                       ) : (
@@ -180,7 +180,7 @@ const TablaUsuarios = ({ users, onEdit, onToggleActive }) => {
                         <button
                           onClick={() => handleEdit(user)}
                           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg! transition-all! duration-300! hover:shadow-md! hover:scale-105!"
-                          style={{ background: '#10b981', border: 'none' }}
+                          style={{ background: '#01a83c', border: 'none' }}
                           title="Editar usuario"
                         >
                           <Edit style={{ fontSize: 16, color: '#fff' }} />

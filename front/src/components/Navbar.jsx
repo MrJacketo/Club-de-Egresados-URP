@@ -61,8 +61,8 @@ export default function Navbar() {
             to="/"
             className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
               location.pathname === "/"
-                ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                ? "bg-[#01a83c]! border-transparent! text-white shadow-xl"
+                : "border-[#01a83c]! text-[#01a83c]! hover:bg-[#01a83c]! hover:border-transparent! hover:text-white! hover:-translate-y-0.5 hover:shadow-lg"
             }`}
           >
             <Home size={20} />
@@ -75,8 +75,8 @@ export default function Navbar() {
                 to="/gestion-oferta"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname === "/gestion-oferta"
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "bg-[#01a83c]! border-transparent! text-white shadow-xl"
+                    : "border-[#01a83c]! text-[#01a83c]! hover:bg-[#01a83c]! hover:border-transparent! hover:text-white! hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
               >
                 <Star size={20} />
@@ -87,8 +87,8 @@ export default function Navbar() {
                 to="/foro-egresados"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname === "/foro-egresados"
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "bg-[#01a83c]! border-transparent! text-white shadow-xl"
+                    : "border-[#01a83c]! text-[#01a83c]! hover:bg-[#01a83c]! hover:border-transparent! hover:text-white! hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
               >
                 <MessagesSquare size={20} />
@@ -99,8 +99,8 @@ export default function Navbar() {
                 to="/noticias"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname.startsWith("/noticias")
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "bg-[#01a83c]! border-transparent! text-white shadow-xl"
+                    : "border-[#01a83c]! text-[#01a83c]! hover:bg-[#01a83c]! hover:border-transparent! hover:text-white! hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
               >
                 <Newspaper size={20} />
@@ -111,8 +111,8 @@ export default function Navbar() {
                 to="/cursos"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname.startsWith("/cursos")
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "bg-[#01a83c]! border-transparent! text-white shadow-xl"
+                    : "border-[#01a83c]! text-[#01a83c]! hover:bg-[#01a83c]! hover:border-transparent! hover:text-white! hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
               >
                 <Book size={20} />
@@ -123,8 +123,8 @@ export default function Navbar() {
                 to="/conferencias"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
                   location.pathname.startsWith("/conferencias")
-                    ? "bg-gradient-to-r! from-green-600! to-teal-600! border-transparent! text-white shadow-xl"
-                    : "border-green-600 text-green-600 hover:bg-gradient-to-r! hover:from-green-600! hover:to-teal-600! hover:border-transparent! hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                    ? "bg-[#01a83c]! border-transparent! text-white shadow-xl"
+                    : "border-[#01a83c]! text-[#01a83c]! hover:bg-[#01a83c]! hover:border-transparent! hover:text-white! hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
               >
                 <Videotape size={20} />
@@ -157,7 +157,7 @@ export default function Navbar() {
                 </div>
                 <ChevronDown
                   size={18}
-                  className={`text-green-500 transition-transform duration-300 ${
+                  className={`text-[#01a83c] transition-transform duration-300 ${
                     isDropdownOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -170,7 +170,7 @@ export default function Navbar() {
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium"
                   >
-                    <User size={20} className="text-green-500" />
+                    <User size={20} className="text-[#01a83c]" />
                     <span>Mi Perfil</span>
                   </Link>
                   <Link
@@ -178,7 +178,7 @@ export default function Navbar() {
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium border-t-2! border-gray-100!"
                   >
-                    <User size={20} className="text-green-500" />
+                    <User size={20} className="text-[#01a83c]" />
                     <span>Mi Membresía</span>
                   </Link>
                   <Link
@@ -186,7 +186,7 @@ export default function Navbar() {
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium border-t-2! border-gray-100!"
                   >
-                    <Calendar size={20} className="text-green-500" />
+                    <Calendar size={20} className="text-[#01a83c]" />
                     <span>Mis Conferencias</span>
                   </Link>
                   <Link
@@ -194,7 +194,7 @@ export default function Navbar() {
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-gray-700 hover:bg-gray-50! transition-all duration-300 font-medium border-t-2! border-gray-100!"
                   >
-                    <Gift size={20} className="text-green-500" />
+                    <Gift size={20} className="text-[#01a83c]" />
                     <span>Mis Beneficios</span>
                   </Link>
                   <Link
@@ -202,7 +202,7 @@ export default function Navbar() {
                       setIsDropdownOpen(false);
                       handleLogout();
                     }}
-                    className="w-full! flex items-center gap-3 px-5 py-4 bg-gradient-to-r! from-green-600! to-teal-600! hover:from-green-700! hover:to-teal-700! text-white transition-all duration-300 font-medium border-t-2! border-gray-100!"
+                    className="w-full! flex items-center gap-3 px-5 py-4 bg-[#01a83c]! hover:from-green-700! hover:to-teal-700! text-white transition-all duration-300 font-medium border-t-2! border-gray-100!"
                   >
                     <LogOut size={20} className="text-white" />
                     <span>Cerrar Sesión</span>
@@ -213,7 +213,7 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="bg-gradient-to-r! from-green-600! to-teal-600! hover:from-green-700! hover:to-teal-700! text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
+              className="bg-[#01a83c]! hover:from-green-700! hover:to-teal-700! text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
             >
               Iniciar Sesión
             </Link>
