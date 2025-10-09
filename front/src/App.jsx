@@ -11,14 +11,14 @@ import WelcomeEgresado from './pages/Egresado/WelcomeEgresado.jsx';
 import Beneficios from './pages/Egresado/MisBeneficios.jsx';
 import Membresia from './pages/Egresado/Membresia.jsx';
 import GuardarOferta from './pages/Egresado/OfertaLaboral/GuardarOferta.jsx';
-import GestionOfertas from './pages/Egresado/OfertaLaboral/GestionOfertas.jsx'
+import GestionOfertas from './pages/Egresado/OfertaLaboral/GestionOfertas.jsx';
 import PerfilEgresadoForm from './components/PerfilEgresadoForm.jsx';
-import GestionarMembresia from './pages/Egresado/GestionarMembresia'; // ajusta la ruta
-import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx'; // ajusta la ruta
+import GestionarMembresia from './pages/Egresado/GestionarMembresia';
+import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
 import Sidebar from './components/Sidebar.jsx';
-import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
+import VerBeneficios from './pages/Egresado/VerBeneficios.jsx';
 import Feedback from "./pages/Egresado/feedback.jsx";
 import NoticiasPage from './pages/Egresado/Noticiaspage.jsx';
 import ForoEgresados from '../src/pages/Egresado/ForoEgresados';
@@ -43,8 +43,9 @@ function App() {
     <UserContextProvider>
       <Navbar />
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
-      {/* Contenedor principal sin margen dinámico */}
-      <div className="relative pt-16 transition-all duration-300">
+
+      {/* Contenedor principal ocupa toda la vista */}
+      <div className="relative pt-16 transition-all duration-300 min-h-screen w-full bg-gray-130">
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register/>} />
@@ -62,7 +63,13 @@ function App() {
           <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
-          <Route path="/foro-egresados" element={<ForoEgresados />} />
+          
+          {/* RUTA DEL FORO CON ESTILOS ESPECIALES */}
+          <Route path="/foro-egresados" element={
+            <div style={{ margin: 0, padding: 0, width: '100%', marginTop: '-0rem' }}>
+              <ForoEgresados />
+            </div>
+          } />
 
 
           <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
@@ -73,13 +80,13 @@ function App() {
           <Route path="/mis-beneficios" element={<PrivateRoute><MisBeneficios /></PrivateRoute>} />
 
           
+
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
           <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
           <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
-          
         </Routes>
         <Footer/>
       </div>
