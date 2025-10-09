@@ -85,8 +85,7 @@ export const auth = {
   // Logout function
   logout: () => {
     auth.removeToken();
-    // Redirect to login page or refresh
-    window.location.href = '/';
+    // No automatic redirect - let components handle navigation
   },
 
   // Get current user info from server

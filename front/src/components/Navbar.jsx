@@ -35,10 +35,18 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      logout();
-      navigate("/login");
+      // Cerrar dropdown inmediatamente
+      setIsDropdownOpen(false);
+      
+      // Ejecutar logout
+      await logout();
+      
+      // Navegar directamente sin pasar por Home usando replace
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Error during logout:", error);
+      // En caso de error, aún navegar al login
+      navigate("/login", { replace: true });
     }
   };
 
@@ -305,15 +313,17 @@ export default function Navbar() {
                     <Gift size={20} style={{ color: '#5DC554' }} />
                     <span>Mis Beneficios</span>
                   </Link>
-                  <Link
-                    onClick={() => {
-                      setIsDropdownOpen(false);
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevenir cualquier comportamiento por defecto
                       handleLogout();
                     }}
-                    className="w-full flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2"
+                    className="w-full flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 cursor-pointer"
                     style={{ 
                       backgroundColor: '#119e04', 
-                      borderColor: 'rgba(93, 197, 84, 0.3)'
+                      borderColor: 'rgba(93, 197, 84, 0.3)',
+                      border: 'none',
+                      borderTop: '2px solid rgba(93, 197, 84, 0.3)'
                     }}
                     onMouseEnter={(e) => {
                       e.target.style.backgroundColor = '#0E7E04';
@@ -324,7 +334,7 @@ export default function Navbar() {
                   >
                     <LogOut size={20} className="text-white" />
                     <span>Cerrar Sesión</span>
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>

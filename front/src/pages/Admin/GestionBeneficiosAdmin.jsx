@@ -102,14 +102,17 @@ function AdminContent() {
   return (
     <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
 
-      <div className="relative z-10 min-h-screen pt-20 px-8" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)', fontFamily: 'Inter, sans-serif' }}>
+      <div className="relative z-10 min-h-screen pt-20 px-8" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-wrap items-center justify-between mb-8">
-            <h1 className="text-5xl font-bold mb-2">
-              <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
-                Gestión de Beneficios
-              </span>
-            </h1>
+          {/* Header */}
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-5xl font-bold mb-2">
+                <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+                  Gestión de Beneficios
+                </span>
+              </h1>
+            </div>
           </div>
 
           <div className="flex items-center justify-between mb-6 gap-3">
@@ -146,7 +149,7 @@ function AdminContent() {
                   );
                 })
                 .map((b) => (
-                  <article key={b.id} className="bg-white rounded-2xl overflow-hidden flex shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] cursor-pointer">
+                  <article key={b.id} className="bg-white rounded-2xl overflow-hidden flex shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                     <div className="p-4 flex-1 flex items-start gap-4">
                       <div className="w-16 h-16 text-white rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg" style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)' }}><Star size={24} /></div>
                       <div className="flex-1">
@@ -233,11 +236,11 @@ function AdminContent() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div>
                       <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">📅 Fecha inicio</label>
-                      <input type="date" value={form.fecha_inicio} onChange={(e)=>setForm({...form, fecha_inicio: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" />
+                      <input type="date" value={form.fecha_inicio} onChange={(e)=>setForm({...form, fecha_inicio: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" style={{ colorScheme: 'light' }} />
                     </div>
                     <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">🏁 Fecha fin</label>
-                      <input type="date" value={form.fecha_fin} onChange={(e)=>setForm({...form, fecha_fin: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" />
+                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">⏰ Fecha fin</label>
+                      <input type="date" value={form.fecha_fin} onChange={(e)=>setForm({...form, fecha_fin: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" style={{ colorScheme: 'light' }} />
                     </div>
                   </div>
                   <div>
