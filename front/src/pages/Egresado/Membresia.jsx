@@ -1,29 +1,25 @@
 import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle, Sparkles, Zap, Star, TrendingUp, ShieldCheck, Loader } from "lucide-react"
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useUser } from "../../context/userContext";
 import { Toaster, toast} from "sonner";
 
 const beneficios = [
-  { icon: Briefcase, titulo: "Acceso a Bolsa Laboral Premium", descripcion: "Ofertas exclusivas para egresados de la URP" },
-  { icon: Award, titulo: "Certificaciones Profesionales", descripcion: "Descuento en certificaciones" },
-  { icon: Users, titulo: "Networking Profesional", descripcion: "Eventos con empleadores y alumnos" },
-  { icon: BookOpen, titulo: "Cursos de Especialización", descripcion: "Acceso a cursos profesionales" },
-  { icon: Calendar, titulo: "Asesorías Personalizadas", descripcion: "Optimización de CV y LinkedIn" },
-  { icon: Sparkles, titulo: "Eventos Exclusivos", descripcion: "Acceso prioritario a conferencias y talleres" },
+  { id: 1, icon: Briefcase, titulo: "Acceso a Bolsa Laboral Premium", descripcion: "Ofertas exclusivas para egresados de la URP" },
+  { id :2, icon: Award, titulo: "Certificaciones Profesionales", descripcion: "Descuento en certificaciones" },
+  { id: 3,icon: Users, titulo: "Networking Profesional", descripcion: "Eventos con empleadores y alumnos" },
+  { id: 4, icon: BookOpen, titulo: "Cursos de Especialización", descripcion: "Acceso a cursos profesionales" },
+  { id: 5, icon: Calendar, titulo: "Asesorías Personalizadas", descripcion: "Optimización de CV y LinkedIn" },
+  { id: 6, icon: Sparkles, titulo: "Eventos Exclusivos", descripcion: "Acceso prioritario a conferencias y talleres" },
 ];
 
 const features = [
-  "Acceso inmediato a todos los beneficios",
-  "Renovación anual automática",
-  "Cancela cuando quieras",
-  "Garantía de devolución en los primeros 14 días"
+  {id: 1, title: "Acceso inmediato a todos los beneficios"},
+  {id: 2, title: "Renovación anual automática"},
+  {id: 3, title: "Cancela cuando quieras"},
+  {id: 4, title: "Garantía de devolución en los primeros 14 días"}
 ];
 
 export default function Membresia() {
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { user } = useUser();
+  const [loading] = useState(false);
 
   return (
     <div className="min-h-screen w-full bg-transparent text-gray-300 font-sans">
@@ -58,10 +54,10 @@ export default function Membresia() {
           </div>
 
           <div className="space-y-3 mb-8">
-            {features.map((feature, idx) => (
-              <div key={idx} className="flex items-center gap-3">
+            {features.map((feature) => (
+              <div key={feature.id} className="flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">{feature}</span>
+                <span className="text-gray-300 text-sm">{feature.title}</span>
               </div>
             ))}
           </div>
@@ -100,12 +96,12 @@ export default function Membresia() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
-            {beneficios.map((beneficio, idx) => {
+            {beneficios.map((beneficio) => {
               const Icon = beneficio.icon;
               return (
-                <div key={idx} className="group relative bg-[#1a1a1a] border border-gray-800 hover:border-green-500/40 rounded-xl p-6 transition-all duration-300 hover:translate-x-2">
+                <div key={beneficio.id} className="group relative bg-[#1a1a1a] border border-gray-800 hover:border-green-500/40 rounded-xl p-6 transition-all duration-300 hover:translate-x-2">
                   <div className="absolute -left-3 top-6 w-8 h-8 bg-green-500 text-black font-black rounded-full flex items-center justify-center text-sm shadow-lg">
-                    {idx + 1}
+                    {beneficio.id}
                   </div>
                   <div className="ml-6 flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
