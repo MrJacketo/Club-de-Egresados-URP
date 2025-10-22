@@ -61,7 +61,6 @@ function App() {
           <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
           <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
-          <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
           
           {/* RUTA DEL FORO CON ESTILOS ESPECIALES */}
           <Route path="/foro-egresados" element={
@@ -77,6 +76,8 @@ function App() {
 
           <Route path="/mis-conferencias" element={<PrivateRoute><MisConferencias /></PrivateRoute>} />
           <Route path="/mis-beneficios" element={<PrivateRoute><MisBeneficios /></PrivateRoute>} />
+          <Route path="/beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
+          <Route path="/ver-beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
 
           
 

@@ -30,14 +30,29 @@ const redimirBeneficio = async (req, res) => {
   const { beneficioId } = req.body;
 
   if (!beneficioId) {
-    return res.status(400).json({ error: "beneficioId es obligatorio" });
+    return res.status(400).json({ 
+      success: false,
+      message: "beneficioId es obligatorio" 
+    });
   }
 
   try {
     // Verificar que el beneficio exista
     const beneficio = await Beneficio.findById(beneficioId);
     if (!beneficio) {
-      return res.status(404).json({ error: "Beneficio no encontrado" });
+      return res.status(404).json({ 
+        success: false,
+        message: "Beneficio no encontrado" 
+      });
+    }
+
+    // Verificar si ya fue redimido por este usuario
+    const yaRedimido = await BeneficioRedimido.findOne({ userId, beneficioId });
+    if (yaRedimido) {
+      return res.status(400).json({
+        success: false,
+        message: "Ya has redimido este beneficio"
+      });
     }
 
     // Registrar redención
@@ -45,20 +60,24 @@ const redimirBeneficio = async (req, res) => {
       userId,
       beneficioId,
       fecha_redencion: new Date(),
-      codigo_unico: beneficio.codigo || null,
     });
 
     await beneficioRedimido.save();
 
+    // Poblar el beneficio para la respuesta
+    await beneficioRedimido.populate('beneficioId');
+
     res.status(200).json({
       success: true,
-      beneficioRedimido,
+      message: "Beneficio redimido exitosamente",
+      data: beneficioRedimido,
     });
   } catch (error) {
+    console.error('Error al redimir beneficio:', error);
     res.status(500).json({
       success: false,
-      error: "Error al redimir beneficio",
-      details: error.message,
+      message: "Error al redimir beneficio",
+      error: error.message,
     });
   }
 };

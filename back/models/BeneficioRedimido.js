@@ -9,7 +9,6 @@ const beneficioRedimidoSchema = new Schema({
     required: true,
   },
   fecha_redencion: { type: Date, default: Date.now },
-  codigo_unico: { type: String },
 });
 
 module.exports = mongoose.model("BeneficioRedimido", beneficioRedimidoSchema);

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Gift, ExternalLink, Ticket, BookOpen, ShoppingBag, CheckCircle } from 'lucide-react';
-// Firebase removed - now using JWT authentication
+import { Gift, ExternalLink, Ticket, BookOpen, ShoppingBag, CheckCircle, Calendar, Building2, Tag, Eye, Clock } from 'lucide-react';
 import apiClient from '../../api/apiClient';
 import { getBeneficiosRequest, getBeneficiosRedimidosRequest } from '../../api/gestionarBeneficiosApi';
 import { useUser } from '../../context/userContext';
@@ -22,19 +21,26 @@ export default function BeneficiosVista() {
 
       const idsReclamados = (redimidos?.beneficiosRedimidos || []).map((b) => b.beneficioId._id);
 
-      const beneficiosFormateados = (beneficiosAll || []).map((b) => ({
-        id: b._id,
-        nombre: b.titulo,
-        detalle: b.descripcion,
-        tipo: b.tipo,
-        reclamado: idsReclamados.includes(b._id)
-      }));
+      const beneficiosFormateados = (beneficiosAll || [])
+        .filter(b => b.estado === 'activo') // Solo mostrar beneficios activos
+        .map((b) => ({
+          id: b._id,
+          nombre: b.titulo,
+          detalle: b.descripcion,
+          tipo: b.tipo_beneficio, // Mapear correctamente desde el backend
+          empresa: b.empresa_asociada,
+          fechaInicio: b.fecha_inicio,
+          fechaFin: b.fecha_fin,
+          urlDetalle: b.url_detalle,
+          imagen: b.imagen_beneficio,
+          estado: b.estado,
+          reclamado: idsReclamados.includes(b._id)
+        }));
 
       const beneficiosReclamadosFormateados = (redimidos?.beneficiosRedimidos || []).map((item) => ({
         id: item.beneficioId._id,
         nombre: item.beneficioId.titulo,
-        tipo: item.beneficioId.tipo,
-        codigo: item.codigo_unico,
+        tipo: item.beneficioId.tipo_beneficio, // Mapear correctamente desde el backend
         link: item.link,
         fechaReclamo: new Date(item.fecha_redencion)
       }));
@@ -54,27 +60,52 @@ export default function BeneficiosVista() {
 
   const getIconByType = (tipo) => {
     switch (tipo) {
-      case 'descuento':
-        return <Ticket className="w-6 h-6" />;
-      case 'noticia':
+      case 'academico':
         return <BookOpen className="w-6 h-6" />;
-      case 'evento':
-        return <ExternalLink className="w-6 h-6" />;
-      default:
+      case 'laboral':
+        return <Building2 className="w-6 h-6" />;
+      case 'salud':
+        return <Ticket className="w-6 h-6" />;
+      case 'cultural':
+        return <Gift className="w-6 h-6" />;
+      case 'convenio':
         return <ShoppingBag className="w-6 h-6" />;
+      default:
+        return <Tag className="w-6 h-6" />;
     }
   };
 
   const getTypeColor = (tipo) => {
     switch (tipo) {
-      case 'descuento':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'noticia':
+      case 'academico':
         return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'evento':
+      case 'laboral':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'salud':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'cultural':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'convenio':
         return 'bg-orange-100 text-orange-800 border-orange-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getTypeLabel = (tipo) => {
+    switch (tipo) {
+      case 'academico':
+        return 'Académico';
+      case 'laboral':
+        return 'Laboral';
+      case 'salud':
+        return 'Salud';
+      case 'cultural':
+        return 'Cultural';
+      case 'convenio':
+        return 'Convenio';
+      default:
+        return 'Beneficio';
     }
   };
 
@@ -103,11 +134,14 @@ export default function BeneficiosVista() {
 
   const BeneficioCard = ({ beneficio }) => {
     const yaReclamado = beneficio.reclamado;
+    const fechaFin = beneficio.fechaFin ? new Date(beneficio.fechaFin) : null;
+    const hoy = new Date();
+    const vigente = !fechaFin || fechaFin >= hoy;
 
     return (
       <div className="bg-white rounded-3xl shadow-md border transition-all duration-300 hover:shadow-xl hover:scale-105 hover:-translate-y-1 h-full">
-        <div className="p-6 h-full grid grid-rows-[auto_auto_1fr_auto] gap-4">
-          {/* Header con icono y título - altura fija */}
+        <div className="p-6 h-full grid grid-rows-[auto_auto_auto_1fr_auto_auto] gap-4">
+          {/* Header con icono y título */}
           <div className="flex items-center space-x-3">
             <div className={`p-2 rounded-lg flex-shrink-0 ${getTypeColor(beneficio.tipo)}`}>
               {getIconByType(beneficio.tipo)}
@@ -117,23 +151,65 @@ export default function BeneficiosVista() {
             </div>
           </div>
 
-          {/* Badge de categoría - altura fija */}
+          {/* Badge de categoría */}
           <div className="flex justify-center">
             <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full border ${getTypeColor(beneficio.tipo)}`}>
-              {beneficio.tipo.charAt(0).toUpperCase() + beneficio.tipo.slice(1)}
+              {getTypeLabel(beneficio.tipo)}
             </span>
           </div>
 
-          {/* Descripción - área flexible */}
+          {/* Información adicional */}
+          <div className="space-y-2 text-xs text-gray-600">
+            {beneficio.empresa && (
+              <div className="flex items-center space-x-1">
+                <Building2 className="w-3 h-3" />
+                <span>{beneficio.empresa}</span>
+              </div>
+            )}
+            {fechaFin && (
+              <div className="flex items-center space-x-1">
+                <Clock className="w-3 h-3" />
+                <span>Válido hasta: {fechaFin.toLocaleDateString()}</span>
+              </div>
+            )}
+            {!vigente && (
+              <div className="flex items-center space-x-1 text-red-600">
+                <Clock className="w-3 h-3" />
+                <span className="font-medium">Expirado</span>
+              </div>
+            )}
+          </div>
+
+          {/* Descripción */}
           <div className="flex items-start">
             <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
               {beneficio.detalle}
             </p>
           </div>
 
-          {/* Botón - altura fija en la parte inferior */}
+          {/* URL de detalle si existe */}
+          {beneficio.urlDetalle && (
+            <div className="flex justify-center">
+              <a
+                href={beneficio.urlDetalle}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-blue-600 text-sm hover:text-blue-800 transition-colors"
+              >
+                <Eye className="w-4 h-4 mr-1" />
+                Ver más detalles
+              </a>
+            </div>
+          )}
+
+          {/* Botón */}
           <div className="flex justify-center items-end">
-            {yaReclamado ? (
+            {!vigente ? (
+              <div className="flex items-center text-red-600 justify-center w-full">
+                <Clock className="w-4 h-4 mr-2" />
+                <span className="text-sm font-medium">Expirado</span>
+              </div>
+            ) : yaReclamado ? (
               <div className="flex items-center text-green-600 justify-center w-full">
                 <CheckCircle className="w-4 h-4 mr-2" />
                 <span className="text-sm font-medium">Reclamado</span>
@@ -161,20 +237,13 @@ export default function BeneficiosVista() {
             <div className="min-w-0 flex-1">
               <h4 className="font-medium text-green-900 break-words">{beneficio.nombre}</h4>
               <p className="text-sm text-green-700">
-                Reclamado el {beneficio.fechaReclamo?.toLocaleDateString?.() || 'Fecha no disponible'}
+                Tipo: {getTypeLabel(beneficio.tipo)} | Reclamado el {beneficio.fechaReclamo?.toLocaleDateString?.() || 'Fecha no disponible'}
               </p>
             </div>
           </div>
         </div>
 
-        {beneficio.tipo === 'descuento' && beneficio.codigo && (
-          <div className="mt-3 p-3 bg-white border border-green-200 rounded-3xl">
-            <p className="text-sm text-gray-600 mb-1">Tu código de descuento:</p>
-            <p className="font-mono font-bold text-lg text-green-800 break-all">{beneficio.codigo}</p>
-          </div>
-        )}
-
-        {(beneficio.tipo === 'curso' || beneficio.tipo === 'servicio' || beneficio.tipo === 'evento') && beneficio.link && (
+        {beneficio.link && (
           <div className="mt-3 flex justify-center">
             <a
               href={beneficio.link}

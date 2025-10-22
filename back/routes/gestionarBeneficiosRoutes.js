@@ -12,12 +12,12 @@ router.get("/activos", gestionarBeneficiosController.getBeneficiosActivos);
 // Beneficios generales (catálogo) - para egresados
 router.get("/ver-beneficios", verifyJWTToken, gestionarBeneficiosController.getBeneficios);
 
-// Obtener un beneficio específico por ID
-router.get("/:id", verifyJWTToken, gestionarBeneficiosController.getBeneficioById);
-
-// Redención de beneficios por usuario
+// Redención de beneficios por usuario (ANTES de la ruta /:id)
 router.get("/mis-beneficios", verifyJWTToken, beneficioRedimidoController.getBeneficiosRedimidosPorUsuario);
 router.post("/redimir", verifyJWTToken, beneficioRedimidoController.redimirBeneficio);
+
+// Obtener un beneficio específico por ID (DESPUÉS de las rutas específicas)
+router.get("/:id", verifyJWTToken, gestionarBeneficiosController.getBeneficioById);
 
 // ========== RUTAS ADMINISTRATIVAS (requieren verificación de admin) ==========
 // Middleware para verificar que el usuario es administrador
