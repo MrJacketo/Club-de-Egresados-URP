@@ -22,20 +22,23 @@ export default function AdminSidebar() {
     // Implementar lógica de logout
     console.log('Cerrando sesión');
   };
+  
   return (
     <div>
       {/* Sidebar */}
       <aside
         className={`group fixed top-[64px] left-0 h-[calc(100vh-64px)] 
-        backdrop-blur-sm bg-blue-500/10 p-4 z-40 
+        shadow-xl p-4 z-40 pt-8  bg-[#00BC4F]
         transition-all duration-300 flex flex-col justify-between
         ${collapsed ? 'w-20' : 'w-64'}`}
       >
         
-        {/* Botón para contraer/expandir */}        <div className="flex justify-end mb-2 pt-2">
+        {/* Botón para contraer/expandir */}
+        <div className="flex justify-end mb-2 pt-2">
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-blue-500/20 text-gray-700 hover:text-blue-700 transition-colors"
+            className="p-2! rounded-lg! bg-transparent! hover:bg-white/20! text-white! text-2xl! font-black! hover:text-white! transition-all! duration-300!"
+            style={{ border: 'none' }}
             title={collapsed ? "Expandir sidebar" : "Contraer sidebar"}
           >
             {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -45,48 +48,60 @@ export default function AdminSidebar() {
         <nav className="flex flex-col space-y-4 mt-4">
           <Link
             to="/admin"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin"
-                ? "bg-blue-600/80 text-white shadow-lg"
-                : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
             }`}
-          >            <LayoutDashboard size={24} />            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+            style={{ border: 'none' }}
+          >
+            <LayoutDashboard size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
               Dashboard
             </span>
           </Link>
 
           <Link
             to="/admin/egresados"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin/egresados"
-                ? "bg-blue-600/80 text-white shadow-lg"
-                : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
             }`}
-          >            <Users size={24} />            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+            style={{ border: 'none' }}
+          >
+            <Users size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
               Egresados
             </span>
           </Link>
 
           <Link
             to="/admin/gestion-noticias"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin/gestion-noticias"
-                ? "bg-blue-600/80 text-white shadow-lg"
-                : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
             }`}
-          >            <Newspaper size={24} />            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+            style={{ border: 'none' }}
+          >
+            <Newspaper size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
               Noticias
             </span>
           </Link>
 
           <Link
             to="/admin/membresias"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin/membresias"
-                ? "bg-blue-600/80 text-white shadow-lg"
-                : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
             }`}
-          >            <Badge size={24} />            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+            style={{ border: 'none' }}
+          >
+            <Badge size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
               Membresías
             </span>
           </Link>
@@ -95,8 +110,8 @@ export default function AdminSidebar() {
                     to="/admin/beneficios"
                     className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
                       location.pathname === "/admin/beneficios"
-                        ? "bg-blue-600/80 text-white shadow-lg"
-                        : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                        ? "bg-white! text-green-600! shadow-lg!"
+                        : "text-white! hover:bg-white/20!"
                     }`}
                   >
                     <Percent size={24} />
@@ -109,12 +124,22 @@ export default function AdminSidebar() {
 
           <Link
             to="/admin/beneficios"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin/beneficios"
-                ? "bg-blue-600/80 text-white shadow-lg"
-                : "hover:bg-blue-500/20 hover:text-blue-700 transition"
+                ? "text-white! shadow-lg!"
+                : "text-gray-700! hover:bg-green-50! hover:text-green-600!"
             }`}
-          >            <Percent size={24} />            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+            style={
+              location.pathname === "/admin/beneficios"
+                ? { 
+                    background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+                    border: 'none'
+                  }
+                : {}
+            }
+          >
+            <Percent size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
               Beneficios
             </span>
           </Link>
@@ -122,13 +147,7 @@ export default function AdminSidebar() {
         </nav>
 
         <div className="mt-auto">
-          <button
-            onClick={handleLogout}
-            className="w-full p-3 rounded-lg flex items-center gap-3 text-white hover:bg-red-500/20 hover:text-red-700 transition"
-          >            <LogOut size={24} />            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
-              Cerrar Sesión
-            </span>
-          </button>
+          
         </div>
       </aside>
 

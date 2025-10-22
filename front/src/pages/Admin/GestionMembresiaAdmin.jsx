@@ -144,7 +144,7 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading, modoEdici
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-gray-900">Detalles de Membresía</h3>
-          <button onClick={onClose} className="text-white hover:text-gray-600 p-1">
+          <button onClick={onClose} className="text-gray-600 hover:text-gray-800 p-1">
             <X size={24} />
           </button>
         </div>
@@ -228,7 +228,7 @@ const ModalDetalles = ({ membresia, onClose, onCambiarEstado, loading, modoEdici
 
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-white text-sm font-medium rounded-md hover:bg-gray-400"
+              className="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600"
             >
               Cerrar
             </button>
@@ -466,12 +466,12 @@ const handleExportar = () => {
 
   if (loadingDatos) {
     return (
-      <div className="flex">
+      <div className="flex min-h-screen" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
         <AdminSidebar />
-        <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} flex items-center justify-center`}>
+        <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} flex items-center justify-center pt-20`}>
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Cargando membresías...</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mx-auto"></div>
+            <p className="mt-6 text-xl font-semibold text-gray-700">Cargando membresías...</p>
           </div>
         </div>
       </div>
@@ -479,78 +479,27 @@ const handleExportar = () => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
       <AdminSidebar />
       <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} overflow-auto h-screen`}>
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-[1644px] mx-auto px-8 py-10 relative">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Membresías</h1>
-          </div>
-
-          {/* Estadísticas */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <EstadisticaCard
-              titulo="Total Membresías"
-              valor={estadisticas.totalMembresias}
-              icon={Users}
-              color="gray"
-            />
-            <EstadisticaCard
-              titulo="Activas"
-              valor={estadisticas.membresiasActivas}
-              icon={CheckCircle}
-              color="green"
-            />
-            <EstadisticaCard
-              titulo="Vencidas/Inactivas"
-              valor={estadisticas.membresiasInactivas}
-              icon={AlertTriangle}
-              color="red"
-            />
-            <EstadisticaCard
-              titulo="Ingresos Mensuales"
-              valor={`S/ ${estadisticas.ingresosMensuales.toLocaleString()}`}
-              icon={DollarSign}
-              color="green"
-            />
-          </div>
-
-         {/* Filtros */}
-<div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-    <div className="relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-      <input
-        type="text"
-        placeholder="Buscar por nombre, email o código..."
-        value={filtros.busqueda}
-        onChange={(e) => {
-          setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
-          setPaginaActual(1);
-        }}
-        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-      />
-    </div>
-
-    <select
-      value={filtros.estado}
-      onChange={(e) => {
-        setFiltros(prev => ({ ...prev, estado: e.target.value }));
-        setPaginaActual(1);
-      }}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
-    >
-      <option value="todos">Todos los estados</option>
-      <option value="activa">Activas</option>
-      <option value="inactiva">Inactivas</option>
-    </select>
-
-    <div className="flex gap-2 justify-end">
+<div className="mb-8">
+  <div className="flex justify-between items-center mb-6">
+    <h1 className="text-5xl font-bold mb-2">
+      <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+        Gestión de Membresías
+      </span>
+    </h1>
+    <div className="flex gap-4">
       <button 
         onClick={handleExportar}
         disabled={loadingExport || loadingDatos}
-        className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-lg hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
+        className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
+        style={{ 
+          background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+          border: 'none'
+        }}
         title={`Exportar ${membresiasFiltradas.length} registros`}
       >
         {loadingExport ? (
@@ -565,11 +514,14 @@ const handleExportar = () => {
           </>
         )}
       </button>
-      
-      <button 
+      <button
         onClick={handleActualizarDatos}
         disabled={loadingDatos}
-        className="flex items-center px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+        className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{ 
+          background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+          border: 'none'
+        }}
       >
         <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
         Actualizar
@@ -578,20 +530,79 @@ const handleExportar = () => {
   </div>
 </div>
 
+          {/* Estadísticas */}
+<div className="grid grid-cols-4 gap-6 mb-12">
+  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <p className="text-gray-500 text-sm font-medium mb-1">Total Membresías</p>
+    <p className="text-4xl font-bold text-gray-800">{estadisticas.totalMembresias || 0}</p>
+  </div>
+
+  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <p className="text-gray-500 text-sm font-medium mb-1">Activas</p>
+    <p className="text-4xl font-bold text-gray-800">{estadisticas.membresiasActivas || 0}</p>
+  </div>
+
+  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <p className="text-gray-500 text-sm font-medium mb-1">Vencidas / Inactivas</p>
+    <p className="text-4xl font-bold text-gray-800">{estadisticas.membresiasInactivas || 0}</p>
+  </div>
+
+  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <p className="text-gray-500 text-sm font-medium mb-1">Ingresos Mensuales</p>
+    <p className="text-3xl font-bold text-gray-800">S/. {estadisticas.ingresosMensuales.toLocaleString()}</p>
+  </div>
+</div>
+
+
+         {/* Filtros */}
+<div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 mb-8">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+    <div className="relative w-[400px]">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+      <input
+        type="text"
+        placeholder="Buscar por nombre, email o código..."
+        value={filtros.busqueda}
+        onChange={(e) => {
+          setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
+          setPaginaActual(1);
+        }}
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+      />
+    </div>
+<div className="ml-[-20px]"></div>
+    <select
+      value={filtros.estado}
+      onChange={(e) => {
+        setFiltros(prev => ({ ...prev, estado: e.target.value }));
+        setPaginaActual(1);
+      }}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+    >
+      <option value="todos">Todos los estados</option>
+      <option value="activa">Activas</option>
+      <option value="inactiva">Inactivas</option>
+    </select>
+
+    <div className="flex gap-2 justify-end">
+
+    </div>
+  </div>
+</div>
+
           {/* Tabla */}
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficios</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                  </tr>
-                </thead>
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+  <table className="w-full">
+    <thead className="bg-gray-50">
+      <tr>
+        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
+        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficios</th>
+        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+      </tr>
+    </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {membresiasActuales.length > 0 ? (
                     membresiasActuales.map((membresia) => (
@@ -611,7 +622,6 @@ const handleExportar = () => {
                   )}
                 </tbody>
               </table>
-            </div>
 
             {membresiasFiltradas.length > 0 && (
               <Paginacion

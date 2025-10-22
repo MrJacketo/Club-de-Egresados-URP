@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Plus, AlertCircle, CheckCircle } from "lucide-react"
+import { Plus, AlertCircle, CheckCircle, Newspaper, Star, FileText, Archive, TrendingUp } from "lucide-react"
 import { useGestionNoticias } from "../../Hooks/useGestionNoticias"
 import FiltrosGestionNoticias from "../../components/gestionNoticias/FiltrosGestionNoticias"
 import TablaNoticias from "../../components/gestionNoticias/TablaNoticias"
@@ -37,6 +37,13 @@ const GestionNoticiasContent = () => {
   const [modalConfirmacionAbierto, setModalConfirmacionAbierto] = useState(false)
   const [noticiaSeleccionada, setNoticiaSeleccionada] = useState(null)
   const [mensaje, setMensaje] = useState({ tipo: "", texto: "" })
+
+  // Calcular estadísticas
+  const totalNoticias = noticias.length
+  const noticiasDestacadas = noticias.filter(n => n.estado === "Destacado").length
+  const noticiasNormales = noticias.filter(n => n.estado === "Normal").length
+  const noticiasBorradores = noticias.filter(n => n.estado === "Borrador").length
+  const destacadasRate = totalNoticias > 0 ? ((noticiasDestacadas / totalNoticias) * 100).toFixed(1) : 0
 
   // Manejar creación de nueva noticia
   const handleNuevaNoticia = () => {
@@ -102,45 +109,114 @@ const GestionNoticiasContent = () => {
   }
   
   return (
-    <div className="flex">
+    <div className="flex min-h-screen pt-12" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
       <AdminSidebar />
-      <div className={`transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} w-0 flex-1 h-screen overflow-auto`}>
-        <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className={`flex-1 transition-all duration-300 py-8 px-8 ${
+          collapsed ? "ml-20" : "ml-64"
+        }`}>
+        
           {/* Header de la página */}
           <div className="flex flex-wrap items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Noticias</h1>
+            <h1 className="text-5xl! font-bold! mb-2!">
+              <span className="bg-gradient-to-r! from-green-500! to-teal-500! bg-clip-text! text-transparent!">
+                Gestión de Noticias
+              </span>
+            </h1>
             <button
               onClick={handleNuevaNoticia}
-              className="flex items-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              className="flex! items-center! px-6! py-3! text-white! rounded-full! font-bold! transition-all! duration-300! hover:scale-110! transform! hover:-translate-y-1!"
+              style={{ 
+                background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+                border: 'none'
+              }}
             >
               <Plus className="w-5 h-5 mr-2" />
               Nueva Noticia
             </button>
           </div>
 
+          {/* Métricas estadísticas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-xl">
+                  <Newspaper style={{ fontSize: 32, color: '#fff' }} />
+                </div>
+                <div className="flex items-center gap-1 text-green-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">100%</span>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Total Noticias</p>
+              <p className="text-4xl font-bold text-gray-800">{totalNoticias}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-green-100 p-4 rounded-xl">
+                  <Star style={{ fontSize: 32, color: '#16a34a' }} />
+                </div>
+                <div className="flex items-center gap-1 text-green-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">{destacadasRate}%</span>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Noticias Destacadas</p>
+              <p className="text-4xl font-bold text-gray-800">{noticiasDestacadas}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gray-100 p-4 rounded-xl">
+                  <FileText style={{ fontSize: 32, color: '#6b7280' }} />
+                </div>
+                <div className="flex items-center gap-1 text-gray-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">{totalNoticias > 0 ? ((noticiasNormales / totalNoticias) * 100).toFixed(1) : 0}%</span>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Noticias Normales</p>
+              <p className="text-4xl font-bold text-gray-800">{noticiasNormales}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-blue-100 p-4 rounded-xl">
+                  <Archive style={{ fontSize: 32, color: '#3b82f6' }} />
+                </div>
+                <div className="flex items-center gap-1 text-blue-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">{totalNoticias > 0 ? ((noticiasBorradores / totalNoticias) * 100).toFixed(1) : 0}%</span>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Borradores</p>
+              <p className="text-4xl font-bold text-gray-800">{noticiasBorradores}</p>
+            </div>
+          </div>
+
           {/* Mensajes de estado */}
           {mensaje.texto && (
             <div
-              className={`mb-6 p-4 rounded-lg flex items-center ${
+              className={`mb-6! p-4! rounded-xl! flex! items-center! shadow-lg! ${
                 mensaje.tipo === "success"
-                  ? "bg-green-100 text-green-800 border border-green-300"
-                  : "bg-red-100 text-red-800 border border-red-300"
+                  ? "bg-green-100! text-green-800! border! border-green-300!"
+                  : "bg-red-100! text-red-800! border! border-red-300!"
               }`}
             >
               {mensaje.tipo === "success" ? (
-                <CheckCircle className="w-5 h-5 mr-2" />
+                <CheckCircle className="w-5 h-5 mr-2" style={{ color: '#16a34a' }} />
               ) : (
-                <AlertCircle className="w-5 h-5 mr-2" />
+                <AlertCircle className="w-5 h-5 mr-2" style={{ color: '#dc2626' }} />
               )}
-              {mensaje.texto}
+              <span className="font-medium!">{mensaje.texto}</span>
             </div>
           )}
 
           {/* Error general */}
           {error && (
-            <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-lg flex items-center border border-red-300">
-              <AlertCircle className="w-5 h-5 mr-2" />
-              {error}
+            <div className="mb-6! p-4! bg-red-100! text-red-800! rounded-xl! flex! items-center! border! border-red-300! shadow-lg!">
+              <AlertCircle className="w-5 h-5 mr-2" style={{ color: '#dc2626' }} />
+              <span className="font-medium!">{error}</span>
             </div>
           )}
 
@@ -182,7 +258,7 @@ const GestionNoticiasContent = () => {
             noticia={noticiaSeleccionada}
             loading={loading}
           />
-        </div>
+        
       </div>
     </div>
   );
