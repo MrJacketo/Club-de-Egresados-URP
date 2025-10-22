@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Gift, ExternalLink, Ticket, BookOpen, ShoppingBag, CheckCircle } from 'lucide-react';
 // Firebase removed - now using JWT authentication
 import apiClient from '../../api/apiClient';
-import { getBeneficiosRequest, getBeneficiosRedimidosRequest } from '../../api/beneficiosApi';
+import { getBeneficiosRequest, getBeneficiosRedimidosRequest } from '../../api/gestionarBeneficiosApi';
 import { useUser } from '../../context/userContext';
 
 

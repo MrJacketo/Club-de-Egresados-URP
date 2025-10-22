@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Plus, AlertCircle, CheckCircle, Star, Gift, TrendingUp, FileText, Archive, Edit, Trash2 } from "lucide-react"
-import { getBeneficiosAdmin, createBeneficio, updateBeneficio, deleteBeneficio } from '../../api/beneficiosApi'
+import { getBeneficiosAdmin, createBeneficio, updateBeneficio, deleteBeneficio } from '../../api/gestionarBeneficiosApi'
 import ModalBeneficio from "../../components/gestionBeneficios/ModalBeneficio"
 import ModalConfirmacion from "../../components/gestionBeneficios/ModalConfirmacion"
 import AdminSidebar from '../../components/AdminSidebar';

@@ -1,19 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const verifyJWTToken = require("../middleware/verifyJWTToken");
-const beneficioController = require("../controllers/beneficioController");
+const gestionarBeneficiosController = require("../controllers/gestionarBeneficiosController");
 const beneficioRedimidoController = require("../controllers/beneficioRedimidoController");
 
 // ========== RUTAS PÚBLICAS (sin autenticación) ==========
 // Obtener beneficios activos para mostrar en la página principal
-router.get("/activos", beneficioController.getBeneficiosActivos);
+router.get("/activos", gestionarBeneficiosController.getBeneficiosActivos);
 
 // ========== RUTAS PARA USUARIOS AUTENTICADOS ==========
 // Beneficios generales (catálogo) - para egresados
-router.get("/ver-beneficios", verifyJWTToken, beneficioController.getBeneficios);
+router.get("/ver-beneficios", verifyJWTToken, gestionarBeneficiosController.getBeneficios);
 
 // Obtener un beneficio específico por ID
-router.get("/:id", verifyJWTToken, beneficioController.getBeneficioById);
+router.get("/:id", verifyJWTToken, gestionarBeneficiosController.getBeneficioById);
 
 // Redención de beneficios por usuario
 router.get("/mis-beneficios", verifyJWTToken, beneficioRedimidoController.getBeneficiosRedimidosPorUsuario);
@@ -33,10 +33,10 @@ const verificarAdmin = (req, res, next) => {
 };
 
 // CRUD completo para administradores
-router.get("/admin/todos", verifyJWTToken, verificarAdmin, beneficioController.getBeneficios);
-router.get("/admin/estadisticas", verifyJWTToken, verificarAdmin, beneficioController.getEstadisticasBeneficios);
-router.post("/admin/crear", verifyJWTToken, verificarAdmin, beneficioController.createBeneficio);
-router.put("/admin/:id", verifyJWTToken, verificarAdmin, beneficioController.updateBeneficio);
-router.delete("/admin/:id", verifyJWTToken, verificarAdmin, beneficioController.deleteBeneficio);
+router.get("/admin/todos", verifyJWTToken, verificarAdmin, gestionarBeneficiosController.getBeneficios);
+router.get("/admin/estadisticas", verifyJWTToken, verificarAdmin, gestionarBeneficiosController.getEstadisticasBeneficios);
+router.post("/admin/crear", verifyJWTToken, verificarAdmin, gestionarBeneficiosController.createBeneficio);
+router.put("/admin/:id", verifyJWTToken, verificarAdmin, gestionarBeneficiosController.updateBeneficio);
+router.delete("/admin/:id", verifyJWTToken, verificarAdmin, gestionarBeneficiosController.deleteBeneficio);
 
 module.exports = router;
