@@ -27,14 +27,7 @@ const beneficioSchema = new mongoose.Schema({
     required: true 
   },
   fecha_fin: { 
-    type: Date,
-    validate: {
-      validator: function(value) {
-        // fecha_fin puede ser null/undefined, pero si existe debe ser mayor a fecha_inicio
-        return !value || value >= this.fecha_inicio;
-      },
-      message: 'La fecha fin debe ser posterior a la fecha inicio'
-    }
+    type: Date
   },
   estado: {
     type: String,
