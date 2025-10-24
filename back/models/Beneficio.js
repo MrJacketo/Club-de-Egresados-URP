@@ -24,21 +24,7 @@ const beneficioSchema = new mongoose.Schema({
   },
   fecha_inicio: { 
     type: Date, 
-    required: true,
-    validate: {
-      validator: function(value) {
-        // La fecha inicio no puede ser anterior a hoy (permite hoy)
-        const hoy = new Date();
-        const ayer = new Date(hoy);
-        ayer.setDate(hoy.getDate() - 1);
-        ayer.setHours(23, 59, 59, 999); // Fin del día anterior
-        
-        const fechaInicio = new Date(value);
-        
-        return fechaInicio > ayer;
-      },
-      message: 'La fecha inicio no puede ser anterior a hoy'
-    }
+    required: true
   },
   fecha_fin: { 
     type: Date,
@@ -47,15 +33,15 @@ const beneficioSchema = new mongoose.Schema({
         // fecha_fin puede ser null/undefined, es opcional
         if (!value) return true;
         
-        // La fecha fin no puede ser anterior a hoy (permite hoy)
+        // La fecha fin no puede ser anterior a hoy (permite hoy y futuras)
         const hoy = new Date();
-        const ayer = new Date(hoy);
-        ayer.setDate(hoy.getDate() - 1);
-        ayer.setHours(23, 59, 59, 999); // Fin del día anterior
+        const fechaHoy = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
         
         const fechaFin = new Date(value);
+        const fechaFinSolo = new Date(fechaFin.getFullYear(), fechaFin.getMonth(), fechaFin.getDate());
         
-        return fechaFin > ayer;
+        // Permitir hoy y fechas futuras, no permitir ayer
+        return fechaFinSolo >= fechaHoy;
       },
       message: 'La fecha fin no puede ser anterior a hoy'
     }
