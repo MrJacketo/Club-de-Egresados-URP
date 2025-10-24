@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Plus, AlertCircle, CheckCircle, Star, Gift, TrendingUp, FileText, Archive, Edit, Trash2 } from "lucide-react"
 import { getBeneficiosAdmin, createBeneficio, updateBeneficio, deleteBeneficio } from '../../api/gestionarBeneficiosApi'
+import FiltrosGestionBeneficios from "../../components/gestionBeneficios/FiltrosGestionBeneficios"
 import ModalBeneficio from "../../components/gestionBeneficios/ModalBeneficio"
 import ModalConfirmacion from "../../components/gestionBeneficios/ModalConfirmacion"
 import AdminSidebar from '../../components/AdminSidebar';
@@ -20,8 +21,15 @@ const GestionBeneficiosContent = () => {
   const { collapsed } = useAdminSidebar();
   
   const [beneficios, setBeneficios] = useState([])
+  const [beneficiosFiltrados, setBeneficiosFiltrados] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [filtros, setFiltros] = useState({
+    titulo: '',
+    tipo_beneficio: '',
+    estado: '',
+    empresa_asociada: ''
+  })
 
   const [modalBeneficioAbierto, setModalBeneficioAbierto] = useState(false)
   const [modalConfirmacionAbierto, setModalConfirmacionAbierto] = useState(false)
@@ -32,6 +40,11 @@ const GestionBeneficiosContent = () => {
   useEffect(() => {
     fetchBeneficios();
   }, []);
+
+  // Aplicar filtros cuando cambien los beneficios o filtros
+  useEffect(() => {
+    aplicarFiltros();
+  }, [beneficios, filtros]);
 
   const fetchBeneficios = async () => {
     setLoading(true);
@@ -61,12 +74,58 @@ const GestionBeneficiosContent = () => {
     }
   };
 
-  // Calcular estadísticas
+  const aplicarFiltros = () => {
+    let beneficiosFiltrados = [...beneficios];
+
+    // Filtrar por título
+    if (filtros.titulo) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.titulo.toLowerCase().includes(filtros.titulo.toLowerCase())
+      );
+    }
+
+    // Filtrar por tipo de beneficio
+    if (filtros.tipo_beneficio) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.tipo_beneficio === filtros.tipo_beneficio
+      );
+    }
+
+    // Filtrar por estado
+    if (filtros.estado) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.estado === filtros.estado
+      );
+    }
+
+    // Filtrar por empresa
+    if (filtros.empresa_asociada) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.empresa_asociada.toLowerCase().includes(filtros.empresa_asociada.toLowerCase())
+      );
+    }
+
+    setBeneficiosFiltrados(beneficiosFiltrados);
+  };
+
+  const limpiarFiltros = () => {
+    setFiltros({
+      titulo: '',
+      tipo_beneficio: '',
+      estado: '',
+      empresa_asociada: ''
+    });
+  };
+
+  // Calcular estadísticas (usar todos los beneficios, no los filtrados)
   const totalBeneficios = beneficios.length
   const beneficiosActivos = beneficios.filter(b => b.estado === "activo").length
   const beneficiosInactivos = beneficios.filter(b => b.estado === "inactivo").length
   const beneficiosAcademicos = beneficios.filter(b => b.tipo_beneficio === "academico").length
   const activosRate = totalBeneficios > 0 ? ((beneficiosActivos / totalBeneficios) * 100).toFixed(1) : 0
+
+  // Para mostrar en la tabla, usar beneficios filtrados
+  const beneficiosParaMostrar = beneficiosFiltrados;
 
   // Manejar creación de nuevo beneficio
   const handleNuevoBeneficio = () => {
@@ -221,6 +280,13 @@ const GestionBeneficiosContent = () => {
             </div>
           </div>
 
+          {/* Filtros de búsqueda */}
+          <FiltrosGestionBeneficios
+            filtros={filtros}
+            onFiltrosChange={setFiltros}
+            onLimpiarFiltros={limpiarFiltros}
+          />
+
           {/* Mensajes de estado */}
           {mensaje.texto && (
             <div
@@ -259,20 +325,24 @@ const GestionBeneficiosContent = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
                 <p className="text-gray-600 mt-4">Cargando beneficios...</p>
               </div>
-            ) : beneficios.length === 0 ? (
+            ) : beneficiosParaMostrar.length === 0 ? (
               <div className="p-8 text-center">
                 <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No hay beneficios registrados</p>
-                <button
-                  onClick={handleNuevoBeneficio}
-                  className="mt-4 text-green-600 hover:text-green-700 font-medium"
-                >
-                  Crear el primer beneficio
-                </button>
+                <p className="text-gray-600">
+                  {beneficios.length === 0 ? "No hay beneficios registrados" : "No se encontraron beneficios con los filtros aplicados"}
+                </p>
+                {beneficios.length === 0 && (
+                  <button
+                    onClick={handleNuevoBeneficio}
+                    className="mt-4 text-green-600 hover:text-green-700 font-medium"
+                  >
+                    Crear el primer beneficio
+                  </button>
+                )}
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {beneficios.map((beneficio) => (
+                {beneficiosParaMostrar.map((beneficio) => (
                   <div key={beneficio._id} className="p-6 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

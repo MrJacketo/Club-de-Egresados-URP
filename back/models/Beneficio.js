@@ -24,10 +24,41 @@ const beneficioSchema = new mongoose.Schema({
   },
   fecha_inicio: { 
     type: Date, 
-    required: true 
+    required: true,
+    validate: {
+      validator: function(value) {
+        // La fecha inicio no puede ser anterior a hoy (permite hoy)
+        const hoy = new Date();
+        const ayer = new Date(hoy);
+        ayer.setDate(hoy.getDate() - 1);
+        ayer.setHours(23, 59, 59, 999); // Fin del día anterior
+        
+        const fechaInicio = new Date(value);
+        
+        return fechaInicio > ayer;
+      },
+      message: 'La fecha inicio no puede ser anterior a hoy'
+    }
   },
   fecha_fin: { 
-    type: Date
+    type: Date,
+    validate: {
+      validator: function(value) {
+        // fecha_fin puede ser null/undefined, es opcional
+        if (!value) return true;
+        
+        // La fecha fin no puede ser anterior a hoy (permite hoy)
+        const hoy = new Date();
+        const ayer = new Date(hoy);
+        ayer.setDate(hoy.getDate() - 1);
+        ayer.setHours(23, 59, 59, 999); // Fin del día anterior
+        
+        const fechaFin = new Date(value);
+        
+        return fechaFin > ayer;
+      },
+      message: 'La fecha fin no puede ser anterior a hoy'
+    }
   },
   estado: {
     type: String,
