@@ -12,13 +12,15 @@ const feedbackRoutes = require("./routes/feedbackRoutes");
 const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
-const moderacionRoutes = require("./routes/moderacionRoutes");
 const publicacionesRoutes = require("./routes/publicacionesRoutes");
+
+
+const app = express();
 
 const ofertaModeradorRoutes = require("./routes/ofertaModeradorRoutes.js");
 const conferenciaRoutes = require("./routes/conferenciaRoutes");
 
-const app = express();
+
 const path = require('path');
 // Connect to MongoDB
 mongoose
@@ -61,17 +63,7 @@ app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
 app.use("/api", ofertaRoutes); //Ruta de oferta laboral
 app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usuarios
-app.use("/api/conferencias", conferenciaRoutes); // Rutas de conferencias
-app.use("/api/moderacion", moderacionRoutes); // Rutas de moderación
 app.use("/api", publicacionesRoutes);
-
-app.use("/api/moderador", ofertaModeradorRoutes); // Rutas de moderador
-
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // Global error handler
