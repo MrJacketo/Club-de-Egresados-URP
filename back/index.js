@@ -12,6 +12,9 @@ const feedbackRoutes = require("./routes/feedbackRoutes")
 const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
+const publicacionesRoutes = require("./routes/publicacionesRoutes");
+
+
 const app = express();
 
 // Connect to MongoDB
@@ -44,6 +47,8 @@ app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
 app.use("/api", ofertaRoutes); //Ruta de oferta laboral
 app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usuarios
+app.use("/api", publicacionesRoutes);
+
 
 // Global error handler
 app.use((err, req, res, next) => {
