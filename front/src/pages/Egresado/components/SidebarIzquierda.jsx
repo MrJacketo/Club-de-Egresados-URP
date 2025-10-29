@@ -16,11 +16,18 @@ function SidebarIzquierda({ perfil, cambiarPerfil }) {
   ];
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const nuevaImagen = URL.createObjectURL(e.target.files[0]);
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      const nuevaImagen = event.target.result; // Esto es Base64
       cambiarPerfil(nuevaImagen);
-    }
-  };
+    };
+    
+    reader.readAsDataURL(file);
+  }
+};
 
   return (
     <aside style={{ display: 'block', width: '100%' }}>
