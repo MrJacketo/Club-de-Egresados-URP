@@ -26,42 +26,42 @@ function CrearPublicacion({ perfil, agregarPost }) {
   };
 
   const handlePublicar = () => {
-    if (nuevoPost.trim() === "" && !archivo) return;
+  if (nuevoPost.trim() === "" && !archivo) return;
 
-    let nuevo = {
-      id: Date.now(),
-      autor: "Tú",
-      contenido: nuevoPost,
-      likes: 0,
-      comentarios: [],
-      imagen: null,
-      video: null,
-      perfilImg: perfil || null,
-    };
-
-    if (archivo) {
-      if (archivo.type.startsWith("image/")) {
-        // CONVERTIR IMAGEN A BASE64 para que persista
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          nuevo.imagen = event.target.result; // Base64
-          agregarPost(nuevo);
-          setNuevoPost("");
-          setArchivo(null);
-          setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
-        };
-        reader.readAsDataURL(archivo);
-        return; // Salir aquí porque es asíncrono
-      } else if (archivo.type.startsWith("video/")) {
-        nuevo.video = URL.createObjectURL(archivo);
-      }
-    }
-
-    agregarPost(nuevo);
-    setNuevoPost("");
-    setArchivo(null);
-    setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
+  let nuevo = {
+    id: Date.now(),
+    autor: "Tú",
+    contenido: nuevoPost,
+    likes: 0,
+    comentarios: [],
+    imagen: null,
+    video: null,
+    perfilImg: perfil || null, // ← ESTO YA ESTÁ BIEN
   };
+
+  if (archivo) {
+    if (archivo.type.startsWith("image/")) {
+      // CONVERTIR IMAGEN A BASE64 para que persista
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        nuevo.imagen = event.target.result; // Base64
+        agregarPost(nuevo);
+        setNuevoPost("");
+        setArchivo(null);
+        setTipoPublicacion("texto");
+      };
+      reader.readAsDataURL(archivo);
+      return; // Salir aquí porque es asíncrono
+    } else if (archivo.type.startsWith("video/")) {
+      nuevo.video = URL.createObjectURL(archivo);
+    }
+  }
+
+  agregarPost(nuevo);
+  setNuevoPost("");
+  setArchivo(null);
+  setTipoPublicacion("texto");
+};
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-xl w-full mb-8">

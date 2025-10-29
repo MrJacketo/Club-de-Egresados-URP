@@ -84,12 +84,10 @@ export const subirImagen = async (archivo) => {
   }
 };
 
-// Agregar comentario
-export const comentarPublicacion = async (id, comentario) => {
+// Agregar comentario CON DATOS COMPLETOS
+export const comentarPublicacion = async (id, comentarioData) => {
   try {
-    const response = await apiClient.post(`/api/publicaciones/${id}/comentarios`, {
-      contenido: comentario
-    });
+    const response = await apiClient.post(`/api/publicaciones/${id}/comentarios`, comentarioData);
     
     if (response.data.success) {
       return response.data;
