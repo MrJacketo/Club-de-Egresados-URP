@@ -13,7 +13,10 @@ export default function PerfilEgresadoForm() {
   const navigate = useNavigate();
   const { userName } = useUser();
   const [photo, setPhoto] = useState("/default-profile.png");
+  const [selectedFile, setSelectedFile] = useState(null); //foto para
 
+
+  
   const [userData, setUserData] = useState({
     nombreCompleto: userName || "",
     anioEgreso: "",
@@ -95,10 +98,29 @@ export default function PerfilEgresadoForm() {
     fetchDataAndOptions();
   }, [userName]);
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setPhoto(URL.createObjectURL(file));
-  };
+const handlePhotoChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("photo", file);
+
+  try {
+    const response = await api.post("/users/upload-photo", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+   setPhoto(response.data.profilePicture); //try 1
+    // Actualiza la vista con la nueva imagen
+    setProfileData(prev => ({
+      ...prev,
+      profilePicture: response.data.profilePicture
+    }));
+    setSelectedFile(file); //TRY 2
+    toast.success("Foto de perfil actualizada correctamente");
+  } catch (err) {
+    toast.error("Error al subir la foto de perfil");
+  }
+};
 
   const handleUserChange = (e) => {
     const { name, value } = e.target;
@@ -179,6 +201,25 @@ export default function PerfilEgresadoForm() {
     } finally {
       setIsLoading(false);
     }
+     
+    //para la imagen
+    try {
+    const formData = new FormData();
+    formData.append("photo", selectedFile); 
+    formData.append("data", JSON.stringify(cleanProfile)); 
+
+    await userApi.uploadProfilePhoto(formData);
+    toast.success("Foto y perfil actualizados correctamente!");
+    navigate("/welcome-egresado");
+  } catch (error) {
+    console.error(error);
+    toast.error("Error al guardar foto o perfil");
+  } finally {
+    setIsLoading(false);
+  }
+  
+
+
   };
 
 return (
@@ -373,13 +414,18 @@ return (
                     onChange={(e) => handleIdiomasChange(index, "idioma", e.target.value)}
                     className="flex-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   />
-                  <input
-                    type="text"
-                    placeholder="Nivel"
-                    value={idioma.nivel}
+                  <select
+                  value={idioma.nivel}
                     onChange={(e) => handleIdiomasChange(index, "nivel", e.target.value)}
-                    className="flex-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  />
+                    className="flex-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
+                    required
+                  >
+                    <option value="">Seleccione nivel</option>
+                    <option value="Básico">Básico</option>
+                    <option value="Intermedio">Intermedio</option>
+                    <option value="Avanzado">Avanzado</option>
+                    <option value="Nativo">Nativo</option>
+                  </select>
                   <button
                     type="button"
                     onClick={() => removeIdioma(index)}
