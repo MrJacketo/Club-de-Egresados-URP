@@ -43,25 +43,6 @@ useEffect(() => {
   }
 }, []);
 
-// Y carga desde ambos lugares
-useEffect(() => {
-  try {
-    // Intentar cargar desde la clave principal
-    let imagenGuardada = localStorage.getItem('imagenPerfil');
-    
-    // Si no existe, intentar desde la clave forzada
-    if (!imagenGuardada) {
-      imagenGuardada = localStorage.getItem('imagenPerfilForzado');
-    }
-    
-    if (imagenGuardada && imagenGuardada.startsWith('data:image')) {
-      setPerfil(imagenGuardada);
-      console.log('✅ Imagen de perfil cargada exitosamente');
-    }
-  } catch (error) {
-    console.error('❌ Error cargando imagen de perfil:', error);
-  }
-}, []);
   // FUNCIÓN PARA OBTENER USUARIO
   const getUsuarioActual = () => {
     try {
@@ -166,29 +147,29 @@ useEffect(() => {
           }
 
           return {
-  id: pub._id || pub.id || `temp-${Date.now()}`,
-  autor: pub.autor?.name || 'Usuario',
-  contenido: pub.contenido || 'Sin contenido',
-  titulo: pub.titulo || '',
-  categoria: pub.categoria || 'General',
-  etiquetas: pub.etiquetas || [],
-  likes: Array.isArray(pub.likes) ? pub.likes.length : 0,
-  usuariosQueDieronLike: Array.isArray(pub.likes) ? pub.likes : [],
-  comentarios: (pub.comentarios || []).map(com => ({
-    id: com._id || com.id || `com-${Date.now()}`,
-    texto: com.contenido || '',
-    autor: com.autor?.name || 'Usuario',
-    perfilImg: com.perfilImg || com.autor?.profilePicture || null,
-    fechaCreacion: com.fechaCreacion || com.createdAt || new Date().toISOString(),
-    likes: com.likes || 0
-  })),
-  imagen: imagenUrl,
-  video: pub.video || null,
-  perfilImg: pub.perfilImg || pub.autor?.profilePicture || null,
-  vistas: pub.vistas || 0,
-  fechaCreacion: pub.fechaCreacion || pub.createdAt || new Date().toISOString(),
-  fechaActualizacion: pub.fechaActualizacion || pub.updatedAt || new Date().toISOString()
-};
+            id: pub._id || pub.id || `temp-${Date.now()}`,
+            autor: pub.autor?.name || 'Usuario',
+            contenido: pub.contenido || 'Sin contenido',
+            titulo: pub.titulo || '',
+            categoria: pub.categoria || 'General',
+            etiquetas: pub.etiquetas || [],
+            likes: Array.isArray(pub.likes) ? pub.likes.length : 0,
+            usuariosQueDieronLike: Array.isArray(pub.likes) ? pub.likes : [],
+            comentarios: (pub.comentarios || []).map(com => ({
+              id: com._id || com.id || `com-${Date.now()}`,
+              texto: com.contenido || '',
+              autor: com.autor?.name || 'Usuario',
+              perfilImg: com.autor?.profilePicture || '/default-avatar.png',
+              fechaCreacion: com.fechaCreacion || com.createdAt || new Date().toISOString(),
+              likes: com.likes || 0
+            })),
+            imagen: imagenUrl, // Usar Base64 directamente
+            video: pub.video || null,
+            perfilImg: pub.autor?.profilePicture || '/default-avatar.png',
+            vistas: pub.vistas || 0,
+            fechaCreacion: pub.fechaCreacion || pub.createdAt || new Date().toISOString(),
+            fechaActualizacion: pub.fechaActualizacion || pub.updatedAt || new Date().toISOString()
+          };
         }).filter(Boolean);
 
         setPosts(publicacionesFormateadas);
@@ -232,58 +213,56 @@ useEffect(() => {
   }, []);
 
   // Agregar nueva publicación CON BASE64
-  // Agregar nueva publicación CON BASE64 Y PERFIL
-const agregarPost = async (nuevoPost) => {
-  try {
-    // Verificar autenticación primero
-    const usuario = getUsuarioActual();
-    if (!usuario) {
-      setError("Debes iniciar sesión para crear publicaciones");
-      return;
-    }
-
-    if (!nuevoPost.contenido || nuevoPost.contenido.trim() === '') {
-      setError("El contenido de la publicación es obligatorio");
-      return;
-    }
-
-    let imagenUrl = null;
-
-    // CONVERTIR IMAGEN A BASE64 para evitar problemas de servidor
-    if (nuevoPost.imagen && nuevoPost.imagen instanceof File) {
-      try {
-        imagenUrl = await convertirImagenABase64(nuevoPost.imagen);
-      } catch (error) {
-        console.error("Error convirtiendo imagen:", error);
-        setError("Error al procesar la imagen");
+  const agregarPost = async (nuevoPost) => {
+    try {
+      // Verificar autenticación primero
+      const usuario = getUsuarioActual();
+      if (!usuario) {
+        setError("Debes iniciar sesión para crear publicaciones");
         return;
       }
-    } else if (nuevoPost.imagen) {
-      imagenUrl = nuevoPost.imagen;
+
+      if (!nuevoPost.contenido || nuevoPost.contenido.trim() === '') {
+        setError("El contenido de la publicación es obligatorio");
+        return;
+      }
+
+      let imagenUrl = null;
+
+      // CONVERTIR IMAGEN A BASE64 para evitar problemas de servidor
+      if (nuevoPost.imagen && nuevoPost.imagen instanceof File) {
+        try {
+          imagenUrl = await convertirImagenABase64(nuevoPost.imagen);
+        } catch (error) {
+          console.error("Error convirtiendo imagen:", error);
+          setError("Error al procesar la imagen");
+          return;
+        }
+      } else if (nuevoPost.imagen) {
+        imagenUrl = nuevoPost.imagen;
+      }
+
+      const publicacionData = {
+        contenido: nuevoPost.contenido.trim(),
+        titulo: nuevoPost.titulo || '',
+        categoria: nuevoPost.categoria || 'General',
+        etiquetas: nuevoPost.etiquetas || [],
+        imagen: imagenUrl, // Usar Base64 directamente
+        video: nuevoPost.video || null
+      };
+
+      const response = await crearPublicacion(publicacionData);
+
+      if (response.success) {
+        await cargarPublicaciones(1);
+        setError(null);
+      } else {
+        throw new Error(response.error || "Error al crear publicación");
+      }
+    } catch (err) {
+      setError(err.message || "Error al crear publicación");
     }
-
-    const publicacionData = {
-      contenido: nuevoPost.contenido.trim(),
-      titulo: nuevoPost.titulo || '',
-      categoria: nuevoPost.categoria || 'General',
-      etiquetas: nuevoPost.etiquetas || [],
-      imagen: imagenUrl,
-      video: nuevoPost.video || null,
-        perfilImg: perfil // ← ESTA LÍNEA DEBE ESTAR PRESENTE
-    };
-
-    const response = await crearPublicacion(publicacionData);
-
-    if (response.success) {
-      await cargarPublicaciones(1);
-      setError(null);
-    } else {
-      throw new Error(response.error || "Error al crear publicación");
-    }
-  } catch (err) {
-    setError(err.message || "Error al crear publicación");
-  }
-};
+  };
 
   // Dar like a publicación
   const darLike = async (id) => {
@@ -347,78 +326,59 @@ const agregarPost = async (nuevoPost) => {
   };
 
   // Agregar comentario
-  // Agregar comentario CON IMAGEN DE PERFIL
-const agregarComentario = async (id, texto) => {
-  try {
-    // Verificar autenticación
-    const usuario = getUsuarioActual();
-    if (!usuario) {
-      setError("Debes iniciar sesión para comentar");
-      return;
+  const agregarComentario = async (id, texto) => {
+    try {
+      // Verificar autenticación
+      const usuario = getUsuarioActual();
+      if (!usuario) {
+        setError("Debes iniciar sesión para comentar");
+        return;
+      }
+
+      if (!texto || texto.trim() === '') {
+        setError("El comentario no puede estar vacío");
+        return;
+      }
+
+      const response = await comentarPublicacion(id, texto.trim());
+      
+      if (response.success) {
+        setPosts(posts.map(p => {
+          if (p.id === id) {
+            const nuevosComentarios = response.comentarios ? response.comentarios.map(com => ({
+              id: com._id || com.id,
+              texto: com.contenido,
+              autor: com.autor?.name || 'Usuario',
+              perfilImg: com.autor?.profilePicture || '/default-avatar.png',
+              fechaCreacion: com.fechaCreacion || com.createdAt,
+              likes: com.likes || 0
+            })) : [...p.comentarios, {
+              id: `temp-com-${Date.now()}`,
+              texto: texto.trim(),
+              autor: 'Tú',
+              perfilImg: perfil || '/default-avatar.png',
+              fechaCreacion: new Date().toISOString(),
+              likes: 0
+            }];
+            
+            return { 
+              ...p, 
+              comentarios: nuevosComentarios 
+            };
+          }
+          return p;
+        }));
+      } else {
+        throw new Error(response.error || "Error al agregar comentario");
+      }
+    } catch (err) {
+      setError(err.message || "Error al agregar comentario");
     }
+  };
 
-    if (!texto || texto.trim() === '') {
-      setError("El comentario no puede estar vacío");
-      return;
-    }
-
-    // OBTENER LA IMAGEN DEL SIDEBAR (del estado o localStorage)
-    const imagenPerfilActual = perfil || localStorage.getItem('imagenPerfil');
-
-    console.log('💬 Enviando comentario con imagen:', {
-      tieneImagen: !!imagenPerfilActual,
-      imagen: imagenPerfilActual ? imagenPerfilActual.substring(0, 50) + '...' : 'No tiene'
-    });
-
-    // AGREGAR INMEDIATAMENTE AL ESTADO LOCAL (para feedback instantáneo)
-    const comentarioTemporal = {
-      id: `temp-com-${Date.now()}`,
-      texto: texto.trim(),
-      autor: 'Tú',
-      perfilImg: imagenPerfilActual || '/default-avatar.png',
-      fechaCreacion: new Date().toISOString(),
-      likes: 0
-    };
-
-    setPosts(posts.map(post => 
-      post.id === id 
-        ? { ...post, comentarios: [...post.comentarios, comentarioTemporal] }
-        : post
-    ));
-
-    // ENVIAR AL BACKEND
-    const comentarioData = {
-      contenido: texto.trim(),
-      perfilImg: imagenPerfilActual // ← ENVIAR LA IMAGEN AL BACKEND
-    };
-
-    const response = await comentarPublicacion(id, comentarioData);
-    
-    if (response.success) {
-      console.log('✅ Comentario guardado en backend');
-    } else {
-      throw new Error(response.error || "Error al agregar comentario");
-    }
-  } catch (err) {
-    setError(err.message || "Error al agregar comentario");
-    // Revertir el comentario temporal si hay error
-    setPosts(posts.map(post => 
-      post.id === id 
-        ? { ...post, comentarios: post.comentarios.filter(com => !com.id.includes('temp-com')) }
-        : post
-    ));
-  }
-};
- const cambiarPerfil = (nuevaImagen) => {
-  setPerfil(nuevaImagen);
-  // Guardar en localStorage de forma segura
-  if (nuevaImagen) {
-    localStorage.setItem('imagenPerfil', nuevaImagen);
-    console.log('✅ Imagen de perfil guardada en localStorage');
-  } else {
-    localStorage.removeItem('imagenPerfil');
-  }
-};
+  const cambiarPerfil = (nuevaImagen) => {
+    setPerfil(nuevaImagen);
+  };
 
   // Cargar más publicaciones
   const cargarMasPublicaciones = async () => {
