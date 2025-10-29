@@ -1,68 +1,109 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { obtenerNoticiasPublicas } from "../../api/gestionNoticiasApi";
 
 function Noticias() {
-  const todasNoticias = [
-    {
-        id: 1,
-        titulo: "URP fortalece lazos internacionales con nuevas universidades europeas",
-        autor: "Oficina de Cooperación Externa",
-        fecha: "05 Oct 2025",
-        resumen: "La Universidad Ricardo Palma amplía sus convenios con instituciones de educación superior en Europa ....",
-        categoria: "Internacional",
-        imagen: "Noticia01.jpg"
-    },
-    {
-      id: 2,
-      titulo: "URP presenta primera Clínica Veterinaria en feria de Surco",
-      autor: "Facultad de Medicina Veterinaria",
-      fecha: "06 Oct 2025",
-      resumen: "La Universidad Ricardo Palma inaugura su primera Clínica Veterinaria móvil en colaboración con la Municipalidad de Surco...",
-      categoria: "Extensión Universitaria",
-      imagen: "Noticia02.jpg"
-    },
-    {
-      id: 3,
-      titulo: "URP obtiene acreditaciones internacionales para 14 carreras profesionales",
-      autor: "Oficina de Calidad Académica",
-      fecha: "07 Oct 2025",
-      resumen: "Catorce carreras de la Universidad Ricardo Palma recibieron acreditaciones internacionales que reconocen ...",
-      categoria: "Logros",
-      imagen: "Noticia03.jpg"
-    },
-    {
-      id: 4,
-      titulo: "URP establece nuevo convenio con municipalidad de San Bartolo",
-      autor: "Oficina de Cooperación Externa",
-      fecha: "08 Oct 2025",
-      resumen: "La Universidad Ricardo Palma firma convenio de colaboración con la Municipalidad de San Bartolo para ...",
-      categoria: "Extensión Universitaria",
-      imagen: "Noticia04.jpg"
-    },
-    {
-      id: 5,
-      titulo: "URP organiza X Fiesta de la Poda con celebración de pisco",
-      autor: "Facultad de Derecho y Ciencia Política",
-      fecha: "09 Oct 2025",
-      resumen: "La Universidad Ricardo Palma invita a la comunidad universitaria a la X Fiesta de la Poda, un evento que ...",
-      categoria: "Cultura",
-      imagen: "Noticia05.jpg"
-    },
-  ];
-
+  const [noticias, setNoticias] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const categorias = ["Todos", "Institucional", "Académico", "Investigación", "Extensión Universitaria","Logros","Estudiantil","Internacional","Innovación","Cultura","Deportes"];
+  const categorias = ["Todos", "General", "Economia", "Tecnologia", "Deportes", "Salud", "Academico", ];
 
-  const noticiasFiltradas =
-    categoriaSeleccionada === "Todos"
-      ? todasNoticias
-      : todasNoticias.filter((n) => n.categoria === categoriaSeleccionada);
+  // Cargar noticias desde el backend
+  useEffect(() => {
+    const cargarNoticias = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await obtenerNoticiasPublicas(categoriaSeleccionada);
+        
+        if (response.success) {
+          setNoticias(response.noticias);
+        } else {
+          setError("Error al cargar las noticias");
+        }
+      } catch (err) {
+        setError(err.message || "Error de conexión con el servidor");
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarNoticias();
+  }, [categoriaSeleccionada]);
+
+  // Mostrar estado de carga
+  if (loading) {
+    return (
+      <div className="min-h-screen text-gray-900 flex flex-col pt-20" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+        <header className="py-6 shadow-md w-full relative" style={{ backgroundColor: "rgba(255, 255, 255, 0.9)" }}>
+          <div className="flex items-center justify-center">
+            <div className="absolute left-8">
+              <img src="LogoURP.png" alt="Logo URP" className="h-16" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold" style={{ color: "#00BC4F" }}>
+                Noticias URP
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Mantente informado con las últimas novedades
+              </p>
+            </div>
+          </div>
+        </header>
+        
+        <div className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando noticias...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar error
+  if (error) {
+    return (
+      <div className="min-h-screen text-gray-900 flex flex-col pt-20" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+        <header className="py-6 shadow-md w-full relative" style={{ backgroundColor: "rgba(255, 255, 255, 0.9)" }}>
+          <div className="flex items-center justify-center">
+            <div className="absolute left-8">
+              <img src="LogoURP.png" alt="Logo URP" className="h-16" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold" style={{ color: "#00BC4F" }}>
+                Noticias URP
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Mantente informado con las últimas novedades
+              </p>
+            </div>
+          </div>
+        </header>
+        
+        <div className="flex-grow flex items-center justify-center">
+          <div className="text-center text-red-600">
+            <p className="text-lg mb-4">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-  <div
-    className="min-h-screen text-gray-900 flex flex-col pt-20"
-    style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}
-  >
+    <div
+      className="min-h-screen text-gray-900 flex flex-col pt-20"
+      style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}
+    >
       {/* HEADER - Fondo blanco */}
       <header 
         className="py-6 shadow-md w-full relative"
@@ -114,9 +155,9 @@ function Noticias() {
 
       {/* GRID DE NOTICIAS */}
       <main className="flex-grow w-full px-6 py-8 overflow-y-auto">
-        {noticiasFiltradas.length > 0 ? (
+        {noticias.length > 0 ? (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full">
-            {noticiasFiltradas.map((noticia) => (
+            {noticias.map((noticia) => (
               <div
                 key={noticia.id}
                 className="bg-white text-black rounded-2xl shadow-lg overflow-hidden hover:shadow-green-500/40 transition-shadow flex flex-col w-full"
@@ -138,11 +179,15 @@ function Noticias() {
                   </p>
                   <p className="text-gray-700 flex-grow">{noticia.resumen}</p>
                   <button
-                    className="mt-4 px-5 py-2 rounded-full font-semibold border-2 transition-colors self-end"
+                    className="mt-4 px-5 py-2 rounded-full font-semibold border-2 transition-colors self-end hover:bg-green-500 hover:text-white"
                     style={{
                       borderColor: "#00BC4F",
                       backgroundColor: "#FFFFFF",
                       color: "#00BC4F",
+                    }}
+                    onClick={() => {
+                      // Navegar a la página de detalle de la noticia
+                      window.location.href = `/noticia/${noticia.id}`;
                     }}
                   >
                     Leer más
@@ -157,7 +202,6 @@ function Noticias() {
           </p>
         )}
       </main>
-
     </div>
   );
 }

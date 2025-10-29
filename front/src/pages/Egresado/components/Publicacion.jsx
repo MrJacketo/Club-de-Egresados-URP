@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ThumbsUp, MessageCircle, Share, MoreHorizontal, X, Bookmark, Link, Flag } from "lucide-react";
+import { ThumbsUp, MessageCircle, Share, MoreHorizontal, X, Bookmark, Link, Flag, Trash2 } from "lucide-react";
 
 function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddComment }) {
   const [menuActivo, setMenuActivo] = useState(false);
@@ -17,6 +17,11 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
       alert("Contenido copiado al portapapeles");
     }
     if (accion === "reportar") alert(`Reportaste la publicación de ${post.autor}`);
+    if (accion === "borrar") {
+      if (window.confirm("¿Estás seguro de que quieres borrar esta publicación?")) {
+        onDelete(post.id);
+      }
+    }
     setMenuActivo(false);
   };
 
@@ -69,6 +74,15 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
                 </button>
                 
                 <div className="border-t border-gray-100 my-1"></div>
+                
+                {/* NUEVO BOTÓN ELIMINAR */}
+                <button
+                  onClick={() => manejarMenu("borrar")}
+                  className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
+                >
+                  <Trash2 size={16} />
+                  <span>Borrar publicación</span>
+                </button>
                 
                 <button
                   onClick={() => manejarMenu("reportar")}
