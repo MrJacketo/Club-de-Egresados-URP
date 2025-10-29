@@ -26,13 +26,22 @@ function ForoEgresados() {
     totalItems: 0,
     itemsPerPage: 10
   });
-// Guardar automáticamente cuando cambie el perfil
+  
+// Cargar imagen de perfil desde localStorage al iniciar
 useEffect(() => {
-  if (perfil && perfil.startsWith('data:image')) {
-    localStorage.setItem('imagenPerfilForzado', perfil);
-    console.log('💾 Imagen de perfil guardada forzadamente');
+  try {
+    const imagenGuardada = localStorage.getItem('imagenPerfil');
+    if (imagenGuardada && imagenGuardada.startsWith('data:image')) {
+      setPerfil(imagenGuardada);
+      console.log('✅ Imagen de perfil cargada desde localStorage');
+    } else if (imagenGuardada) {
+      console.log('⚠️ Imagen en formato no válido, limpiando...');
+      localStorage.removeItem('imagenPerfil');
+    }
+  } catch (error) {
+    console.error('❌ Error cargando imagen de perfil:', error);
   }
-}, [perfil]);
+}, []);
 
 // Y carga desde ambos lugares
 useEffect(() => {
@@ -169,7 +178,7 @@ useEffect(() => {
     id: com._id || com.id || `com-${Date.now()}`,
     texto: com.contenido || '',
     autor: com.autor?.name || 'Usuario',
-    perfilImg: com.autor?.profilePicture || '/default-avatar.png',
+    perfilImg: com.perfilImg || com.autor?.profilePicture || null,
     fechaCreacion: com.fechaCreacion || com.createdAt || new Date().toISOString(),
     likes: com.likes || 0
   })),
@@ -260,7 +269,7 @@ const agregarPost = async (nuevoPost) => {
       etiquetas: nuevoPost.etiquetas || [],
       imagen: imagenUrl,
       video: nuevoPost.video || null,
-      perfilImg: perfil // ← INCLUIR LA IMAGEN DE PERFIL ACTUAL
+        perfilImg: perfil // ← ESTA LÍNEA DEBE ESTAR PRESENTE
     };
 
     const response = await crearPublicacion(publicacionData);
@@ -338,56 +347,68 @@ const agregarPost = async (nuevoPost) => {
   };
 
   // Agregar comentario
-  const agregarComentario = async (id, texto) => {
-    try {
-      // Verificar autenticación
-      const usuario = getUsuarioActual();
-      if (!usuario) {
-        setError("Debes iniciar sesión para comentar");
-        return;
-      }
-
-      if (!texto || texto.trim() === '') {
-        setError("El comentario no puede estar vacío");
-        return;
-      }
-
-      const response = await comentarPublicacion(id, texto.trim());
-      
-      if (response.success) {
-        setPosts(posts.map(p => {
-          if (p.id === id) {
-            const nuevosComentarios = response.comentarios ? response.comentarios.map(com => ({
-              id: com._id || com.id,
-              texto: com.contenido,
-              autor: com.autor?.name || 'Usuario',
-              perfilImg: com.autor?.profilePicture || '/default-avatar.png',
-              fechaCreacion: com.fechaCreacion || com.createdAt,
-              likes: com.likes || 0
-            })) : [...p.comentarios, {
-              id: `temp-com-${Date.now()}`,
-              texto: texto.trim(),
-              autor: 'Tú',
-              perfilImg: perfil || '/default-avatar.png',
-              fechaCreacion: new Date().toISOString(),
-              likes: 0
-            }];
-            
-            return { 
-              ...p, 
-              comentarios: nuevosComentarios 
-            };
-          }
-          return p;
-        }));
-      } else {
-        throw new Error(response.error || "Error al agregar comentario");
-      }
-    } catch (err) {
-      setError(err.message || "Error al agregar comentario");
+  // Agregar comentario CON IMAGEN DE PERFIL
+const agregarComentario = async (id, texto) => {
+  try {
+    // Verificar autenticación
+    const usuario = getUsuarioActual();
+    if (!usuario) {
+      setError("Debes iniciar sesión para comentar");
+      return;
     }
-  };
 
+    if (!texto || texto.trim() === '') {
+      setError("El comentario no puede estar vacío");
+      return;
+    }
+
+    // OBTENER LA IMAGEN DEL SIDEBAR (del estado o localStorage)
+    const imagenPerfilActual = perfil || localStorage.getItem('imagenPerfil');
+
+    console.log('💬 Enviando comentario con imagen:', {
+      tieneImagen: !!imagenPerfilActual,
+      imagen: imagenPerfilActual ? imagenPerfilActual.substring(0, 50) + '...' : 'No tiene'
+    });
+
+    // AGREGAR INMEDIATAMENTE AL ESTADO LOCAL (para feedback instantáneo)
+    const comentarioTemporal = {
+      id: `temp-com-${Date.now()}`,
+      texto: texto.trim(),
+      autor: 'Tú',
+      perfilImg: imagenPerfilActual || '/default-avatar.png',
+      fechaCreacion: new Date().toISOString(),
+      likes: 0
+    };
+
+    setPosts(posts.map(post => 
+      post.id === id 
+        ? { ...post, comentarios: [...post.comentarios, comentarioTemporal] }
+        : post
+    ));
+
+    // ENVIAR AL BACKEND
+    const comentarioData = {
+      contenido: texto.trim(),
+      perfilImg: imagenPerfilActual // ← ENVIAR LA IMAGEN AL BACKEND
+    };
+
+    const response = await comentarPublicacion(id, comentarioData);
+    
+    if (response.success) {
+      console.log('✅ Comentario guardado en backend');
+    } else {
+      throw new Error(response.error || "Error al agregar comentario");
+    }
+  } catch (err) {
+    setError(err.message || "Error al agregar comentario");
+    // Revertir el comentario temporal si hay error
+    setPosts(posts.map(post => 
+      post.id === id 
+        ? { ...post, comentarios: post.comentarios.filter(com => !com.id.includes('temp-com')) }
+        : post
+    ));
+  }
+};
  const cambiarPerfil = (nuevaImagen) => {
   setPerfil(nuevaImagen);
   // Guardar en localStorage de forma segura
