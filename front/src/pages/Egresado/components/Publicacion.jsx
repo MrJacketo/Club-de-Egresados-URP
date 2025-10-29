@@ -5,7 +5,26 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
   const [menuActivo, setMenuActivo] = useState(false);
   const comentariosRapidos = ["¡Qué buena noticia! 🎉", "Felicidades 👏", "Éxitos 💪"];
 
+  // ✅ SOLO ESTO SE AGREGÓ - Cargar imagen del sidebar
+  const obtenerImagenSidebar = () => {
+    try {
+      const imagen = localStorage.getItem('imagenPerfil');
+      if (imagen && imagen.startsWith('data:image')) {
+        return imagen;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  };
+
   const obtenerImagenPerfil = (autor, perfilImgEspecifico = null) => {
+    // ✅ SOLO ESTO SE AGREGÓ - Si es el usuario actual, usar imagen del sidebar
+    if (autor === "Tú") {
+      const imagenSidebar = obtenerImagenSidebar();
+      if (imagenSidebar) return imagenSidebar;
+    }
+    
     if (perfilImgEspecifico) return perfilImgEspecifico;
     return perfilesUsuarios[autor] || null;
   };
