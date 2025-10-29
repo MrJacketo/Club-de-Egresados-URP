@@ -29,17 +29,21 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
     <article className="bg-white rounded-2xl p-10 relative shadow-sm">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          {obtenerImagenPerfil(post.autor, post.perfilImg) ? (
-            <img
-              src={obtenerImagenPerfil(post.autor, post.perfilImg)}
-              alt="Perfil"
-              className="w-11 h-11 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-11 h-11 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
-              {post.autor.charAt(0)}
-            </div>
-          )}
+          {post.perfilImg ? (
+  <img
+    src={post.perfilImg}
+    alt="Perfil"
+    className="w-11 h-11 rounded-full object-cover"
+    onError={(e) => {
+      console.log('Error cargando imagen de perfil, usando avatar por defecto');
+      e.target.style.display = 'none';
+    }}
+  />
+) : (
+  <div className="w-11 h-11 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
+    {post.autor.charAt(0)}
+  </div>
+)}
           <div>
             <h4 className="font-semibold text-green-700">{post.autor}</h4>
             <time className="text-xs text-gray-400">Hace poco</time>

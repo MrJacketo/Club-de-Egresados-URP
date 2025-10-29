@@ -26,7 +26,33 @@ function ForoEgresados() {
     totalItems: 0,
     itemsPerPage: 10
   });
+// Guardar automáticamente cuando cambie el perfil
+useEffect(() => {
+  if (perfil && perfil.startsWith('data:image')) {
+    localStorage.setItem('imagenPerfilForzado', perfil);
+    console.log('💾 Imagen de perfil guardada forzadamente');
+  }
+}, [perfil]);
 
+// Y carga desde ambos lugares
+useEffect(() => {
+  try {
+    // Intentar cargar desde la clave principal
+    let imagenGuardada = localStorage.getItem('imagenPerfil');
+    
+    // Si no existe, intentar desde la clave forzada
+    if (!imagenGuardada) {
+      imagenGuardada = localStorage.getItem('imagenPerfilForzado');
+    }
+    
+    if (imagenGuardada && imagenGuardada.startsWith('data:image')) {
+      setPerfil(imagenGuardada);
+      console.log('✅ Imagen de perfil cargada exitosamente');
+    }
+  } catch (error) {
+    console.error('❌ Error cargando imagen de perfil:', error);
+  }
+}, []);
   // FUNCIÓN PARA OBTENER USUARIO
   const getUsuarioActual = () => {
     try {
@@ -131,29 +157,29 @@ function ForoEgresados() {
           }
 
           return {
-            id: pub._id || pub.id || `temp-${Date.now()}`,
-            autor: pub.autor?.name || 'Usuario',
-            contenido: pub.contenido || 'Sin contenido',
-            titulo: pub.titulo || '',
-            categoria: pub.categoria || 'General',
-            etiquetas: pub.etiquetas || [],
-            likes: Array.isArray(pub.likes) ? pub.likes.length : 0,
-            usuariosQueDieronLike: Array.isArray(pub.likes) ? pub.likes : [],
-            comentarios: (pub.comentarios || []).map(com => ({
-              id: com._id || com.id || `com-${Date.now()}`,
-              texto: com.contenido || '',
-              autor: com.autor?.name || 'Usuario',
-              perfilImg: com.autor?.profilePicture || '/default-avatar.png',
-              fechaCreacion: com.fechaCreacion || com.createdAt || new Date().toISOString(),
-              likes: com.likes || 0
-            })),
-            imagen: imagenUrl, // Usar Base64 directamente
-            video: pub.video || null,
-            perfilImg: pub.autor?.profilePicture || '/default-avatar.png',
-            vistas: pub.vistas || 0,
-            fechaCreacion: pub.fechaCreacion || pub.createdAt || new Date().toISOString(),
-            fechaActualizacion: pub.fechaActualizacion || pub.updatedAt || new Date().toISOString()
-          };
+  id: pub._id || pub.id || `temp-${Date.now()}`,
+  autor: pub.autor?.name || 'Usuario',
+  contenido: pub.contenido || 'Sin contenido',
+  titulo: pub.titulo || '',
+  categoria: pub.categoria || 'General',
+  etiquetas: pub.etiquetas || [],
+  likes: Array.isArray(pub.likes) ? pub.likes.length : 0,
+  usuariosQueDieronLike: Array.isArray(pub.likes) ? pub.likes : [],
+  comentarios: (pub.comentarios || []).map(com => ({
+    id: com._id || com.id || `com-${Date.now()}`,
+    texto: com.contenido || '',
+    autor: com.autor?.name || 'Usuario',
+    perfilImg: com.autor?.profilePicture || '/default-avatar.png',
+    fechaCreacion: com.fechaCreacion || com.createdAt || new Date().toISOString(),
+    likes: com.likes || 0
+  })),
+  imagen: imagenUrl,
+  video: pub.video || null,
+  perfilImg: pub.perfilImg || pub.autor?.profilePicture || null,
+  vistas: pub.vistas || 0,
+  fechaCreacion: pub.fechaCreacion || pub.createdAt || new Date().toISOString(),
+  fechaActualizacion: pub.fechaActualizacion || pub.updatedAt || new Date().toISOString()
+};
         }).filter(Boolean);
 
         setPosts(publicacionesFormateadas);
@@ -197,56 +223,58 @@ function ForoEgresados() {
   }, []);
 
   // Agregar nueva publicación CON BASE64
-  const agregarPost = async (nuevoPost) => {
-    try {
-      // Verificar autenticación primero
-      const usuario = getUsuarioActual();
-      if (!usuario) {
-        setError("Debes iniciar sesión para crear publicaciones");
-        return;
-      }
-
-      if (!nuevoPost.contenido || nuevoPost.contenido.trim() === '') {
-        setError("El contenido de la publicación es obligatorio");
-        return;
-      }
-
-      let imagenUrl = null;
-
-      // CONVERTIR IMAGEN A BASE64 para evitar problemas de servidor
-      if (nuevoPost.imagen && nuevoPost.imagen instanceof File) {
-        try {
-          imagenUrl = await convertirImagenABase64(nuevoPost.imagen);
-        } catch (error) {
-          console.error("Error convirtiendo imagen:", error);
-          setError("Error al procesar la imagen");
-          return;
-        }
-      } else if (nuevoPost.imagen) {
-        imagenUrl = nuevoPost.imagen;
-      }
-
-      const publicacionData = {
-        contenido: nuevoPost.contenido.trim(),
-        titulo: nuevoPost.titulo || '',
-        categoria: nuevoPost.categoria || 'General',
-        etiquetas: nuevoPost.etiquetas || [],
-        imagen: imagenUrl, // Usar Base64 directamente
-        video: nuevoPost.video || null
-      };
-
-      const response = await crearPublicacion(publicacionData);
-
-      if (response.success) {
-        await cargarPublicaciones(1);
-        setError(null);
-      } else {
-        throw new Error(response.error || "Error al crear publicación");
-      }
-    } catch (err) {
-      setError(err.message || "Error al crear publicación");
+  // Agregar nueva publicación CON BASE64 Y PERFIL
+const agregarPost = async (nuevoPost) => {
+  try {
+    // Verificar autenticación primero
+    const usuario = getUsuarioActual();
+    if (!usuario) {
+      setError("Debes iniciar sesión para crear publicaciones");
+      return;
     }
-  };
+
+    if (!nuevoPost.contenido || nuevoPost.contenido.trim() === '') {
+      setError("El contenido de la publicación es obligatorio");
+      return;
+    }
+
+    let imagenUrl = null;
+
+    // CONVERTIR IMAGEN A BASE64 para evitar problemas de servidor
+    if (nuevoPost.imagen && nuevoPost.imagen instanceof File) {
+      try {
+        imagenUrl = await convertirImagenABase64(nuevoPost.imagen);
+      } catch (error) {
+        console.error("Error convirtiendo imagen:", error);
+        setError("Error al procesar la imagen");
+        return;
+      }
+    } else if (nuevoPost.imagen) {
+      imagenUrl = nuevoPost.imagen;
+    }
+
+    const publicacionData = {
+      contenido: nuevoPost.contenido.trim(),
+      titulo: nuevoPost.titulo || '',
+      categoria: nuevoPost.categoria || 'General',
+      etiquetas: nuevoPost.etiquetas || [],
+      imagen: imagenUrl,
+      video: nuevoPost.video || null,
+      perfilImg: perfil // ← INCLUIR LA IMAGEN DE PERFIL ACTUAL
+    };
+
+    const response = await crearPublicacion(publicacionData);
+
+    if (response.success) {
+      await cargarPublicaciones(1);
+      setError(null);
+    } else {
+      throw new Error(response.error || "Error al crear publicación");
+    }
+  } catch (err) {
+    setError(err.message || "Error al crear publicación");
+  }
+};
 
   // Dar like a publicación
   const darLike = async (id) => {
@@ -360,9 +388,16 @@ function ForoEgresados() {
     }
   };
 
-  const cambiarPerfil = (nuevaImagen) => {
-    setPerfil(nuevaImagen);
-  };
+ const cambiarPerfil = (nuevaImagen) => {
+  setPerfil(nuevaImagen);
+  // Guardar en localStorage de forma segura
+  if (nuevaImagen) {
+    localStorage.setItem('imagenPerfil', nuevaImagen);
+    console.log('✅ Imagen de perfil guardada en localStorage');
+  } else {
+    localStorage.removeItem('imagenPerfil');
+  }
+};
 
   // Cargar más publicaciones
   const cargarMasPublicaciones = async () => {
