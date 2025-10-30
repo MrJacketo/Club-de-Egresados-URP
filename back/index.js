@@ -1,17 +1,19 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
-const mongoose = require("mongoose"); // Keep MongoDB connection for future use
+const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const perfilRoutes = require("./routes/perfilRoutes");
 const membresiaRoutes = require("./routes/membresiaRoutes");
 const pagoRoutes = require('./routes/pagoRoutes');
 const beneficiosRoutes = require('./routes/gestionarBeneficiosRoutes');
-const feedbackRoutes = require("./routes/feedbackRoutes")
+const feedbackRoutes = require("./routes/feedbackRoutes");
 const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
+const conferenciaRoutes = require("./routes/conferenciaRoutes"); // NUEVA LÍNEA
+
 const app = express();
 
 // Connect to MongoDB
@@ -30,27 +32,27 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173", // Update this to match your frontend's URL
+    origin: "http://localhost:5173",
   })
 );
 
 // Routes
-app.use("/auth", authRoutes); // Authentication routes
-app.use("/api", perfilRoutes); // Perfil de egresado routes
+app.use("/auth", authRoutes);
+app.use("/api", perfilRoutes);
 app.use("/api/feedback", feedbackRoutes);
-app.use("/api/noticias", gestionNoticiasRoutes); // Noticias routes
-app.use("/api/membresia", membresiaRoutes); //RUTAS MEMBRESIAS
-app.use("/api/pago", pagoRoutes); //RUTA PAGOS
-app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
-app.use("/api", ofertaRoutes); //Ruta de oferta laboral
-app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usuarios
+app.use("/api/noticias", gestionNoticiasRoutes);
+app.use("/api/membresia", membresiaRoutes);
+app.use("/api/pago", pagoRoutes);
+app.use("/api/beneficios", beneficiosRoutes);
+app.use("/api", ofertaRoutes);
+app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/conferencias", conferenciaRoutes); // NUEVA LÍNEA
 
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
-
 
 // Start the server
 const port = 8000;
