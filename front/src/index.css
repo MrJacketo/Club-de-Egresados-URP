@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@fontsource/inter/400.css"; 
+@import "@fontsource/inter/400.css";
 
 /* Establece los estilos globales */
 :root {
@@ -17,21 +17,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-
 /* Asegúrate de que el cuerpo ocupe toda la pantalla */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
   overflow-x: hidden; /* Esto evita el desbordamiento horizontal */
   box-sizing: border-box;
-<<<<<<< HEAD
-  background: #353535 /* Fondo negro */
-=======
   background: whitesmoke; /* Fondo verde */
->>>>>>> main
 }
 
 /* Asegúrate de que el contenedor raíz ocupe toda la pantalla */
@@ -42,14 +37,14 @@ html, body {
 }
 
 /* Ocultar la barra de desplazamiento pero permitir el desplazamiento */
-html, body {
+html,
+body {
   overflow: auto; /* Habilita el desplazamiento */
-
 }
 
 ::-webkit-scrollbar {
-  width: 0px;  /* Oculta la barra de desplazamiento */
-  background: transparent;  /* Fondo transparente */
+  width: 0px; /* Oculta la barra de desplazamiento */
+  background: transparent; /* Fondo transparente */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -77,34 +72,27 @@ button {
   transition: border-color 0.25s;
 }
 
-
-
-
 .ProseMirror {
   color: black;
   background-color: white;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 15px;
   padding: 0.75rem;
   border-radius: 0.5rem;
   min-height: 200px;
   border: 1.5px solid rgba(142, 142, 142, 0.501);
-  transition-all duration-200
-
-  &:focus {
+  transition-all duration-200 &:focus {
     outline: none;
-    border: 1px solid #25BF7B;
+    border: 1px solid #25bf7b;
   }
 
   &:hover {
-    border-color: #686868bb; 
+    border-color: #686868bb;
   }
 }
 
-
-
 /* Preferencia de esquema claro */
- @media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;

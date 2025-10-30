@@ -1,155 +1,175 @@
-import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle, Sparkles, Zap, Star, TrendingUp, ShieldCheck, Loader } from "lucide-react"
+import {
+  Briefcase,
+  Award,
+  Users,
+  BookOpen,
+  Calendar,
+  CheckCircle,
+  Sparkles,
+  Zap,
+  Star,
+  TrendingUp,
+  ShieldCheck,
+  Loader,
+} from "lucide-react";
 import { useState } from "react";
-<<<<<<< HEAD
-import { Toaster, toast} from "sonner";
-
-const beneficios = [
-  { id: 1, icon: Briefcase, titulo: "Acceso a Bolsa Laboral Premium", descripcion: "Ofertas exclusivas para egresados de la URP" },
-  { id :2, icon: Award, titulo: "Certificaciones Profesionales", descripcion: "Descuento en certificaciones" },
-  { id: 3,icon: Users, titulo: "Networking Profesional", descripcion: "Eventos con empleadores y alumnos" },
-  { id: 4, icon: BookOpen, titulo: "Cursos de Especialización", descripcion: "Acceso a cursos profesionales" },
-  { id: 5, icon: Calendar, titulo: "Asesorías Personalizadas", descripcion: "Optimización de CV y LinkedIn" },
-  { id: 6, icon: Sparkles, titulo: "Eventos Exclusivos", descripcion: "Acceso prioritario a conferencias y talleres" },
-];
-
-const features = [
-  {id: 1, title: "Acceso inmediato a todos los beneficios"},
-  {id: 2, title: "Renovación anual automática"},
-  {id: 3, title: "Cancela cuando quieras"},
-  {id: 4, title: "Garantía de devolución en los primeros 14 días"}
-];
-
-export default function Membresia() {
-  const [loading] = useState(false);
-
-  return (
-    <div className="min-h-screen w-full bg-transparent text-gray-300 font-sans">
-=======
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/userContext";
-import { Toaster, toast} from "sonner";
+import { Toaster, toast } from "sonner";
+import { activateMembresiaRequest } from "../../api/membresiaApi";
+import {
+  createSubscriptionRequest,
+  simulatePagoRequest,
+} from "../../api/pagoApi";
 
 const beneficios = [
-  { icon: Briefcase, titulo: "Acceso a Bolsa Laboral Premium", descripcion: "Ofertas exclusivas para egresados de la URP" },
-  { icon: Award, titulo: "Certificaciones Profesionales", descripcion: "Descuento en certificaciones" },
-  { icon: Users, titulo: "Networking Profesional", descripcion: "Eventos con empleadores y alumnos" },
-  { icon: BookOpen, titulo: "Cursos de Especialización", descripcion: "Acceso a cursos profesionales" },
-  { icon: Calendar, titulo: "Asesorías Personalizadas", descripcion: "Optimización de CV y LinkedIn" },
-  { icon: Sparkles, titulo: "Eventos Exclusivos", descripcion: "Acceso prioritario a conferencias y talleres" },
+  {
+    icon: Briefcase,
+    titulo: "Acceso a Bolsa Laboral Premium",
+    descripcion: "Ofertas exclusivas para egresados de la URP",
+  },
+  {
+    icon: Award,
+    titulo: "Certificaciones Profesionales",
+    descripcion: "Descuento en certificaciones",
+  },
+  {
+    icon: Users,
+    titulo: "Networking Profesional",
+    descripcion: "Eventos con empleadores y alumnos",
+  },
+  {
+    icon: BookOpen,
+    titulo: "Cursos de Especialización",
+    descripcion: "Acceso a cursos profesionales",
+  },
+  {
+    icon: Calendar,
+    titulo: "Asesorías Personalizadas",
+    descripcion: "Optimización de CV y LinkedIn",
+  },
+  {
+    icon: Sparkles,
+    titulo: "Eventos Exclusivos",
+    descripcion: "Acceso prioritario a conferencias y talleres",
+  },
 ];
 
 const features = [
   "Acceso inmediato a todos los beneficios",
   "Renovación anual automática",
   "Cancela cuando quieras",
-  "Garantía de devolución en los primeros 14 días"
+  "Garantía de devolución en los primeros 14 días",
 ];
 
 export default function Membresia() {
-  const [loading, setLoading] = useState(false);
+  const [loadingActivation, setLoadingActivation] = useState(false);
+  const [loadingSimulation, setLoadingSimulation] = useState(false);
   const navigate = useNavigate();
   const { user } = useUser();
 
   return (
     <div className="min-h-screen w-full bg-white text-gray-900 font-sans">
->>>>>>> main
       <Toaster position="bottom-center" richColors />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        
         <div className="mb-8 text-left">
-<<<<<<< HEAD
-          <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-500/30 rounded-full px-4 py-2 mb-4">
-            <Star className="w-4 h-4 text-green-400 fill-green-400" />
-            <span className="text-green-400 text-sm font-semibold">Oferta Limitada</span>
-          </div>
-          <h1 className="text-5xl md:text-6xl font-black text-white mb-3 text-left">
-            Únete a <span className="text-green-500">URPex</span>
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl text-left">
-=======
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 rounded-full px-4 py-2 mb-4 shadow-lg">
             <Star className="w-4 h-4 text-white fill-white" />
-            <span className="text-white text-sm font-semibold">Oferta Limitada</span>
+            <span className="text-white text-sm font-semibold">
+              Oferta Limitada
+            </span>
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-3 text-left">
             Únete a <span className="text-green-600">URPex</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl text-left">
->>>>>>> main
-            La membresía exclusiva para egresados que impulsa tu crecimiento profesional
+            La membresía exclusiva para egresados que impulsa tu crecimiento
+            profesional
           </p>
         </div>
 
-<<<<<<< HEAD
-        <div className="mb-12 bg-gradient-to-br from-[#1a1a1a] to-[#252525] rounded-2xl border-2 border-green-500/30 p-8 lg:p-12">
-          
-          <div className="mb-6">
-            <div className="flex items-baseline gap-3 flex-wrap mb-2">
-              <span className="text-6xl font-black text-white">S/ 120</span>
-              <span className="text-2xl text-gray-400 line-through">S/ 150</span>
-              <span className="text-green-400 font-semibold text-sm">/año</span>
-              <div className="inline-flex items-center gap-2 bg-green-500/20 rounded-lg px-3 py-1">
-                <Zap className="w-4 h-4 text-green-400" />
-                <span className="text-green-400 font-bold text-sm">Ahorra S/ 30 hoy</span>
-=======
         <div className="mb-12 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 border border-gray-100 p-8 lg:p-12">
-          
           <div className="mb-6">
             <div className="flex items-baseline gap-3 flex-wrap mb-2">
               <span className="text-6xl font-black text-gray-900">S/ 120</span>
-              <span className="text-2xl text-gray-500 line-through">S/ 150</span>
+              <span className="text-2xl text-gray-500 line-through">
+                S/ 150
+              </span>
               <span className="text-green-600 font-semibold text-sm">/año</span>
               <div className="inline-flex items-center gap-2 bg-green-100 rounded-lg px-3 py-1">
                 <Zap className="w-4 h-4 text-green-600" />
-                <span className="text-green-600 font-bold text-sm">Ahorra S/ 30 hoy</span>
->>>>>>> main
+                <span className="text-green-600 font-bold text-sm">
+                  Ahorra S/ 30 hoy
+                </span>
               </div>
             </div>
           </div>
 
           <div className="space-y-3 mb-8">
-<<<<<<< HEAD
-            {features.map((feature) => (
-              <div key={feature.id} className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                <span className="text-gray-300 text-sm">{feature.title}</span>
-=======
             {features.map((feature, idx) => (
               <div key={idx} className="flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                 <span className="text-gray-700 text-sm">{feature}</span>
->>>>>>> main
               </div>
             ))}
           </div>
 
           <button
-            onClick={() => toast.error('Función aun no implementada')}
-            disabled={loading}
-<<<<<<< HEAD
-            className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-bold py-4 px-6 rounded-xl mb-6"
-=======
+            onClick={async () => {
+              try {
+                setLoadingActivation(true);
+                const response = await createSubscriptionRequest();
+                if (response.init_point) {
+                  window.location.href = response.init_point;
+                } else {
+                  toast.error("No se pudo iniciar el proceso de pago");
+                }
+              } catch (error) {
+                toast.error(error.message || "Error al procesar el pago");
+              } finally {
+                setLoadingActivation(false);
+              }
+            }}
+            disabled={loadingActivation}
             className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-4 px-6 rounded-xl mb-6 transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
->>>>>>> main
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-2">
+              {loadingActivation ? (
                 <Loader className="animate-spin h-5 w-5" />
-                Procesando...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
+              ) : (
                 <Sparkles className="w-5 h-5" />
-                Activar Membresía
-              </span>
-            )}
+              )}
+              {loadingActivation ? "Procesando..." : "Activar Membresía"}
+              {/*/ MERCADOPAGO NECESITA CUENTAS DE TESTEO /*/}
+            </span>
           </button>
 
-<<<<<<< HEAD
-          <div className="flex items-center justify-center gap-2 text-gray-500 text-xs">
-=======
+          <button
+            onClick={async () => {
+              try {
+                setLoadingSimulation(true);
+                await simulatePagoRequest();
+                toast.success("¡Pago simulado con éxito!");
+              } catch (error) {
+                toast.error(error.message || "Error al simular el pago");
+              } finally {
+                setLoadingSimulation(false);
+              }
+            }}
+            disabled={loadingSimulation}
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-4 px-6 rounded-xl mb-6 transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            <span className="flex items-center justify-center gap-2">
+              {loadingSimulation ? (
+                <Loader className="animate-spin h-5 w-5" />
+              ) : (
+                <ShieldCheck className="w-5 h-5" />
+              )}
+              {loadingSimulation ? "Procesando..." : "Simular Pago"}
+            </span>
+          </button>
+
           <div className="flex items-center justify-center gap-2 text-gray-600 text-xs">
->>>>>>> main
             <ShieldCheck className="w-4 h-4" />
             Pago 100% seguro y encriptado
           </div>
@@ -157,44 +177,23 @@ export default function Membresia() {
 
         <div className="space-y-6">
           <div className="mb-8 text-left">
-<<<<<<< HEAD
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-3 flex items-center gap-3">
-              <TrendingUp className="w-10 h-10 text-green-500" />
-              Todo lo que incluye
-            </h2>
-            <p className="text-xl text-gray-400">Beneficios diseñados para acelerar tu carrera</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {beneficios.map((beneficio) => {
-              const Icon = beneficio.icon;
-              return (
-                <div key={beneficio.id} className="group relative bg-[#1a1a1a] border border-gray-800 hover:border-green-500/40 rounded-xl p-6 transition-all duration-300 hover:translate-x-2">
-                  <div className="absolute -left-3 top-6 w-8 h-8 bg-green-500 text-black font-black rounded-full flex items-center justify-center text-sm shadow-lg">
-                    {beneficio.id}
-                  </div>
-                  <div className="ml-6 flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
-                      <Icon className="w-6 h-6 text-green-500" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold text-lg mb-1 group-hover:text-green-400 transition-colors">
-                        {beneficio.titulo}
-                      </h3>
-                      <p className="text-gray-400 text-sm">{beneficio.descripcion}</p>
-=======
             <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-3 flex items-center gap-3">
               <TrendingUp className="w-10 h-10 text-green-600" />
               Todo lo que incluye
             </h2>
-            <p className="text-xl text-gray-600">Beneficios diseñados para acelerar tu carrera</p>
+            <p className="text-xl text-gray-600">
+              Beneficios diseñados para acelerar tu carrera
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             {beneficios.map((beneficio, idx) => {
               const Icon = beneficio.icon;
               return (
-                <div key={idx} className="group relative bg-white border border-gray-200 hover:border-green-300 hover:shadow-lg rounded-xl p-6 transition-all duration-300 hover:translate-x-2">
+                <div
+                  key={idx}
+                  className="group relative bg-white border border-gray-200 hover:border-green-300 hover:shadow-lg rounded-xl p-6 transition-all duration-300 hover:translate-x-2"
+                >
                   <div className="absolute -left-3 top-6 w-8 h-8 bg-green-600 text-white font-black rounded-full flex items-center justify-center text-sm shadow-lg">
                     {idx + 1}
                   </div>
@@ -206,8 +205,9 @@ export default function Membresia() {
                       <h3 className="text-gray-900 font-bold text-lg mb-1 group-hover:text-green-600 transition-colors">
                         {beneficio.titulo}
                       </h3>
-                      <p className="text-gray-600 text-sm">{beneficio.descripcion}</p>
->>>>>>> main
+                      <p className="text-gray-600 text-sm">
+                        {beneficio.descripcion}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -215,28 +215,21 @@ export default function Membresia() {
             })}
           </div>
 
-<<<<<<< HEAD
-          <div className="mt-8 bg-gradient-to-r from-green-500/10 to-transparent border-l-4 border-green-500 rounded-lg p-6">
-            <div className="flex items-start gap-4">
-              <div className="flex -space-x-2">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-gray-700 border-2 border-[#1a1a1a] flex items-center justify-center text-white font-semibold text-sm">
-=======
           <div className="mt-8 bg-gradient-to-r from-green-50 to-transparent border-l-4 border-green-600 rounded-lg p-6">
             <div className="flex items-start gap-4">
               <div className="flex -space-x-2">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-green-600 border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
->>>>>>> main
+                  <div
+                    key={i}
+                    className="w-10 h-10 rounded-full bg-green-600 border-2 border-white flex items-center justify-center text-white font-semibold text-sm"
+                  >
                     {String.fromCharCode(64 + i)}
                   </div>
                 ))}
               </div>
-<<<<<<< HEAD
-              <p className="text-white font-semibold">Únete a la comunidad más activa de la URP</p>
-=======
-              <p className="text-gray-900 font-semibold">Únete a la comunidad más activa de la URP</p>
->>>>>>> main
+              <p className="text-gray-900 font-semibold">
+                Únete a la comunidad más activa de la URP
+              </p>
             </div>
           </div>
         </div>
