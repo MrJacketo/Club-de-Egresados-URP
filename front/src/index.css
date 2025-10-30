@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource/inter/400.css"; 
 
 /* Establece los estilos globales */
 :root {
@@ -26,7 +27,11 @@ html, body {
   width: 100%;
   overflow-x: hidden; /* Esto evita el desbordamiento horizontal */
   box-sizing: border-box;
+<<<<<<< HEAD
   background: #353535 /* Fondo negro */
+=======
+  background: whitesmoke; /* Fondo verde */
+>>>>>>> main
 }
 
 /* Asegúrate de que el contenedor raíz ocupe toda la pantalla */
@@ -39,6 +44,7 @@ html, body {
 /* Ocultar la barra de desplazamiento pero permitir el desplazamiento */
 html, body {
   overflow: auto; /* Habilita el desplazamiento */
+
 }
 
 ::-webkit-scrollbar {
@@ -71,14 +77,8 @@ button {
   transition: border-color 0.25s;
 }
 
-button:hover {
-  border-color: #646cff;
-}
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+
 
 .ProseMirror {
   color: black;
@@ -104,7 +104,7 @@ button:focus-visible {
 
 
 /* Preferencia de esquema claro */
-@media (prefers-color-scheme: light) {
+ @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;

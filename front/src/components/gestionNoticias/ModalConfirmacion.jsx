@@ -13,7 +13,7 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, noticia, loading }) => 
             <AlertTriangle className="w-6 h-6 text-red-500 mr-2" />
             <h2 className="text-xl font-semibold text-gray-900">Confirmar Eliminación</h2>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-gray-400! hover:text-gray-600! bg-transparent! transition-colors!">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -41,7 +41,7 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, noticia, loading }) => 
         <div className="flex justify-end space-x-4 p-6 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 border! bg-transparent! border-gray-300! rounded-lg! text-gray-700! hover:bg-gray-50! transition-colors!"
             disabled={loading}
           >
             Cancelar
@@ -49,9 +49,9 @@ const ModalConfirmacion = ({ isOpen, onClose, onConfirm, noticia, loading }) => 
           <button
             onClick={() => onConfirm(noticia._id)}
             disabled={loading}
-            className="px-4 py-2 bg-transparent text-red-600 border border-red-500 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            className="px-4 py-2 bg-transparent! text-red-600! border! border-red-500! rounded-lg! hover:bg-red-50! transition-colors! disabled:opacity-50! disabled:cursor-not-allowed! flex items-center!"
           >
-            {loading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>}
+            {loading && <div className="animate-spin! rounded-full! h-4 w-4 border-b-2! border-red-600! mr-2"></div>}
             Eliminar Noticia
           </button>
         </div>

@@ -1,4 +1,4 @@
-import apiClient from "./apiClient";
+  import apiClient from "./apiClient";
 // Firebase removed - now using JWT authentication
 
 //Obtener todos los usuarios registrados
