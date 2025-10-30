@@ -13,7 +13,7 @@ const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
 const app = express();
-
+const path = require('path');
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URL, {
@@ -44,6 +44,13 @@ app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
 app.use("/api", ofertaRoutes); //Ruta de oferta laboral
 app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usuarios
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Global error handler
 app.use((err, req, res, next) => {

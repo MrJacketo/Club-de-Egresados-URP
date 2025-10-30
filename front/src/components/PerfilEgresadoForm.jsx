@@ -160,67 +160,64 @@ const handlePhotoChange = async (e) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
-      if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
-      if (!userData.carrera) return toast.error("La carrera es requerida");
+  try {
+    if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
+    if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
+    if (!userData.carrera) return toast.error("La carrera es requerida");
 
-      await userApi.updateAcademicData({
-        anioEgreso: userData.anioEgreso,
-        carrera: userData.carrera,
-        gradoAcademico: userData.gradoAcademico || "Bachiller",
-      });
+    // Actualiza los datos académicos del usuario
+    await userApi.updateAcademicData({
+      anioEgreso: userData.anioEgreso,
+      carrera: userData.carrera,
+      gradoAcademico: userData.gradoAcademico || "Bachiller",
+    });
 
-      const cleanProfile = {
-        nombreCompleto: userData.nombreCompleto.trim(),
-        interesesProfesionales: {
-          ...profileData.interesesProfesionales,
-          modalidad: profileData.interesesProfesionales?.modalidad || "Presencial",
-          tipoJornada: profileData.interesesProfesionales?.tipoJornada || "Tiempo completo",
-        },
-        habilidades: {
-          ...profileData.habilidades,
-          idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
-        },
-        ubicacion: {
-          ...profileData.ubicacion,
-          distritoResidencia: profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
-        },
-      };
+    // Define cleanProfile fuera del try interno
+    const cleanProfile = {
+      nombreCompleto: userData.nombreCompleto.trim(),
+      interesesProfesionales: {
+        ...profileData.interesesProfesionales,
+        modalidad: profileData.interesesProfesionales?.modalidad || "Presencial",
+        tipoJornada: profileData.interesesProfesionales?.tipoJornada || "Tiempo completo",
+      },
+      habilidades: {
+        ...profileData.habilidades,
+        idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
+      },
+      ubicacion: {
+        ...profileData.ubicacion,
+        distritoResidencia: profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
+      },
+    };
 
-      await createOrUpdateGraduateProfileRequest(cleanProfile);
+    // Guarda el perfil de egresado
+    await createOrUpdateGraduateProfileRequest(cleanProfile);
+
+    // Si hay una foto seleccionada, súbela junto con el perfil
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("photo", selectedFile);
+      formData.append("data", JSON.stringify(cleanProfile));
+
+      await userApi.uploadProfilePhoto(formData);
+      toast.success("Foto y perfil actualizados correctamente!");
+    } else {
       toast.success("Perfil guardado exitosamente!");
-      navigate("/welcome-egresado");
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.error || "Error al guardar el perfil");
-    } finally {
-      setIsLoading(false);
     }
-     
-    //para la imagen
-    try {
-    const formData = new FormData();
-    formData.append("photo", selectedFile); 
-    formData.append("data", JSON.stringify(cleanProfile)); 
 
-    await userApi.uploadProfilePhoto(formData);
-    toast.success("Foto y perfil actualizados correctamente!");
     navigate("/welcome-egresado");
   } catch (error) {
-    console.error(error);
-    toast.error("Error al guardar foto o perfil");
+    console.error("Error al guardar el perfil:", error);
+    toast.error(error.response?.data?.error || "Error al guardar foto o perfil");
   } finally {
     setIsLoading(false);
   }
-  
+};
 
-
-  };
 
   return (
     <div className="w-full min-h-screen bg-[#1C1D21] text-white flex flex-col">
@@ -269,14 +266,35 @@ const handlePhotoChange = async (e) => {
               </div>
               <div>
                 <label className="text-[#00BC4F] font-semibold block">Carrera:</label>
-                <input
-                  type="text"
+                <select
                   name="carrera"
-                  value={userData.carrera}
+                  value={userData.carrera || ""}
                   onChange={handleUserChange}
-                  className="w-full mt-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
-                />
+                  className="w-full mt-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F] text-white"
+                  required
+                >
+                  <option value="">Seleccione su carrera</option>
+                  <option value="Administración y Gerencia">Administración y Gerencia</option>
+                  <option value="Administración de Negocios Globales">Administración de Negocios Globales</option>
+                  <option value="Arquitectura">Arquitectura</option>
+                  <option value="Biología">Biología</option>
+                  <option value="Contabilidad y Finanzas">Contabilidad y Finanzas</option>
+                  <option value="Derecho y Ciencia Política">Derecho y Ciencia Política</option>
+                  <option value="Economía">Economía</option>
+                  <option value="Ingeniería Civil">Ingeniería Civil</option>
+                  <option value="Ingeniería Electrónica">Ingeniería Electrónica</option>
+                  <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+                  <option value="Ingeniería Informática">Ingeniería Informática</option>
+                  <option value="Ingeniería Mecatrónica">Ingeniería Mecatrónica</option>
+                  <option value="Marketing Global y Administración Comercial">Marketing Global y Administración Comercial</option>
+                  <option value="Medicina Humana">Medicina Humana</option>
+                  <option value="Medicina Veterinaria">Medicina Veterinaria</option>
+                  <option value="Psicología">Psicología</option>
+                  <option value="Traducción e Interpretación">Traducción e Interpretación</option>
+                  <option value="Turismo, Hotelería y Gastronomía">Turismo, Hotelería y Gastronomía</option>
+                </select>
               </div>
+
             </div>
 
             <div>
