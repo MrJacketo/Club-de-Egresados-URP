@@ -3,6 +3,7 @@ const dotenv = require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const path = require("path"); // ← AGREGAR ESTA LÍNEA
 const authRoutes = require("./routes/authRoutes");
 const perfilRoutes = require("./routes/perfilRoutes");
 const membresiaRoutes = require("./routes/membresiaRoutes");
@@ -13,7 +14,6 @@ const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
 const publicacionesRoutes = require("./routes/publicacionesRoutes");
-
 
 const app = express();
 
@@ -65,7 +65,6 @@ app.use("/api", ofertaRoutes); //Ruta de oferta laboral
 app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usuarios
 app.use("/api", publicacionesRoutes);
 
-
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -74,20 +73,4 @@ app.use((err, req, res, next) => {
 
 // Start the server
 const port = 8000;
-const host = '0.0.0.0'; // Permite conexiones desde cualquier IP
-
-app.listen(port, host, () => {
-  console.log(`Servidor corriendo en el puerto ${port}`);
-  
-  // Mostrar IPs de la máquina actual
-  const os = require('os');
-  const interfaces = os.networkInterfaces();
-  
-  Object.keys(interfaces).forEach(name => {
-    interfaces[name].forEach(iface => {
-      if (iface.family === 'IPv4' && !iface.internal) {
-        console.log(`   - http://${iface.address}:${port}`);
-      }
-    });
-  });
-});
+app.listen(port, () => console.log(`Servidor corriendo en el puerto ${port}`));
