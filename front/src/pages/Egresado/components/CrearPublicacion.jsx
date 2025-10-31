@@ -4,7 +4,7 @@ import { Globe, Video, Image, Smile } from "lucide-react";
 function CrearPublicacion({ perfil, agregarPost }) {
   const [nuevoPost, setNuevoPost] = useState("");
   const [archivo, setArchivo] = useState(null);
-  const [setTipoPublicacion] = useState("texto");
+  const [tipoPublicacion, setTipoPublicacion] = useState("texto"); // ✅ CORREGIDO
   const [mostrarEmojis, setMostrarEmojis] = useState(false);
 
   const emojis = [
@@ -16,7 +16,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
   const handleArchivoChange = (e, tipo) => {
     if (e.target.files && e.target.files[0]) {
       setArchivo(e.target.files[0]);
-      setTipoPublicacion(tipo);
+      setTipoPublicacion(tipo); // ✅ AHORA FUNCIONA
     }
   };
 
@@ -26,42 +26,42 @@ function CrearPublicacion({ perfil, agregarPost }) {
   };
 
   const handlePublicar = () => {
-  if (nuevoPost.trim() === "" && !archivo) return;
+    if (nuevoPost.trim() === "" && !archivo) return;
 
-  let nuevo = {
-    id: Date.now(),
-    autor: "Tú",
-    contenido: nuevoPost,
-    likes: 0,
-    comentarios: [],
-    imagen: null,
-    video: null,
-    perfilImg: perfil || null, // ← ESTO YA ESTÁ BIEN
-  };
+    let nuevo = {
+      id: Date.now(),
+      autor: "Tú",
+      contenido: nuevoPost,
+      likes: 0,
+      comentarios: [],
+      imagen: null,
+      video: null,
+      perfilImg: perfil || null,
+    };
 
-  if (archivo) {
-    if (archivo.type.startsWith("image/")) {
-      // CONVERTIR IMAGEN A BASE64 para que persista
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        nuevo.imagen = event.target.result; // Base64
-        agregarPost(nuevo);
-        setNuevoPost("");
-        setArchivo(null);
-        setTipoPublicacion("texto");
-      };
-      reader.readAsDataURL(archivo);
-      return; // Salir aquí porque es asíncrono
-    } else if (archivo.type.startsWith("video/")) {
-      nuevo.video = URL.createObjectURL(archivo);
+    if (archivo) {
+      if (archivo.type.startsWith("image/")) {
+        // CONVERTIR IMAGEN A BASE64 para que persista
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          nuevo.imagen = event.target.result; // Base64
+          agregarPost(nuevo);
+          setNuevoPost("");
+          setArchivo(null);
+          setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
+        };
+        reader.readAsDataURL(archivo);
+        return; // Salir aquí porque es asíncrono
+      } else if (archivo.type.startsWith("video/")) {
+        nuevo.video = URL.createObjectURL(archivo);
+      }
     }
-  }
 
-  agregarPost(nuevo);
-  setNuevoPost("");
-  setArchivo(null);
-  setTipoPublicacion("texto");
-};
+    agregarPost(nuevo);
+    setNuevoPost("");
+    setArchivo(null);
+    setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
+  };
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-xl w-full mb-8">
@@ -89,7 +89,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
       </div>
 
       <textarea
-        className="w-full border-0 rounded-xl p-4 focus:outline-none focus:ring-0 resize-none min-h-[120px] text-black text-xl placeholder-gray-400 bg-gray-50" /* AUMENTADO: p-3 a p-4, min-h, text-xl */
+        className="w-full border-0 rounded-xl p-4 focus:outline-none focus:ring-0 resize-none min-h-[120px] text-black text-xl placeholder-gray-400 bg-gray-50"
         placeholder="¿Sobre qué quieres hablar? 😊"
         value={nuevoPost}
         onChange={(e) => setNuevoPost(e.target.value)}
@@ -98,7 +98,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
       <div className="flex items-center justify-between mt-4"> 
         <label
           onClick={() => setMostrarEmojis(!mostrarEmojis)}
-          className="flex items-center gap-3 bg-gray-50 text-gray-700 px-4 py-3 rounded-xl cursor-pointer transition-colors hover:bg-gray-100 border border-gray-200 font-medium" /* MEJORADO: estilos */
+          className="flex items-center gap-3 bg-gray-50 text-gray-700 px-4 py-3 rounded-xl cursor-pointer transition-colors hover:bg-gray-100 border border-gray-200 font-medium"
         >
           <Smile size={20} /> 
           <span className="text-base">Emojis</span> 
@@ -149,7 +149,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
           </label>
 
           <label className="flex items-center gap-3 bg-gray-50 text-gray-700 px-4 py-3 rounded-xl cursor-pointer transition-colors hover:bg-gray-100 border border-gray-200 font-medium">
-            <Image size={20} /> {/* AUMENTADO: size-18 a 20 */}
+            <Image size={20} />
             <span className="text-base">Foto</span>
             <input
               type="file"
