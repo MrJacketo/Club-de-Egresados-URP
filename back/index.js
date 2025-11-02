@@ -27,13 +27,20 @@ mongoose
   .catch((err) => console.error("Error al conectar MongoDB", err));
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173", // Update this to match your frontend's URL
+    origin: function (origin, callback) {
+      // Permitir cualquier origen que termine en :5173 o sea undefined (como Postman)
+      if (!origin || origin.includes(':5173')) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Para desarrollo, permite todo
+      }
+    },
   })
 );
 
@@ -61,4 +68,20 @@ app.use((err, req, res, next) => {
 
 // Start the server
 const port = 8000;
-app.listen(port, () => console.log(`Servidor corriendo en el puerto ${port}`));
+const host = '0.0.0.0'; // Permite conexiones desde cualquier IP
+
+app.listen(port, host, () => {
+  console.log(`🚀 Servidor corriendo en el puerto ${port}`);
+  
+  // Mostrar IPs de la máquina actual
+  const os = require('os');
+  const interfaces = os.networkInterfaces();
+  
+  Object.keys(interfaces).forEach(name => {
+    interfaces[name].forEach(iface => {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        console.log(`   - http://${iface.address}:${port}`);
+      }
+    });
+  });
+});
