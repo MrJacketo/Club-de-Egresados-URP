@@ -7,7 +7,8 @@ import {
   Percent, 
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck
 } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
@@ -106,23 +107,39 @@ export default function AdminSidebar() {
             </span>
           </Link>
 
-                  <Link
-                    to="/admin/beneficios"
-                    className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
-                      location.pathname === "/admin/beneficios"
-                        ? "bg-white! text-green-600! shadow-lg!"
-                        : "text-white! hover:bg-white/20!"
-                    }`}
-                  >
-                    <Percent size={24} />
-                    <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
-                      Beneficios
-                    </span>
-                  </Link>
-
-          {/*}
-
           <Link
+            to="/admin/beneficios"
+            className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+              location.pathname === "/admin/beneficios"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
+            }`}
+          >
+            <Percent size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+              Beneficios
+            </span>
+          </Link>
+
+          {/* Moderación - visible para admin y moderador */}
+          {(user?.rol === 'admin' || user?.rol === 'moderador') && (
+            <Link
+              to="/moderador/usuarios"
+              className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
+                location.pathname === "/moderador/usuarios"
+                  ? "bg-white! text-green-600! shadow-lg!"
+                  : "text-white! hover:bg-white/20!"
+              }`}
+              style={{ border: 'none' }}
+            >
+              <ShieldCheck size={24} />
+              <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
+                Moderación
+              </span>
+            </Link>
+          )}
+
+          {/*}          <Link
             to="/admin/beneficios"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin/beneficios"
