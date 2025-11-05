@@ -2,45 +2,33 @@ const express = require("express");
 const router = express.Router();
 const {
   obtenerNoticias,
+  obtenerNoticiasPublicas,
   obtenerNoticiaPorId,
+  obtenerNoticiaPublicaPorId,
   crearNoticia,
   actualizarNoticia,
   eliminarNoticia,
-  cambiarEstadoNoticia,
-  obtenerEstadisticas,
+  servirImagenNoticia  // ← AÑADE ESTA IMPORTACIÓN
 } = require("../controllers/gestionNoticiasController");
 
 const verifyJWTToken = require("../middleware/verifyJWTToken");
+const upload = require("../utils/multerConfig");
 
-// Middleware para verificar que el usuario es administrador
-const verificarAdmin = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      message: "Usuario no autenticado",
-    });
-  }
-  // Add admin role check here if needed
-  next();
-};
+// Rutas públicas (sin autenticación)
+router.get("/public", obtenerNoticiasPublicas);           
+router.get("/public/:id", obtenerNoticiaPublicaPorId);
+router.get("/imagen/:nombreImagen", servirImagenNoticia); // ← AÑADE ESTA LÍNEA CRÍTICA
 
-// Aplicar middleware de autenticación
+// Rutas protegidas (con autenticación)
 router.use(verifyJWTToken);
-// router.use(verificarAdmin); // Uncomment if admin verification needed
 
-// Obtener todas las noticias con filtros
 router.get("/", obtenerNoticias);
-
-// Obtener noticia por ID
 router.get("/:id", obtenerNoticiaPorId);
 
-// Crear nueva noticia (con imagen)
-router.post("/", crearNoticia);
+// SOLO UNA LÍNEA PARA POST - CON MULTER
+router.post("/", upload.single('imagen'), crearNoticia);
 
-// Actualizar noticia
 router.put("/:id", actualizarNoticia);
-
-// Eliminar noticia (soft delete)
 router.delete("/:id", eliminarNoticia);
 
 module.exports = router;
