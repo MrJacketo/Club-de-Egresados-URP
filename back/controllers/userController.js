@@ -1,9 +1,12 @@
 const User = require("../models/User");
 const Membresia = require("../models/Membresia")
+const path = require("path");
+const multer = require("multer");
 // Create or update user profile
 const createOrUpdateUserProfile = async (req, res) => {
   const userId = req.user._id;
   const userData = req.body;
+  
 
   try {
     // Check if the user already exists
@@ -22,6 +25,51 @@ const createOrUpdateUserProfile = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+//guardar imagenes
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, "uploads/"), // carpeta donde se guardarán las fotos
+    filename: (req, file, cb) => {
+      const uniqueName = `${Date.now()}-${file.originalname}`;
+      cb(null, uniqueName);
+    },
+  });
+  //subir imgs
+    const upload = multer({
+      storage,
+      fileFilter: (req, file, cb) => {
+        // Solo permitir imágenes
+        if (!file.mimetype.startsWith("image/")) {
+          return cb(new Error("Solo se permiten imágenes"));
+        }
+        cb(null, true);
+      },
+    });
+//funcion usada para subir foto de perfil
+    const uploadProfilePhoto = async (req, res) => {
+      try {
+        if (!req.file) {
+          return res.status(400).json({ error: "No se subió ninguna imagen" });
+        }
+
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        if (!user) {
+          return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        // Actualiza el campo profilePicture
+        user.profilePicture = `/uploads/${req.file.filename}`;
+        await user.save();
+
+        res.json({
+          message: "Foto de perfil actualizada exitosamente",
+          profilePicture: user.profilePicture,
+        });
+      } catch (error) {
+        console.error("Error subiendo foto de perfil:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+      }
+    };
 
 // Get user
 const getUserProfile = async (req, res) => {
@@ -124,5 +172,8 @@ module.exports = {
   getUserProfile,
   getAllUsers,
   updateUserProfile,
+  uploadProfilePhoto,
+  upload,
   disableUser
+  
 }

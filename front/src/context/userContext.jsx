@@ -31,6 +31,8 @@ export function UserContextProvider({ children }) {
         }
       } catch (error) {
         console.error("Error initializing auth:", error);
+        // Token might be expired or invalid, clear auth data
+       
       } finally {
         setLoading(false);
       }

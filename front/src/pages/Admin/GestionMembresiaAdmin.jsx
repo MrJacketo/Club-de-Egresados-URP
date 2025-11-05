@@ -479,83 +479,85 @@ const handleExportar = () => {
   }
 
   return (
-    <div className="flex min-h-screen" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+    <div className="flex bg-[#1C1D21] min-h-screen text-white">
       <AdminSidebar />
       <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} overflow-auto h-screen`}>
         <div className="max-w-[1644px] mx-auto px-8 py-10 relative">
           {/* Header */}
-<div className="mb-8">
-  <div className="flex justify-between items-center mb-6">
-    <h1 className="text-5xl font-bold mb-2">
-      <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
-        Gestión de Membresías
-      </span>
-    </h1>
-    <div className="flex gap-4">
-      <button 
-        onClick={handleExportar}
-        disabled={loadingExport || loadingDatos}
-        className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
-        style={{ 
-          background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
-          border: 'none'
-        }}
-        title={`Exportar ${membresiasFiltradas.length} registros`}
-      >
-        {loadingExport ? (
-          <>
-            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
-            Exportando
-          </>
-        ) : (
-          <>
-            <Download size={20} className="mr-2" />
-            Exportar
-          </>
-        )}
-      </button>
-      <button
-        onClick={handleActualizarDatos}
-        disabled={loadingDatos}
-        className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{ 
-          background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
-          border: 'none'
-        }}
-      >
-        <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
-        Actualizar
-      </button>
-    </div>
-  </div>
-</div>
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h1 className="text-4xl font-extrabold text-[#00BC4F] tracking-wide">Mis Membresías</h1>
+                  <div className="flex gap-4">
+                    <button 
+                      onClick={handleExportar}
+                      disabled={loadingExport || loadingDatos}
+                      className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+                        border: 'none'
+                      }}
+                      title={`Exportar ${membresiasFiltradas.length} registros`}
+                    >
+                      {loadingExport ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                          Exportando
+                        </>
+                      ) : (
+                        <>
+                          <Download size={20} className="mr-2" />
+                          Exportar
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={handleActualizarDatos}
+                      disabled={loadingDatos}
+                      className="flex items-center px-6 py-3 border-2 border-[#00BC4F] text-[#00BC4F] font-semibold rounded-2xl hover:bg-[#00BC4F]/10"
+                    >
+                      <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
+                      Actualizar
+                    </button>
+                  </div>
+                </div>
+              </div>
+               </div>
 
           {/* Estadísticas */}
 <div className="grid grid-cols-4 gap-6 mb-12">
-  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-    <p className="text-gray-500 text-sm font-medium mb-1">Total Membresías</p>
-    <p className="text-4xl font-bold text-gray-800">{estadisticas.totalMembresias || 0}</p>
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Total Membresías</h3>
+    
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.totalMembresias || 0}
+    </p>
   </div>
 
-  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-    <p className="text-gray-500 text-sm font-medium mb-1">Activas</p>
-    <p className="text-4xl font-bold text-gray-800">{estadisticas.membresiasActivas || 0}</p>
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Activas</h3>
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.membresiasActivas || 0}
+    </p>
   </div>
 
-  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-    <p className="text-gray-500 text-sm font-medium mb-1">Vencidas / Inactivas</p>
-    <p className="text-4xl font-bold text-gray-800">{estadisticas.membresiasInactivas || 0}</p>
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Vencidas / Inactivas</h3>
+    <p className="text-6xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      {estadisticas.membresiasInactivas || 0}
+    </p>
   </div>
 
-  <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-    <p className="text-gray-500 text-sm font-medium mb-1">Ingresos Mensuales</p>
-    <p className="text-3xl font-bold text-gray-800">S/. {estadisticas.ingresosMensuales.toLocaleString()}</p>
+  <div className="bg-[#101012] rounded-xl p-6 text-center shadow-lg flex flex-col h-full">
+    <h3 className="text-2xl font-black text-[#00BC4F]/50 mb-2">Ingresos Mensuales</h3>
+    <p className="text-3xl font-black text-white drop-shadow-[0_0_30px_rgba(0,188,79,0.65)] mt-auto">
+      S/. {estadisticas.ingresosMensuales.toLocaleString()}
+    </p>
   </div>
 </div>
 
 
          {/* Filtros */}
-<div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 mb-8">
+<div className="bg-[#101012] rounded-lg p-6 shadow-sm ">
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
     <div className="relative w-[400px]">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -591,19 +593,20 @@ const handleExportar = () => {
 </div>
 
           {/* Tabla */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-  <table className="w-full">
-    <thead className="bg-gray-50">
+          <div className="bg-[#013617] rounded-lg shadow-sm overflow-hidden">
+<div className="bg-[#101012] rounded-2xl overflow-hidden shadow-lg border border-[#00BC4F]/20">
+  <table className="w-full text-white">
+    <thead className="bg-[#00BC4F]/10 text-[#00BC4F] uppercase text-xs font-bold tracking-wider">
       <tr>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficios</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+        <th className="px-6 py-4 text-left">Usuario</th>
+        <th className="px-6 py-4 text-left">Estado</th>
+        <th className="px-6 py-4 text-left">Fechas</th>
+        <th className="px-6 py-4 text-left">Beneficios</th>
+        <th className="px-6 py-4 text-left">Precio</th>
+        <th className="px-6 py-4 text-left">Acciones</th>
       </tr>
     </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-[#00BC4F]/10">
                   {membresiasActuales.length > 0 ? (
                     membresiasActuales.map((membresia) => (
                       <FilaMembresia

@@ -8,14 +8,14 @@ const perfilEgresadoSchema = new mongoose.Schema({
     areasInteres: [
       {
         type: String,
-        enum: [
+        /** num: [
           "Innovación y tecnología",
           "Gestión empresarial",
           "Comercio exterior",
           "Educación y formación",
           "Emprendimiento",
           "Proyectos sociales",
-        ],
+        ], **/
       },
     ],
     modalidad: {
@@ -32,7 +32,7 @@ const perfilEgresadoSchema = new mongoose.Schema({
       {
         idioma: {
           type: String,
-          enum: [
+         /** enum: [
             "Español",
             "Inglés",
             "Portugués",
@@ -42,7 +42,7 @@ const perfilEgresadoSchema = new mongoose.Schema({
             "Chino",
             "Japonés",
             "Ruso",
-          ],
+          ], **/
         },
         nivel: {
           type: String,
