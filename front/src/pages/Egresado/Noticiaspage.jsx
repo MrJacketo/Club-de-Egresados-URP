@@ -14,17 +14,40 @@ function Noticias() {
       try {
         setLoading(true);
         setError(null);
-
+        
+        console.log("🔄 Iniciando carga de noticias...");
         const response = await obtenerNoticiasPublicas(categoriaSeleccionada);
-
+        
+        console.log("📦 Respuesta completa:", response);
+        
         if (response.success) {
-          setNoticias(response.noticias);
+          console.log("✅ Éxito - Noticias recibidas:", response.noticias.length);
+
+          // Procesar las noticias - VERSIÓN CORREGIDA
+          // Procesar las noticias - VERSIÓN CORREGIDA
+const noticiasProcesadas = response.noticias.map(noticia => {
+  // URL CORREGIDA - puerto 8000 y ruta /imagen/
+  const imagenUrl = `http://localhost:8000/api/noticias/imagen/${noticia.imagen}`;
+
+  
+  console.log(`🖼️  Imagen URL CORREGIDA para "${noticia.titulo}": ${imagenUrl}`);
+  console.log(`📁 Nombre de imagen en BD: ${noticia.imagen}`);
+
+  return {
+    ...noticia,
+    imagenUrl: imagenUrl,
+    tieneImagen: true
+  };
+});
+
+          setNoticias(noticiasProcesadas);
+          console.log("✅ Noticias procesadas:", noticiasProcesadas.length);
         } else {
-          setError("Error al cargar las noticias");
+          setError("Error al cargar las noticias: " + (response.error || 'Error desconocido'));
         }
       } catch (err) {
         setError(err.message || "Error de conexión con el servidor");
-        console.error("Error:", err);
+        console.error("❌ Error:", err);
       } finally {
         setLoading(false);
       }
@@ -115,10 +138,20 @@ function Noticias() {
           
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full">
             {noticias.map((noticia) => (
-              <div key={noticia.id} className="bg-white text-black rounded-2xl shadow-lg overflow-hidden hover:shadow-green-500/40 transition-shadow flex flex-col w-full">
-
-                <img src={noticia.imagen} alt={noticia.titulo} className="w-full h-48 object-cover" />
-
+              <div
+                key={noticia.id}
+                className="bg-white text-black rounded-2xl shadow-lg overflow-hidden hover:shadow-green-500/40 transition-shadow flex flex-col w-full"
+              >
+                <img
+                  src={noticia.imagenUrl}
+                  alt={noticia.titulo}
+                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    console.log(`❌ Error cargando imagen: ${noticia.imagenUrl}`);
+                    // Fallback directo a SVG
+                    e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%2300BC4F'/%3E%3Ctext x='50%25' y='45%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' fill='white' font-weight='bold'%3ENOTICIAS URP%3C/text%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='16' fill='white'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
+                  }}
+                />
                 <div className="p-4 flex flex-col flex-grow">
                   <h2 className="text-xl font-semibold mb-2" style={{ color: "#00BC4F" }}>{noticia.titulo}</h2>
 
@@ -135,7 +168,9 @@ function Noticias() {
                       backgroundColor: "#FFFFFF",
                       color: "#00BC4F",
                     }}
-                    onClick={() => window.location.href = `/noticia/${noticia.id}`}
+                    onClick={() => {
+                      window.location.href = `/noticia/${noticia.id}`;
+                    }}
                   >
                     Leer más
                   </button>

@@ -41,6 +41,9 @@ import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
 import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
 import AdminOfertas from './pages/Admin/AdminOfertas.jsx';
 axios.defaults.baseURL = "http://localhost:8000";
+import GestionForo from './pages/Admin/GestionForo.jsx';
+
+axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
 
 function App() {
@@ -111,19 +114,11 @@ function App() {
 
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-          <Route path='/admin/egresados' element={<AdminRoute><AdminUsers /></AdminRoute>} />
-          <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin /></AdminRoute>} />
-          <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin /></AdminRoute>} />
-          <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias /></AdminRoute>} />
-          <Route path="/admin/gestion-ofertas" element={<AdminRoute><AdminOfertas /></AdminRoute>} />
-
-          {/* Rutas de moderador */}
-          <Route path="/moderador/usuarios" element={<ModeradorRoute><ModeracionUsuarios /></ModeradorRoute>} />
-          <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
-          <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
-          <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
-
-
+          <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
+          <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
+          <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
+          <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
+           <Route path="/admin/gestion-foro" element={<AdminRoute><GestionForo/></AdminRoute>} />
         </Routes>
         <Footer />
       </div>
