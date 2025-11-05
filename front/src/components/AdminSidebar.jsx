@@ -7,7 +7,8 @@ import {
   Percent, 
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Shield
 } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
@@ -119,6 +120,21 @@ export default function AdminSidebar() {
                       Beneficios
                     </span>
                   </Link>
+                  
+                  <Link
+                    to="/admin/gestion-foro"
+                    className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+                      location.pathname === "/admin/gestion-foro"
+                        ? "bg-white! text-green-600! shadow-lg!"
+                        : "text-white! hover:bg-white/20!"
+                    }`}
+                  >
+                    <Shield size={24} />
+                    <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+                      Moderar Foro
+                    </span>
+                  </Link>
+                  
 
           {/*}
 

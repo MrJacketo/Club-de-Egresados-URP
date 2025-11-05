@@ -33,6 +33,7 @@ import Footer from './components/footer.jsx';
 
 import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
+import GestionForo from './pages/Admin/GestionForo.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -86,6 +87,7 @@ function App() {
           <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
           <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
+           <Route path="/admin/gestion-foro" element={<AdminRoute><GestionForo/></AdminRoute>} />
         </Routes>
         <Footer/>
       </div>

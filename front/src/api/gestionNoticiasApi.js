@@ -1,32 +1,89 @@
 import apiClient from "./apiClient"
 
 // Crear nueva noticia
+// Crear nueva noticia - VERSIÓN CORREGIDA
 export const crearNoticia = async (noticiaData) => {
   try {
-    const response = await apiClient.post("/api/noticias", noticiaData)
+    // Verificar si noticiaData es FormData (tiene archivo) o JSON
+    let config = {};
+    
+    if (noticiaData instanceof FormData) {
+      // Si es FormData (con archivo), usar multipart/form-data
+      config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+    }
+    
+    const response = await apiClient.post("/api/noticias", noticiaData, config);
+    
     if (response.data.success) {
-      return response.data
+      return response.data;
     } else {
-      throw new Error(response.data.error || "Error desconocido")
+      throw new Error(response.data.error || "Error desconocido");
     }
   } catch (error) {
-    console.error("Error en crearNoticia:", error)
+    console.error("Error en crearNoticia:", error);
 
     if (error.response) {
-      // El servidor respondió con un código de error
       const errorMessage =
-        error.response.data?.error || error.response.data?.message || `Error ${error.response.status}`
-      throw new Error(errorMessage)
+        error.response.data?.error || error.response.data?.message || `Error ${error.response.status}`;
+      throw new Error(errorMessage);
     } else if (error.request) {
-      // La petición se hizo pero no hubo respuesta
-      throw new Error("No se pudo conectar con el servidor")
+      throw new Error("No se pudo conectar con el servidor");
     } else {
-      // Error en la configuración de la petición
-      throw new Error(error.message || "Error desconocido")
+      throw new Error(error.message || "Error desconocido");
     }
   }
-}
-
+};
+// Servir imagen de noticia
+const obtenerImagen = async (req, res) => {
+  try {
+    const { nombreImagen } = req.params;
+    
+    // Construir la ruta completa a la imagen
+    const rutaImagen = path.join(__dirname, '../uploads/noticias', nombreImagen);
+    
+    // Verificar si la imagen existe
+    if (!fs.existsSync(rutaImagen)) {
+      return res.status(404).json({
+        success: false,
+        error: "Imagen no encontrada"
+      });
+    }
+    
+    // Determinar el tipo de contenido
+    const extension = path.extname(nombreImagen).toLowerCase();
+    let contentType = 'image/jpeg'; // por defecto
+    
+    switch (extension) {
+      case '.png':
+        contentType = 'image/png';
+        break;
+      case '.gif':
+        contentType = 'image/gif';
+        break;
+      case '.webp':
+        contentType = 'image/webp';
+        break;
+      case '.svg':
+        contentType = 'image/svg+xml';
+        break;
+    }
+    
+    // Servir la imagen
+    res.setHeader('Content-Type', contentType);
+    fs.createReadStream(rutaImagen).pipe(res);
+    
+  } catch (error) {
+    console.error("Error al servir imagen:", error);
+    res.status(500).json({
+      success: false,
+      error: "Error al cargar la imagen"
+    });
+  }
+};
 // Obtener noticias (para administración - con autenticación)
 export const obtenerNoticias = async (filtros = {}) => {
   try {
@@ -58,33 +115,22 @@ export const obtenerNoticias = async (filtros = {}) => {
 // Obtener noticias públicas (para el frontend - sin autenticación)
 export const obtenerNoticiasPublicas = async (categoria = "Todos") => {
   try {
-    const params = new URLSearchParams()
-    if (categoria && categoria !== "Todos") {
-      params.append("categoria", categoria)
-    }
-
-    const url = `/api/noticias/public${params.toString() ? `?${params.toString()}` : ''}`
-    const response = await apiClient.get(url)
-
-    if (response.data.success) {
-      return response.data
-    } else {
-      throw new Error(response.data.error || "Error al obtener noticias públicas")
-    }
-  } catch (error) {
-    console.error("Error en obtenerNoticiasPublicas:", error)
+    const url = `http://localhost:8000/api/noticias/public?categoria=${categoria}`;
+    console.log("🌐 Llamando a la API:", url);
     
-    if (error.response) {
-      const errorMessage =
-        error.response.data?.error || error.response.data?.message || `Error ${error.response.status}`
-      throw new Error(errorMessage)
-    } else if (error.request) {
-      throw new Error("No se pudo conectar con el servidor")
-    } else {
-      throw new Error(error.message || "Error desconocido")
-    }
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    console.log("📡 Respuesta de la API:", data);
+    return data;
+  } catch (error) {
+    console.error('❌ Error fetching noticias:', error);
+    return {
+      success: false,
+      error: 'Error al cargar las noticias'
+    };
   }
-}
+};
 
 // Obtener noticia por ID (para administración - con autenticación)
 export const obtenerNoticiaPorId = async (id) => {
