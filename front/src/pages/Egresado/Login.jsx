@@ -68,38 +68,38 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white flex font-inter">
+    <div className="relative w-screen h-screen bg-white flex font-inter">
       {/* Izquierda - Login */}
-      <div className="flex-1 lg:flex-none lg:w-1/2 xl:w-2/5 bg-[#1C1D21] flex justify-center items-center p-8">
-        <div className="w-full max-w-md bg-white rounded-[26px] shadow-2xl p-8 lg:p-10">
-          <h2 className="text-gray-900 text-3xl lg:text-4xl xl:text-5xl font-extrabold text-center mb-2">
+      <div className="relative w-[644px] h-full bg-[#1C1D21] flex justify-center items-center">
+        <div className="w-[562px] h-[711px] bg-[#1C1D21] rounded-[26px] shadow-2xl p-10">
+          <h2 className="text-white text-[40px] font-extrabold text-center mb-2">
             Ingresar
           </h2>
-          <p className="text-gray-600 text-center text-base lg:text-lg mb-6 lg:mb-8">
+          <p className="text-white text-center text-[18px] mb-8">
             Ingresa los datos de tu cuenta
           </p>
 
-          <form onSubmit={handleLogin} className="space-y-4 lg:space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-gray-600 mb-2 text-sm lg:text-base">Codigo</label>
+              <label className="block text-[#ACACAC] mb-1">Codigo</label>
               <input
                 type="text"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full bg-transparent border-b border-gray-300 text-gray-900 py-2 lg:py-3 focus:outline-none focus:border-[#00BC4F] transition-colors text-sm lg:text-base"
+                className="w-full bg-transparent border-b border-[#ACACAC] text-white py-2 focus:outline-none"
                 placeholder="Ingresa tu código"
               />
             </div>
 
             <div className="relative">
-              <label className="block text-gray-600 mb-2 text-sm lg:text-base">Contraseña</label>
+              <label className="block text-[#ACACAC] mb-1">Contraseña</label>
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full bg-transparent border-b border-gray-300 text-gray-900 py-2 lg:py-3 focus:outline-none focus:border-[#00BC4F] transition-colors text-sm lg:text-base pr-8"
+                className="w-full bg-transparent border-b border-[#ACACAC] text-white py-2 focus:outline-none"
                 placeholder="••••••••"
               />
               <img

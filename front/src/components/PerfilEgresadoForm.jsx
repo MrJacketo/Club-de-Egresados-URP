@@ -13,7 +13,10 @@ export default function PerfilEgresadoForm() {
   const navigate = useNavigate();
   const { userName } = useUser();
   const [photo, setPhoto] = useState("/default-profile.png");
+  const [selectedFile, setSelectedFile] = useState(null); //foto para
 
+
+  
   const [userData, setUserData] = useState({
     nombreCompleto: userName || "",
     anioEgreso: "",
@@ -95,10 +98,29 @@ export default function PerfilEgresadoForm() {
     fetchDataAndOptions();
   }, [userName]);
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setPhoto(URL.createObjectURL(file));
-  };
+const handlePhotoChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("photo", file);
+
+  try {
+    const response = await api.post("/users/upload-photo", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+   setPhoto(response.data.profilePicture); //try 1
+    // Actualiza la vista con la nueva imagen
+    setProfileData(prev => ({
+      ...prev,
+      profilePicture: response.data.profilePicture
+    }));
+    setSelectedFile(file); //TRY 2
+    toast.success("Foto de perfil actualizada correctamente");
+  } catch (err) {
+    toast.error("Error al subir la foto de perfil");
+  }
+};
 
   const handleUserChange = (e) => {
     const { name, value } = e.target;
@@ -138,60 +160,76 @@ export default function PerfilEgresadoForm() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
-      if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
-      if (!userData.carrera) return toast.error("La carrera es requerida");
+  try {
+    if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
+    if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
+    if (!userData.carrera) return toast.error("La carrera es requerida");
 
-      await userApi.updateAcademicData({
-        anioEgreso: userData.anioEgreso,
-        carrera: userData.carrera,
-        gradoAcademico: userData.gradoAcademico || "Bachiller",
-      });
+    // Actualiza los datos académicos del usuario
+    await userApi.updateAcademicData({
+      anioEgreso: userData.anioEgreso,
+      carrera: userData.carrera,
+      gradoAcademico: userData.gradoAcademico || "Bachiller",
+    });
 
-      const cleanProfile = {
-        nombreCompleto: userData.nombreCompleto.trim(),
-        interesesProfesionales: {
-          ...profileData.interesesProfesionales,
-          modalidad: profileData.interesesProfesionales?.modalidad || "Presencial",
-          tipoJornada: profileData.interesesProfesionales?.tipoJornada || "Tiempo completo",
-        },
-        habilidades: {
-          ...profileData.habilidades,
-          idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
-        },
-        ubicacion: {
-          ...profileData.ubicacion,
-          distritoResidencia: profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
-        },
-      };
+    // Define cleanProfile fuera del try interno
+    const cleanProfile = {
+      nombreCompleto: userData.nombreCompleto.trim(),
+      interesesProfesionales: {
+        ...profileData.interesesProfesionales,
+        modalidad: profileData.interesesProfesionales?.modalidad || "Presencial",
+        tipoJornada: profileData.interesesProfesionales?.tipoJornada || "Tiempo completo",
+      },
+      habilidades: {
+        ...profileData.habilidades,
+        idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
+      },
+      ubicacion: {
+        ...profileData.ubicacion,
+        distritoResidencia: profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
+      },
+    };
 
-      await createOrUpdateGraduateProfileRequest(cleanProfile);
+    // Guarda el perfil de egresado
+    await createOrUpdateGraduateProfileRequest(cleanProfile);
+
+    // Si hay una foto seleccionada, súbela junto con el perfil
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("photo", selectedFile);
+      formData.append("data", JSON.stringify(cleanProfile));
+
+      await userApi.uploadProfilePhoto(formData);
+      toast.success("Foto y perfil actualizados correctamente!");
+    } else {
       toast.success("Perfil guardado exitosamente!");
-      navigate("/welcome-egresado");
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.error || "Error al guardar el perfil");
-    } finally {
-      setIsLoading(false);
     }
-  };
+
+    navigate("/welcome-egresado");
+  } catch (error) {
+    console.error("Error al guardar el perfil:", error);
+    toast.error(error.response?.data?.error || "Error al guardar foto o perfil");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
-    <div className="w-full min-h-screen bg-white text-gray-900 flex flex-col">
+    <div className="w-full min-h-screen bg-[#1C1D21] text-white flex flex-col">
       <main className="flex flex-col md:flex-row flex-1 p-10 gap-10">
         {/* FOTO */}
         <div className="flex flex-col items-center md:w-1/3">
-          <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-green-500 shadow-lg bg-white">
+          <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-[#00BC4F] shadow-lg">
             <img src={photo} alt="Foto de perfil" className="w-full h-full object-cover" />
           </div>
           <label
             htmlFor="photo"
-            className="mt-4 px-4 py-2 bg-green-500 rounded-lg text-white font-semibold cursor-pointer hover:bg-green-600 transition-colors"
+            className="mt-4 px-4 py-2 bg-[#00BC4F] rounded-lg text-white font-semibold cursor-pointer hover:bg-green-600 transition"
           >
             Editar foto de perfil
           </label>
@@ -199,59 +237,80 @@ export default function PerfilEgresadoForm() {
         </div>
 
         {/* FORMULARIO */}
-        <div className="md:w-2/3 bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-          <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">Perfil del Egresado</h2>
+        <div className="md:w-2/3 rounded-2xl shadow-lg p-8">
+          <h2 className="text-3xl font-bold mb-8 text-[#00BC4F]">Perfil del Egresado</h2>
 
           <form onSubmit={handleSubmit} className="flex flex-col space-y-6 text-left text-lg">
             {/* DATOS ACADÉMICOS */}
             <div>
-              <label className="text-green-600 font-semibold block">Nombre completo:</label>
+              <label className="text-[#00BC4F] font-semibold block">Nombre completo:</label>
               <input
                 type="text"
                 name="nombreCompleto"
                 value={userData.nombreCompleto}
                 onChange={handleUserChange}
-                className="w-full mt-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full mt-1 px-3 py-2 bg-[#2A2B30] text-white border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
               />
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-green-600 font-semibold block">Año de egreso:</label>
+                <label className="text-[#00BC4F] font-semibold block">Año de egreso:</label>
                 <input
                   type="number"
                   name="anioEgreso"
                   value={userData.anioEgreso}
                   onChange={handleUserChange}
-                  className="w-full mt-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full mt-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
                 />
               </div>
               <div>
-                <label className="text-green-600 font-semibold block">Carrera:</label>
-                <input
-                  type="text"
+                <label className="text-[#00BC4F] font-semibold block">Carrera:</label>
+                <select
                   name="carrera"
-                  value={userData.carrera}
+                  value={userData.carrera || ""}
                   onChange={handleUserChange}
-                  className="w-full mt-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                />
+                  className="w-full mt-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F] text-white"
+                  required
+                >
+                  <option value="">Seleccione su carrera</option>
+                  <option value="Administración y Gerencia">Administración y Gerencia</option>
+                  <option value="Administración de Negocios Globales">Administración de Negocios Globales</option>
+                  <option value="Arquitectura">Arquitectura</option>
+                  <option value="Biología">Biología</option>
+                  <option value="Contabilidad y Finanzas">Contabilidad y Finanzas</option>
+                  <option value="Derecho y Ciencia Política">Derecho y Ciencia Política</option>
+                  <option value="Economía">Economía</option>
+                  <option value="Ingeniería Civil">Ingeniería Civil</option>
+                  <option value="Ingeniería Electrónica">Ingeniería Electrónica</option>
+                  <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+                  <option value="Ingeniería Informática">Ingeniería Informática</option>
+                  <option value="Ingeniería Mecatrónica">Ingeniería Mecatrónica</option>
+                  <option value="Marketing Global y Administración Comercial">Marketing Global y Administración Comercial</option>
+                  <option value="Medicina Humana">Medicina Humana</option>
+                  <option value="Medicina Veterinaria">Medicina Veterinaria</option>
+                  <option value="Psicología">Psicología</option>
+                  <option value="Traducción e Interpretación">Traducción e Interpretación</option>
+                  <option value="Turismo, Hotelería y Gastronomía">Turismo, Hotelería y Gastronomía</option>
+                </select>
               </div>
+
             </div>
 
             <div>
-              <label className="text-green-600 font-semibold block">Grado Académico:</label>
+              <label className="text-[#00BC4F] font-semibold block">Grado Académico:</label>
               <input
                 type="text"
                 name="gradoAcademico"
                 value={userData.gradoAcademico}
                 onChange={handleUserChange}
-                className="w-full mt-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full mt-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
               />
             </div>
 
             {/* INTERESES PROFESIONALES */}
             <div>
-              <label className="text-green-600 font-semibold block mb-2">Áreas de Interés:</label>
+              <label className="text-[#00BC4F] font-semibold block mb-2">Áreas de Interés:</label>
               {(profileData.interesesProfesionales?.areasInteres || []).map((area, index) => (
                 <div key={index} className="flex space-x-4 items-center mb-2">
                   <select
@@ -270,7 +329,7 @@ export default function PerfilEgresadoForm() {
                         };
                       });
                     }}
-                    className="w-full mt-1 p-2 border border-gray-300 bg-white rounded text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
                   >
                     <option value="">Selecciona un área</option>
                     {options.areasInteres.map((areaOpt) => (
@@ -291,7 +350,7 @@ export default function PerfilEgresadoForm() {
                         },
                       }))
                     }
-                    className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    className="px-3 py-1 bg-red-600 rounded-lg hover:bg-red-700"
                   >
                     X
                   </button>
@@ -309,19 +368,19 @@ export default function PerfilEgresadoForm() {
                     },
                   }))
                 }
-                className="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                className="mt-2 px-4 py-2 bg-[#00BC4F] rounded-lg font-semibold hover:bg-green-600 transition"
               >
                 + Añadir área
               </button>
 
               {/* NUEVAS OPCIONES - Modalidad y Jornada */}
               <div className="mt-6">
-                <label className="block text-sm font-medium text-green-600">Modalidad Preferida de Empleo</label>
+                <label className="block text-sm font-medium text-[#00BC4F]">Modalidad Preferida de Empleo</label>
                 <select
                   name="modalidad"
                   value={profileData.interesesProfesionales?.modalidad || ""}
                   onChange={(e) => handleNestedChange(e, "interesesProfesionales")}
-                  className="w-full mt-1 p-2 border border-gray-300 bg-white rounded text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
                 >
                   <option value="">Seleccione una modalidad</option>
                   {options.modalidades.map((modalidad) => (
@@ -333,12 +392,12 @@ export default function PerfilEgresadoForm() {
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-medium text-green-600">Tipo de Jornada</label>
+                <label className="block text-sm font-medium text-[#00BC4F]">Tipo de Jornada</label>
                 <select
                   name="tipoJornada"
                   value={profileData.interesesProfesionales?.tipoJornada || ""}
                   onChange={(e) => handleNestedChange(e, "interesesProfesionales")}
-                  className="w-full mt-1 p-2 border border-gray-300 bg-white rounded text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
                 >
                   <option value="">Seleccione un tipo de jornada</option>
                   {options.tiposJornada.map((jornada) => (
@@ -352,7 +411,7 @@ export default function PerfilEgresadoForm() {
 
             {/* IDIOMAS */}
             <div>
-              <label className="text-green-600 font-semibold block mb-2">Idiomas:</label>
+              <label className="text-[#00BC4F] font-semibold block mb-2">Idiomas:</label>
               {(profileData.habilidades?.idiomas || []).map((idioma, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
                   <input
@@ -360,19 +419,24 @@ export default function PerfilEgresadoForm() {
                     placeholder="Idioma"
                     value={idioma.idioma}
                     onChange={(e) => handleIdiomasChange(index, "idioma", e.target.value)}
-                    className="flex-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    className="flex-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
                   />
-                  <input
-                    type="text"
-                    placeholder="Nivel"
-                    value={idioma.nivel}
+                  <select
+                  value={idioma.nivel}
                     onChange={(e) => handleIdiomasChange(index, "nivel", e.target.value)}
-                    className="flex-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  />
+                    className="flex-1 px-3 py-2 bg-[#2A2B30] border border-[#00BC4F] rounded-lg focus:ring-2 focus:ring-[#00BC4F]"
+                    required
+                  >
+                    <option value="">Seleccione nivel</option>
+                    <option value="Básico">Básico</option>
+                    <option value="Intermedio">Intermedio</option>
+                    <option value="Avanzado">Avanzado</option>
+                    <option value="Nativo">Nativo</option>
+                  </select>
                   <button
                     type="button"
                     onClick={() => removeIdioma(index)}
-                    className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    className="px-3 py-1 bg-red-600 rounded-lg hover:bg-red-700"
                   >
                     X
                   </button>
@@ -381,21 +445,21 @@ export default function PerfilEgresadoForm() {
               <button
                 type="button"
                 onClick={addIdioma}
-                className="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                className="mt-2 px-4 py-2 bg-[#00BC4F] rounded-lg font-semibold hover:bg-green-600 transition"
               >
                 + Añadir idioma
               </button>
 
               {/* NUEVAS OPCIONES - Ubicación */}
               <div className="mt-6">
-                <label className="block text-sm font-medium text-green-600">
+                <label className="block text-sm font-medium text-[#00BC4F]">
                   Distrito de Residencia
                 </label>
                 <select
                   name="distritoResidencia"
                   value={profileData.ubicacion?.distritoResidencia || ""}
                   onChange={(e) => handleNestedChange(e, "ubicacion")}
-                  className="w-full mt-1 p-2 border border-gray-300 bg-white rounded text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="w-full mt-1 p-2 border border-[#00BC4F] bg-[#2A2B30] rounded text-white"
                 >
                   <option value="">Seleccione un distrito</option>
                   {options.distritosResidencia.map((distrito) => (
@@ -407,45 +471,45 @@ export default function PerfilEgresadoForm() {
               </div>
 
               <div className="mt-4">
-                <label className="flex items-center text-sm font-medium text-green-600 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="disponibilidadReubicacion"
-                    checked={profileData.ubicacion?.disponibilidadReubicacion || false}
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
-                        ...prev,
-                        ubicacion: {
-                          ...prev.ubicacion,
-                          disponibilidadReubicacion: e.target.checked,
-                        },
-                      }))
-                    }
-                    className="mr-2 w-4 h-4 text-green-600 bg-white border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-                  />
+                <label className="block text-sm font-medium text-[#00BC4F]">
                   Disponibilidad para Reubicación
                 </label>
+                <input
+                  type="checkbox"
+                  name="disponibilidadReubicacion"
+                  checked={profileData.ubicacion?.disponibilidadReubicacion || false}
+                  onChange={(e) =>
+                    setProfileData((prev) => ({
+                      ...prev,
+                      ubicacion: {
+                        ...prev.ubicacion,
+                        disponibilidadReubicacion: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="mt-1"
+                />
               </div>
 
               <div className="mt-4">
-                <label className="flex items-center text-sm font-medium text-green-600 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="disponibilidadViajar"
-                    checked={profileData.ubicacion?.disponibilidadViajar || false}
-                    onChange={(e) =>
-                      setProfileData((prev) => ({
-                        ...prev,
-                        ubicacion: {
-                          ...prev.ubicacion,
-                          disponibilidadViajar: e.target.checked,
-                        },
-                      }))
-                    }
-                    className="mr-2 w-4 h-4 text-green-600 bg-white border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-                  />
+                <label className="block text-sm font-medium text-[#00BC4F]">
                   Disponibilidad para Viajar
                 </label>
+                <input
+                  type="checkbox"
+                  name="disponibilidadViajar"
+                  checked={profileData.ubicacion?.disponibilidadViajar || false}
+                  onChange={(e) =>
+                    setProfileData((prev) => ({
+                      ...prev,
+                      ubicacion: {
+                        ...prev.ubicacion,
+                        disponibilidadViajar: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="mt-1"
+                />
               </div>
             </div>
 
@@ -454,7 +518,7 @@ export default function PerfilEgresadoForm() {
                 <button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                  className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
                 >
                   Cancelar
                 </button>
@@ -462,10 +526,10 @@ export default function PerfilEgresadoForm() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`px-6 py-2 rounded-lg text-white font-semibold transition-colors ${
+                  className={`px-6 py-2 rounded-lg text-white font-semibold transition ${
                     isLoading
                       ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600"
+                      : "bg-[#00BC4F] hover:bg-[#009B42]"
                   }`}
                 >
                   {isLoading ? "Guardando..." : "Guardar Perfil"}
