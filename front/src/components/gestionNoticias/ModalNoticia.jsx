@@ -167,29 +167,26 @@ const ModalNoticia = ({ isOpen, onClose, onSubmit, noticia = null, loading }) =>
   }
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validarFormulario()) return;
+    if (!validarFormulario()) return;
 
-  // ✅ ENVIAR FormData CON ARCHIVO BINARIO
-  const formDataToSend = new FormData();
-  
-  // Agregar todos los campos como FormData
-  formDataToSend.append('titulo', formData.titulo);
-  formDataToSend.append('contenido', formData.contenido);
-  formDataToSend.append('categoria', formData.categoria);
-  formDataToSend.append('tipoContenido', formData.tipoContenido);
-  formDataToSend.append('fechaPublicacion', formData.fechaPublicacion);
-  formDataToSend.append('destacada', formData.destacada);
-  
-  // ✅ Agregar la imagen como ARCHIVO BINARIO (no Base64)
-  if (formData.imagen) {
-    formDataToSend.append('imagen', formData.imagen);
-  }
+    let imagenUrl = noticia?.imagenUrl || null;
+    if (formData.imagen) {
+      imagenUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => resolve(ev.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(formData.imagen);
+      });
+    }
+    onSubmit({
+      ...formData,
+      imagenUrl,
+      imagen: undefined,
+    });
+  };
 
-  // ✅ Enviar FormData directamente
-  onSubmit(formDataToSend);
-};
   if (!isOpen) return null;
 
   return (
