@@ -3,7 +3,6 @@ const dotenv = require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
-const path = require("path"); // ← AGREGAR ESTA LÍNEA
 const authRoutes = require("./routes/authRoutes");
 const perfilRoutes = require("./routes/perfilRoutes");
 const membresiaRoutes = require("./routes/membresiaRoutes");
@@ -13,8 +12,6 @@ const feedbackRoutes = require("./routes/feedbackRoutes");
 const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
-const publicacionesRoutes = require("./routes/publicacionesRoutes");
-
 const app = express();
 
 const ofertaModeradorRoutes = require("./routes/ofertaModeradorRoutes.js");
@@ -32,26 +29,15 @@ mongoose
   .catch((err) => console.error("Error al conectar MongoDB", err));
 
 // Middleware
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     credentials: true,
-    origin: function (origin, callback) {
-      // Permitir cualquier origen que termine en :5173 o sea undefined (como Postman)
-      if (!origin || origin.includes(':5173')) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Para desarrollo, permite todo
-      }
-    },
+    origin: "http://localhost:5173", // Update this to match your frontend's URL
   })
 );
-
-// ← AGREGAR ESTA LÍNEA PARA SERVIR ARCHIVOS ESTÁTICOS
-
-app.use('/api/noticias/imagen', express.static('uploads/noticias'));
 
 // Routes
 app.use("/auth", authRoutes);
@@ -63,7 +49,6 @@ app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
 app.use("/api", ofertaRoutes); //Ruta de oferta laboral
 app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usuarios
-app.use("/api", publicacionesRoutes);
 
 
 app.use(express.json());
@@ -77,6 +62,7 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
+
 
 // Start the server
 const port = 8000;

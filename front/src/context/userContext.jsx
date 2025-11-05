@@ -5,45 +5,34 @@ export const UserContext = createContext({});
 
 export function UserContextProvider({ children }) {
   const [user, setUser] = useState(() => {
+    // Retrieve user from localStorage on initialization
     return auth.getUser();
   });
   const [userName, setUserName] = useState(() => {
+    // Retrieve userName from user data
     const userData = auth.getUser();
     return userData?.name || "";
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Loading state for authentication
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        setLoading(true);
-        
-        // ✅ CORREGIDO: Usar el método seguro que nunca falla
+        // Check if user is authenticated
         if (auth.isAuthenticated()) {
-          const currentUser = await auth.getCurrentUserSafe();
+          // Try to get current user data from server
+          const currentUser = await auth.getCurrentUser();
           setUser(currentUser);
           setUserName(currentUser.name);
         } else {
-          // Si no está autenticado, verificar si hay datos locales
-          const localUser = auth.getUser();
-          if (localUser) {
-            setUser(localUser);
-            setUserName(localUser.name);
-          } else {
-            setUser(null);
-            setUserName("");
-          }
-        }
-      } catch (error) {
-        console.log("✅ Inicializando con datos locales después de error");
-        const localUser = auth.getUser();
-        if (localUser) {
-          setUser(localUser);
-          setUserName(localUser.name);
-        } else {
+          // No token found, user is not authenticated
           setUser(null);
           setUserName("");
         }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        // Token might be expired or invalid, clear auth data
+       
       } finally {
         setLoading(false);
       }

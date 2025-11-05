@@ -118,7 +118,6 @@ function App() {
           <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
           <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
-           <Route path="/admin/gestion-foro" element={<AdminRoute><GestionForo/></AdminRoute>} />
         </Routes>
         <Footer />
       </div>

@@ -1,51 +1,33 @@
 const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-const comentarioSchema = new mongoose.Schema({
-  autor: {
-    type: String,
-    required: true
-  },
-  contenido: {
-    type: String,
-    required: true
-  },
-  fechaCreacion: {
-    type: Date,
-    default: Date.now
-  }
+const feedbackSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  nombreUsuario: { type: String, trim: true },
+  emailUsuario: { type: String, trim: true },
+  beneficioDeseado: { type: String, required: true, trim: true },
+  comentariosAdicionales: { type: String, default: '', trim: true },
+  estado: { type: String, enum: ['pendiente', 'revisado', 'rechazado'], default: 'pendiente' },
+  prioridad: { type: String, enum: ['alta', 'media', 'baja'], default: 'media' },
+  respuestaAdministrador: { type: String, default: '' },
+  /*
+Campo oculto el administrador pueda ocultar un feedback que considere irrelevante
+  */
+  oculto: { type: Boolean, default: false },
+  fechaCreacion: { type: Date, default: Date.now },
+  ultimaActualizacion: { type: Date, default: Date.now }
 });
 
-const publicacionSchema = new mongoose.Schema({
-  autor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  contenido: {
-    type: String,
-    required: true
-  },
-  fechaCreacion: {
-    type: Date,
-    default: Date.now
-  },
-  oculto: {
-    type: Boolean,
-    default: false
-  },
-  likes: {
-    type: Number,
-    default: 0
-  },
-  comentarios: [comentarioSchema],
-  imagen: {
-    type: String,
-    default: null
-  },
-  video: {
-    type: String,
-    default: null
-  }
+//  para actualizar  la fecha
+feedbackSchema.pre('save', function (next) {
+  this.ultimaActualizacion = Date.now();
+  next();
 });
 
-module.exports = mongoose.model('Publicacion', publicacionSchema);
+feedbackSchema.pre('findOneAndUpdate', function (next) {
+  this.set({ ultimaActualizacion: Date.now() });
+  next();
+});
+
+module.exports = mongoose.model('Feedback', feedbackSchema);
+
