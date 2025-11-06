@@ -95,6 +95,71 @@ export default function Navbar() {
 
           {user && (
             <>
+              {/* Enlaces específicos para ADMIN */}
+              {user.rol === 'admin' && (
+                <Link
+                  to="/admin"
+                  className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
+                    location.pathname.startsWith("/admin")
+                      ? "text-white shadow-xl"
+                      : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                  }`}
+                  style={location.pathname.startsWith("/admin") 
+                    ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+                    : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                  }
+                  onMouseEnter={(e) => {
+                    if (!location.pathname.startsWith("/admin")) {
+                      e.target.style.backgroundColor = '#119e04';
+                      e.target.style.borderColor = '#119e04';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!location.pathname.startsWith("/admin")) {
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.borderColor = '#5DC554';
+                    }
+                  }}
+                >
+                  <Shield size={20} />
+                  <span>Panel Admin</span>
+                </Link>
+              )}
+
+              {/* Enlaces específicos para MODERADOR */}
+              {user.rol === 'moderador' && (
+                <Link
+                  to="/moderador"
+                  className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
+                    location.pathname.startsWith("/moderador")
+                      ? "text-white shadow-xl"
+                      : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
+                  }`}
+                  style={location.pathname.startsWith("/moderador") 
+                    ? { backgroundColor: '#119e04', borderColor: '#119e04' }
+                    : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                  }
+                  onMouseEnter={(e) => {
+                    if (!location.pathname.startsWith("/moderador")) {
+                      e.target.style.backgroundColor = '#119e04';
+                      e.target.style.borderColor = '#119e04';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!location.pathname.startsWith("/moderador")) {
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.borderColor = '#5DC554';
+                    }
+                  }}
+                >
+                  <Shield size={20} />
+                  <span>Panel Moderador</span>
+                </Link>
+              )}
+
+              {/* Enlaces para EGRESADOS (no admin ni moderador) */}
+              {user.rol !== 'admin' && user.rol !== 'moderador' && (
+                <>
               <Link
                 to="/gestion-oferta"
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
@@ -234,6 +299,8 @@ export default function Navbar() {
                 <Videotape size={20} />
                 <span>Conferencias</span>
               </Link>
+                </>
+              )}
             </>
           )}
         </div>

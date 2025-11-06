@@ -11,6 +11,7 @@ const beneficiosRoutes = require('./routes/beneficiosRoutes');
 const feedbackRoutes = require("./routes/feedbackRoutes")
 const gestionNoticiasRoutes = require("./routes/gestionNoticiasRoutes");
 const ofertaRoutes = require("./routes/ofertaRoutes.js");
+const ofertaModeradorRoutes = require("./routes/ofertaModeradorRoutes.js");
 const adminUserRoutes = require("./routes/userRoutes");
 const app = express();
 
@@ -43,6 +44,7 @@ app.use("/api/membresia", membresiaRoutes); //RUTAS MEMBRESIAS
 app.use("/api/pago", pagoRoutes); //RUTA PAGOS
 app.use("/api/beneficios", beneficiosRoutes); //RUTA BENEFICIOS
 app.use("/api", ofertaRoutes); //Ruta de oferta laboral
+app.use("/api/moderador", ofertaModeradorRoutes); // Rutas de moderador
 app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usuarios
 
 // Global error handler
