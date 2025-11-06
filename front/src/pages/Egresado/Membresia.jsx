@@ -150,6 +150,7 @@ export default function Membresia() {
                 setLoadingSimulation(true);
                 await simulatePagoRequest();
                 toast.success("¡Pago simulado con éxito!");
+                setTimeout(() => navigate("/MembresiaCompletada"), 1000); //PARA QUE SE VEA EL TOAST :(
               } catch (error) {
                 toast.error(error.message || "Error al simular el pago");
               } finally {
