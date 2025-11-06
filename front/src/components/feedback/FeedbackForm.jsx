@@ -10,7 +10,7 @@ import {
   CONFERENCIA_FILTRO,
   CONFERENCIA_TEMAS,
 } from "../../constants/Beneficios/Beneficios.enum"
-import { enviarFeedback } from "../../api/beneficiosApi"
+import { enviarFeedback } from "../../api/gestionarBeneficiosApi"
 
 const FeedbackForm = ({ onSuccess }) => {
   const [formData, setFormData] = useState({

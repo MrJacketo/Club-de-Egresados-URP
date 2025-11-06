@@ -1,37 +1,58 @@
-import React, { useEffect, useState } from 'react';
-import { getBeneficios } from '../../api/beneficiosApi';
-import { Plus, RefreshCw, Edit2, Trash, Star, Calendar, X } from 'lucide-react';
+import { useState, useEffect } from "react"
+import { Plus, AlertCircle, CheckCircle, Star, Gift, TrendingUp, FileText, Archive, Edit, Trash2 } from "lucide-react"
+import { getBeneficiosAdmin, createBeneficio, updateBeneficio, deleteBeneficio } from '../../api/gestionarBeneficiosApi'
+import FiltrosGestionBeneficios from "../../components/gestionBeneficios/FiltrosGestionBeneficios"
+import ModalBeneficio from "../../components/gestionBeneficios/ModalBeneficio"
+import ModalConfirmacion from "../../components/gestionBeneficios/ModalConfirmacion"
 import AdminSidebar from '../../components/AdminSidebar';
 import { AdminSidebarProvider, useAdminSidebar } from '../../context/adminSidebarContext';
 
-function AdminContent() {
-  const [beneficios, setBeneficios] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form, setForm] = useState({
-    titulo: '',
-    descripcion: '',
-    tipo_beneficio: 'academico',
-    empresa_asociada: '',
-    fecha_inicio: new Date().toISOString().slice(0, 10),
-    fecha_fin: '',
-    estado: 'activo',
-    url_detalle: '',
-    imagen_beneficio: ''
-  });
-  const [query, setQuery] = useState('');
+// Componente contenedor con el Provider
+const GestionBeneficios = () => {
+  return (
+    <AdminSidebarProvider>
+      <GestionBeneficiosContent />
+    </AdminSidebarProvider>
+  );
+};
 
+// Componente principal con acceso al contexto
+const GestionBeneficiosContent = () => {
+  const { collapsed } = useAdminSidebar();
+  
+  const [beneficios, setBeneficios] = useState([])
+  const [beneficiosFiltrados, setBeneficiosFiltrados] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [filtros, setFiltros] = useState({
+    titulo: '',
+    tipo_beneficio: '',
+    estado: '',
+    empresa_asociada: ''
+  })
+
+  const [modalBeneficioAbierto, setModalBeneficioAbierto] = useState(false)
+  const [modalConfirmacionAbierto, setModalConfirmacionAbierto] = useState(false)
+  const [beneficioSeleccionado, setBeneficioSeleccionado] = useState(null)
+  const [mensaje, setMensaje] = useState({ tipo: "", texto: "" })
+
+  // Cargar beneficios
   useEffect(() => {
     fetchBeneficios();
   }, []);
 
+  // Aplicar filtros cuando cambien los beneficios o filtros
+  useEffect(() => {
+    aplicarFiltros();
+  }, [beneficios, filtros]);
+
   const fetchBeneficios = async () => {
     setLoading(true);
+    setError("");
     try {
-      const data = await getBeneficios();
+      const data = await getBeneficiosAdmin();
       const normalized = (data || []).map((b) => ({
-        id: b._id || b.id,
+        _id: b._id || b.id,
         titulo: b.titulo || b.nombre || '',
         descripcion: b.descripcion || b.detalle || '',
         tipo_beneficio: b.tipo_beneficio || b.tipo || 'academico',
@@ -41,232 +62,370 @@ function AdminContent() {
         estado: b.estado || 'activo',
         url_detalle: b.url_detalle || '',
         imagen_beneficio: b.imagen_beneficio || '',
-        raw: b,
+        fechaCreacion: b.fechaCreacion || b.createdAt || new Date(),
       }));
       setBeneficios(normalized);
     } catch (err) {
       console.error('error fetching beneficios', err);
+      setError("Error al cargar los beneficios");
       setBeneficios([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreate = () => {
-    const newItem = { id: 'local-' + Date.now(), ...form };
-    setBeneficios(prev => [newItem, ...prev]);
-    resetForm();
+  const aplicarFiltros = () => {
+    let beneficiosFiltrados = [...beneficios];
+
+    // Filtrar por título
+    if (filtros.titulo) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.titulo.toLowerCase().includes(filtros.titulo.toLowerCase())
+      );
+    }
+
+    // Filtrar por tipo de beneficio
+    if (filtros.tipo_beneficio) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.tipo_beneficio === filtros.tipo_beneficio
+      );
+    }
+
+    // Filtrar por estado
+    if (filtros.estado) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.estado === filtros.estado
+      );
+    }
+
+    // Filtrar por empresa
+    if (filtros.empresa_asociada) {
+      beneficiosFiltrados = beneficiosFiltrados.filter(beneficio =>
+        beneficio.empresa_asociada.toLowerCase().includes(filtros.empresa_asociada.toLowerCase())
+      );
+    }
+
+    setBeneficiosFiltrados(beneficiosFiltrados);
   };
 
-  const handleEdit = (item) => {
-    setEditing(item.id);
-    setForm({
-      titulo: item.titulo,
-      descripcion: item.descripcion,
-      tipo_beneficio: item.tipo_beneficio || item.tipo || 'academico',
-      empresa_asociada: item.empresa_asociada || '',
-      fecha_inicio: item.fecha_inicio,
-      fecha_fin: item.fecha_fin,
-      estado: item.estado || 'activo',
-      url_detalle: item.url_detalle || '',
-      imagen_beneficio: item.imagen_beneficio || ''
+  const limpiarFiltros = () => {
+    setFiltros({
+      titulo: '',
+      tipo_beneficio: '',
+      estado: '',
+      empresa_asociada: ''
     });
   };
 
-  const handleUpdate = () => {
-    setBeneficios(prev => prev.map((b) => b.id === editing ? { ...b, ...form } : b));
-    setEditing(null);
-    resetForm();
-  };
+  // Calcular estadísticas (usar todos los beneficios, no los filtrados)
+  const totalBeneficios = beneficios.length
+  const beneficiosActivos = beneficios.filter(b => b.estado === "activo").length
+  const beneficiosInactivos = beneficios.filter(b => b.estado === "inactivo").length
+  const beneficiosAcademicos = beneficios.filter(b => b.tipo_beneficio === "academico").length
+  const activosRate = totalBeneficios > 0 ? ((beneficiosActivos / totalBeneficios) * 100).toFixed(1) : 0
 
-  const handleDelete = (id) => {
-    if (!confirm('¿Eliminar este beneficio del listado local? (esta acción es sólo local)')) return;
-    setBeneficios(prev => prev.filter((b) => b.id !== id));
-  };
+  // Para mostrar en la tabla, usar beneficios filtrados
+  const beneficiosParaMostrar = beneficiosFiltrados;
 
-  const resetForm = () => setForm({ 
-    titulo: '', 
-    descripcion: '', 
-    tipo_beneficio: 'academico', 
-    empresa_asociada: '',
-    fecha_inicio: new Date().toISOString().slice(0, 10), 
-    fecha_fin: '', 
-    estado: 'activo',
-    url_detalle: '',
-    imagen_beneficio: ''
-  });
+  // Manejar creación de nuevo beneficio
+  const handleNuevoBeneficio = () => {
+    setBeneficioSeleccionado(null)
+    setModalBeneficioAbierto(true)
+  }
 
+  // Manejar edición de beneficio
+  const handleEditarBeneficio = (beneficio) => {
+    setBeneficioSeleccionado(beneficio)
+    setModalBeneficioAbierto(true)
+  }
 
-  const { collapsed } = useAdminSidebar();
+  // Manejar eliminación de beneficio
+  const handleEliminarBeneficio = (beneficio) => {
+    setBeneficioSeleccionado(beneficio)
+    setModalConfirmacionAbierto(true)
+  }
 
+  // Manejar envío del formulario
+  const handleSubmitBeneficio = async (formData) => {
+    try {
+      let resultado
+      if (beneficioSeleccionado) {
+        resultado = await updateBeneficio(beneficioSeleccionado._id, formData)
+      } else {
+        resultado = await createBeneficio(formData)
+      }
+
+      if (resultado.success) {
+        setMensaje({ tipo: "success", texto: beneficioSeleccionado ? "Beneficio actualizado exitosamente" : "Beneficio creado exitosamente" })
+        setModalBeneficioAbierto(false)
+        setBeneficioSeleccionado(null)
+        await fetchBeneficios()
+
+        // Limpiar mensaje después de 5 segundos
+        setTimeout(() => setMensaje({ tipo: "", texto: "" }), 5000)
+      } else {
+        setMensaje({ tipo: "error", texto: resultado.message || "Error al procesar el beneficio" })
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setMensaje({ tipo: "error", texto: error.response?.data?.message || error.message || "Error inesperado al procesar el beneficio" })
+    }
+  }
+
+  // Confirmar eliminación
+  const handleConfirmarEliminacion = async () => {
+    try {
+      const resultado = await deleteBeneficio(beneficioSeleccionado._id)
+
+      if (resultado.success) {
+        setMensaje({ tipo: "success", texto: "Beneficio eliminado exitosamente" })
+        setModalConfirmacionAbierto(false)
+        setBeneficioSeleccionado(null)
+        await fetchBeneficios()
+
+        // Limpiar mensaje después de 5 segundos
+        setTimeout(() => setMensaje({ tipo: "", texto: "" }), 5000)
+      } else {
+        setMensaje({ tipo: "error", texto: resultado.message || "Error al eliminar el beneficio" })
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setMensaje({ tipo: "error", texto: "Error inesperado al eliminar el beneficio" })
+    }
+  }
+  
   return (
-    <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
-
-      <div className="relative z-10 min-h-screen pt-20 px-8" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-5xl font-bold mb-2">
-                <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
-                  Gestión de Beneficios
-                </span>
-              </h1>
-            </div>
+    <div className="flex min-h-screen pt-12" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+      <AdminSidebar />
+      <div className={`flex-1 transition-all duration-300 py-8 px-8 ${
+          collapsed ? "ml-20" : "ml-64"
+        }`}>
+        
+          {/* Header de la página */}
+          <div className="flex flex-wrap items-center justify-between mb-8">
+            <h1 className="text-5xl! font-bold! mb-2!">
+              <span className="bg-gradient-to-r! from-green-500! to-teal-500! bg-clip-text! text-transparent!">
+                Gestión de Beneficios
+              </span>
+            </h1>
+            <button
+              onClick={handleNuevoBeneficio}
+              className="flex! items-center! px-6! py-3! text-white! rounded-full! font-bold! transition-all! duration-300! hover:scale-110! transform! hover:-translate-y-1!"
+              style={{ 
+                background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+                border: 'none'
+              }}
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Nuevo Beneficio
+            </button>
           </div>
 
-          <div className="flex items-center justify-between mb-6 gap-3">
-            <div className="flex-1 max-w-md">
-              <input
-                type="search"
-                placeholder="Buscar beneficios..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full p-3 rounded-lg bg-white border border-gray-200 text-gray-900"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button onClick={fetchBeneficios} title="Recargar" className="flex items-center gap-2 px-4 py-2 text-white rounded-full font-bold transition-all duration-300 hover:scale-105 transform hover:-translate-y-1" style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)' }}><RefreshCw size={16} /> Recargar</button>
-              <button onClick={()=>{ setEditing(null); setIsModalOpen(true); }} className="flex items-center gap-2 px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1" style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)' }}><Plus size={16} /> Nuevo Beneficio</button>
-            </div>
-          </div>
-
-          <section>
-            <div className="flex flex-col gap-4">
-              {loading && <div className="text-center text-gray-600">Cargando beneficios...</div>}
-              {!loading && beneficios.length === 0 && <div className="text-center text-gray-600">No hay beneficios</div>}
-
-              {beneficios
-                .filter((b) => {
-                  if (!query) return true;
-                  const q = query.toLowerCase();
-                  return (
-                    (b.titulo || '').toLowerCase().includes(q) ||
-                    (b.descripcion || '').toLowerCase().includes(q) ||
-                    (b.tipo_beneficio || '').toLowerCase().includes(q) ||
-                    (b.empresa_asociada || '').toLowerCase().includes(q)
-                  );
-                })
-                .map((b) => (
-                  <article key={b.id} className="bg-white rounded-2xl overflow-hidden flex shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                    <div className="p-4 flex-1 flex items-start gap-4">
-                      <div className="w-16 h-16 text-white rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg" style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)' }}><Star size={24} /></div>
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between">
-                          <div className="text-left">
-                            <h3 className="font-semibold text-lg text-gray-900 text-left">{b.titulo || 'Sin título'}</h3>
-                            <div className="text-xs text-gray-600 text-left">{(b.tipo_beneficio || '').charAt(0).toUpperCase() + (b.tipo_beneficio || '').slice(1)}</div>
-                            {b.empresa_asociada && <div className="text-xs text-green-600 text-left">{b.empresa_asociada}</div>}
-                          </div>
-                          <div className="text-xs text-gray-600 flex items-center gap-1">
-                            <div className="p-1 bg-green-100 rounded-full">
-                              <Calendar size={12} className="text-green-700" />
-                            </div>
-                            <span>{b.fecha_inicio || ''}{b.fecha_fin ? ` • ${b.fecha_fin}` : ''}</span>
-                          </div>
-                        </div>
-
-                        <p className="mt-2 text-sm text-gray-600 line-clamp-3 text-left">{b.descripcion || '—'}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center gap-3 p-4 min-h-full" style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)' }}>
-                      <button onClick={()=>{ handleEdit(b); setIsModalOpen(true); }} title="Editar" className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-all duration-300 hover:scale-110 transform">
-                        <Edit2 size={18} className="text-white" />
-                      </button>
-                      <button onClick={()=>handleDelete(b.id)} title="Eliminar" className="p-3 bg-white/20 hover:bg-red-500 rounded-full transition-all duration-300 hover:scale-110 transform">
-                        <Trash size={18} className="text-white" />
-                      </button>
-                    </div>
-                  </article>
-                ))}
-            </div>
-          </section>
-
-          {isModalOpen && (
-            <div className="fixed inset-0 z-50 bg-black/60">
-              <div className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} p-4 sm:p-6 lg:p-8`}>
-                <div className="bg-white rounded-2xl w-full max-w-4xl p-6 sm:p-8 shadow-2xl max-h-[85vh] overflow-y-auto transform transition-all duration-300 scale-100 mx-auto">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900">{editing ? 'Editar beneficio' : 'Crear beneficio'}</h3>
-                  <button onClick={()=>{ setIsModalOpen(false); setEditing(null); resetForm(); }} title="Cerrar" className="p-2 transition-colors" style={{ backgroundColor: 'transparent', border: 'none' }}>
-                    <X size={18} className="text-green-600 hover:text-green-700" />
-                  </button>
+          {/* Métricas estadísticas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-xl">
+                  <Gift style={{ fontSize: 32, color: '#fff' }} />
                 </div>
-
-                <div className="space-y-2">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">✏️ Título</label>
-                      <input value={form.titulo} onChange={(e)=>setForm({...form, titulo: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" />
-                    </div>
-                    <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">🏷️ Tipo de Beneficio</label>
-                      <select value={form.tipo_beneficio} onChange={(e)=>setForm({...form, tipo_beneficio: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200">
-                        <option value="academico">Académico</option>
-                        <option value="laboral">Laboral</option>
-                        <option value="salud">Salud</option>
-                        <option value="cultural">Cultural</option>
-                        <option value="convenio">Convenio</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">🔄 Estado</label>
-                      <select value={form.estado} onChange={(e)=>setForm({...form, estado: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200">
-                        <option value="activo">Activo</option>
-                        <option value="inactivo">Inactivo</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">📝 Descripción</label>
-                    <textarea value={form.descripcion} onChange={(e)=>setForm({...form, descripcion: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium h-20 shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200 resize-none" />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">🏢 Empresa Asociada</label>
-                      <input value={form.empresa_asociada} onChange={(e)=>setForm({...form, empresa_asociada: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" />
-                    </div>
-                    <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">🔗 URL Detalle / Código de Descuento</label>
-                      <input type="text" value={form.url_detalle} onChange={(e)=>setForm({...form, url_detalle: e.target.value})} placeholder="https://ejemplo.com o CODIGO20" className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">📅 Fecha inicio</label>
-                      <input type="date" value={form.fecha_inicio} onChange={(e)=>setForm({...form, fecha_inicio: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" style={{ colorScheme: 'light' }} />
-                    </div>
-                    <div>
-                      <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">⏰ Fecha fin</label>
-                      <input type="date" value={form.fecha_fin} onChange={(e)=>setForm({...form, fecha_fin: e.target.value})} className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" style={{ colorScheme: 'light' }} />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-gray-800 text-sm font-semibold mb-2 text-left">🖼️ Imagen del Beneficio (URL)</label>
-                    <input type="url" value={form.imagen_beneficio} onChange={(e)=>setForm({...form, imagen_beneficio: e.target.value})} placeholder="https://ejemplo.com/imagen.jpg" className="w-full p-3 bg-gray-50 border-2 border-gray-400 rounded-xl text-gray-900 text-sm font-medium shadow-inner focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white transition-all duration-200" />
-                  </div>
-                </div>
-
-                <div className="mt-6 flex justify-end gap-3">{editing ? (<><button onClick={handleUpdate} className="px-6 py-2 text-white rounded-full font-bold transition-all duration-300 hover:scale-105" style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)' }}>Actualizar</button><button onClick={()=>{ setEditing(null); resetForm(); setIsModalOpen(false); }} className="px-6 py-2 rounded-full font-bold text-gray-600 bg-gray-200 hover:bg-gray-300 transition-all duration-300">Cancelar</button></>) : (<button onClick={()=>{ handleCreate(); setIsModalOpen(false); }} className="px-6 py-2 text-white rounded-full font-bold transition-all duration-300 hover:scale-105" style={{ background: 'linear-gradient(135deg, #16a34a, #14b8a6)' }}>Crear Beneficio</button>)}</div>
+                <div className="flex items-center gap-1 text-green-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">100%</span>
                 </div>
               </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Total Beneficios</p>
+              <p className="text-4xl font-bold text-gray-800">{totalBeneficios}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-green-100 p-4 rounded-xl">
+                  <Star style={{ fontSize: 32, color: '#16a34a' }} />
+                </div>
+                <div className="flex items-center gap-1 text-green-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">{activosRate}%</span>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Beneficios Activos</p>
+              <p className="text-4xl font-bold text-gray-800">{beneficiosActivos}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-gray-100 p-4 rounded-xl">
+                  <FileText style={{ fontSize: 32, color: '#6b7280' }} />
+                </div>
+                <div className="flex items-center gap-1 text-gray-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">{totalBeneficios > 0 ? ((beneficiosAcademicos / totalBeneficios) * 100).toFixed(1) : 0}%</span>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Beneficios Académicos</p>
+              <p className="text-4xl font-bold text-gray-800">{beneficiosAcademicos}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-red-100 p-4 rounded-xl">
+                  <Archive style={{ fontSize: 32, color: '#dc2626' }} />
+                </div>
+                <div className="flex items-center gap-1 text-red-600">
+                  <TrendingUp style={{ fontSize: 20 }} />
+                  <span className="text-sm font-bold">{totalBeneficios > 0 ? ((beneficiosInactivos / totalBeneficios) * 100).toFixed(1) : 0}%</span>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-medium mb-1">Beneficios Inactivos</p>
+              <p className="text-4xl font-bold text-gray-800">{beneficiosInactivos}</p>
+            </div>
+          </div>
+
+          {/* Filtros de búsqueda */}
+          <FiltrosGestionBeneficios
+            filtros={filtros}
+            onFiltrosChange={setFiltros}
+            onLimpiarFiltros={limpiarFiltros}
+          />
+
+          {/* Mensajes de estado */}
+          {mensaje.texto && (
+            <div
+              className={`mb-6! p-4! rounded-xl! flex! items-center! shadow-lg! ${
+                mensaje.tipo === "success"
+                  ? "bg-green-100! text-green-800! border! border-green-300!"
+                  : "bg-red-100! text-red-800! border! border-red-300!"
+              }`}
+            >
+              {mensaje.tipo === "success" ? (
+                <CheckCircle className="w-5 h-5 mr-2" style={{ color: '#16a34a' }} />
+              ) : (
+                <AlertCircle className="w-5 h-5 mr-2" style={{ color: '#dc2626' }} />
+              )}
+              <span className="font-medium!">{mensaje.texto}</span>
             </div>
           )}
-        </div>
+
+          {/* Error general */}
+          {error && (
+            <div className="mb-6! p-4! bg-red-100! text-red-800! rounded-xl! flex! items-center! border! border-red-300! shadow-lg!">
+              <AlertCircle className="w-5 h-5 mr-2" style={{ color: '#dc2626' }} />
+              <span className="font-medium!">{error}</span>
+            </div>
+          )}
+
+          {/* Lista de beneficios */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-800">Lista de Beneficios</h2>
+              <p className="text-gray-600 mt-1">Gestiona todos los beneficios disponibles para los egresados</p>
+            </div>
+            
+            {loading ? (
+              <div className="p-8 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
+                <p className="text-gray-600 mt-4">Cargando beneficios...</p>
+              </div>
+            ) : beneficiosParaMostrar.length === 0 ? (
+              <div className="p-8 text-center">
+                <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">
+                  {beneficios.length === 0 ? "No hay beneficios registrados" : "No se encontraron beneficios con los filtros aplicados"}
+                </p>
+                {beneficios.length === 0 && (
+                  <button
+                    onClick={handleNuevoBeneficio}
+                    className="mt-4 text-green-600 hover:text-green-700 font-medium"
+                  >
+                    Crear el primer beneficio
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200">
+                {beneficiosParaMostrar.map((beneficio) => (
+                  <div key={beneficio._id} className="p-6 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-800">{beneficio.titulo}</h3>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            beneficio.estado === 'activo' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {beneficio.estado}
+                          </span>
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {beneficio.tipo_beneficio}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mb-2 line-clamp-2">{beneficio.descripcion}</p>
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                          {beneficio.empresa_asociada && (
+                            <span>🏢 {beneficio.empresa_asociada}</span>
+                          )}
+                          {beneficio.fecha_inicio && (
+                            <span>📅 {beneficio.fecha_inicio}</span>
+                          )}
+                          {beneficio.url_detalle && (
+                            <span>🔗 Enlace disponible</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-4">
+                        <button
+                          onClick={() => handleEditarBeneficio(beneficio)}
+                          className="inline-flex! items-center! gap-2! px-4! py-2! rounded-lg! transition-all! duration-300! hover:shadow-md! hover:scale-105!"
+                          style={{ background: '#00C853', border: 'none' }}
+                          title="Editar beneficio"
+                        >
+                          <Edit className="w-4! h-4!" style={{ color: '#fff' }} />
+                          <span className="text-white! text-xs! font-bold!">Editar</span>
+                        </button>
+                        <button
+                          onClick={() => handleEliminarBeneficio(beneficio)}
+                          className="inline-flex! items-center! gap-2! bg-red-500! px-4! py-2! rounded-lg! transition-all! duration-300! hover:bg-red-600! hover:shadow-md! hover:scale-105!"
+                          style={{ border: 'none' }}
+                          title="Eliminar beneficio"
+                        >
+                          <Trash2 className="w-4! h-4!" style={{ color: '#fff' }} />
+                          <span className="text-white! text-xs! font-bold!">Eliminar</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Modal de beneficio */}
+          <ModalBeneficio
+            isOpen={modalBeneficioAbierto}
+            onClose={() => {
+              setModalBeneficioAbierto(false);
+              setBeneficioSeleccionado(null);
+            }}
+            onSubmit={handleSubmitBeneficio}
+            beneficio={beneficioSeleccionado}
+            loading={loading}
+          />
+
+          {/* Modal de confirmación */}
+          <ModalConfirmacion
+            isOpen={modalConfirmacionAbierto}
+            onClose={() => {
+              setModalConfirmacionAbierto(false);
+              setBeneficioSeleccionado(null);
+            }}
+            onConfirm={handleConfirmarEliminacion}
+            beneficio={beneficioSeleccionado}
+            loading={loading}
+          />
+        
       </div>
     </div>
   );
-}
+};
 
-export default function GestionBeneficiosAdmin() {
-  return (
-    <AdminSidebarProvider>
-      <div className="flex">
-        <AdminSidebar />
-        <AdminContent />
-      </div>
-    </AdminSidebarProvider>
-  );
-}
+export default GestionBeneficios;

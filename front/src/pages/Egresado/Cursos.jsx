@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -10,7 +10,12 @@ import {
   CheckCircle,
   X,
   Clock,
+  Building2,
+  Tag,
+  Eye,
 } from "lucide-react";
+import { getBeneficiosRequest, redimirBeneficioRequest } from '../../api/gestionarBeneficiosApi';
+import { useUser } from '../../context/userContext';
 
 export default function Cursos() {
   const [currentSlide1, setCurrentSlide1] = useState(0);
@@ -20,163 +25,63 @@ export default function Cursos() {
   const [selectedType, setSelectedType] = useState("");
   const [showFiltered, setShowFiltered] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [errorNotification, setErrorNotification] = useState(null);
   const [reclamados, setReclamados] = useState([]);
+  const [beneficios, setBeneficios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useUser();
 
-  // Descuentos
-  const descuentos = [
-    {
-      id: 1,
-      titulo: "Descuento 15% en Libros Técnicos",
-      tipo: "Descuento",
-      categoria: "Descuentos",
-      descripcion: "Descuento especial en la librería universitaria para libros de especialización",
-      validoHasta: "31/12/2025",
-      imagen: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=400&fit=crop",
-    },
-    {
-      id: 2,
-      titulo: "Descuento 20% en Coursera",
-      tipo: "Descuento",
-      categoria: "Descuentos",
-      descripcion: "Accede a miles de cursos online con descuento exclusivo para estudiantes",
-      validoHasta: "1/10/2025",
-      imagen: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&h=400&fit=crop",
-    },
-    {
-      id: 3,
-      titulo: "Descuento 25% en Material Deportivo",
-      tipo: "Descuento",
-      categoria: "Descuentos",
-      descripcion: "Equipamiento deportivo con descuento para miembros de la comunidad universitaria",
-      validoHasta: "15/11/2025",
-      imagen: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=400&fit=crop",
-    },
-    {
-      id: 4,
-      titulo: "Descuento 30% en Software Educativo",
-      tipo: "Descuento",
-      categoria: "Descuentos",
-      descripcion: "Licencias de software especializado con descuento estudiantil",
-      validoHasta: "31/12/2025",
-      imagen: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop",
-    },
-  ];
+  // Cargar beneficios del backend
+  useEffect(() => {
+    const fetchBeneficios = async () => {
+      try {
+        setLoading(true);
+        const data = await getBeneficiosRequest();
+        setBeneficios(data || []);
+      } catch (error) {
+        console.error('Error al cargar beneficios:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Cursos
-  const cursos = [
-    {
-      id: 5,
-      titulo: "Curso Gratuito de Python",
-      tipo: "Curso",
-      categoria: "Cursos",
-      carrera: "Ingeniería Informática",
-      docente: "LINAREZ COLOMA, HUMBERTO VICTOR",
-      nivel: "Intermedio",
-      modalidad: "Presencial",
-      descuento: "20%",
-      validoHasta: "1/10/2025",
-      inicio: "10 de Julio",
-      imagen: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=600&h=400&fit=crop",
-    },
-    {
-      id: 6,
-      titulo: "Curso | Lenguaje C#",
-      tipo: "Curso",
-      categoria: "Cursos",
-      carrera: "Ingeniería Informática",
-      docente: "LINAREZ COLOMA, HUMBERTO VICTOR",
-      nivel: "Intermedio",
-      modalidad: "Presencial",
-      descuento: "20%",
-      validoHasta: "13/06/2025",
-      inicio: "10 de Julio",
-      imagen: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop",
-    },
-    {
-      id: 7,
-      titulo: "Curso de Machine Learning",
-      tipo: "Curso",
-      categoria: "Cursos",
-      carrera: "Ingeniería de Sistemas",
-      docente: "RODRIGUEZ PEREZ, MARIA ELENA",
-      nivel: "Avanzado",
-      modalidad: "Virtual",
-      descuento: "20%",
-      validoHasta: "30/08/2025",
-      inicio: "15 de Agosto",
-      imagen: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
-    },
-    {
-      id: 8,
-      titulo: "Curso de Desarrollo Web Full Stack",
-      tipo: "Curso",
-      categoria: "Cursos",
-      carrera: "Ingeniería Informática",
-      docente: "GARCIA TORRES, CARLOS ALBERTO",
-      nivel: "Intermedio",
-      modalidad: "Híbrido",
-      descuento: "20%",
-      validoHasta: "20/09/2025",
-      inicio: "5 de Septiembre",
-      imagen: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?w=600&h=400&fit=crop",
-    },
-  ];
+    if (user) {
+      fetchBeneficios();
+    }
+  }, [user]);
 
-  // Otros Beneficios
-  const otrosBeneficios = [
-    {
-      id: 9,
-      titulo: "Conferencia Ciberseguridad",
-      tipo: "Evento",
-      categoria: "Otros",
-      descripcion: "Conferencia magistral sobre las nuevas tendencias del mercado laboral peruano",
-      validoHasta: "15/10/2025",
-      hora: "7:00pm",
-      imagen: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop",
-    },
-    {
-      id: 10,
-      titulo: "Acceso a Biblioteca Digital Premium",
-      tipo: "Acceso",
-      categoria: "Otros",
-      descripcion: "Acceso ilimitado a recursos digitales académicos y bases de datos especializadas",
-      validoHasta: "31/12/2025",
-      hora: "6:30pm",
-      imagen: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=400&fit=crop",
-    },
-    {
-      id: 11,
-      titulo: "Membresía Gimnasio Universitario",
-      tipo: "Membresía",
-      categoria: "Otros",
-      descripcion: "Acceso gratuito a las instalaciones deportivas durante todo el semestre",
-      validoHasta: "30/06/2025",
-      hora: "5:00pm",
-      imagen: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
-    },
-    {
-      id: 12,
-      titulo: "Asesoría Académica Personalizada",
-      tipo: "Servicio",
-      categoria: "Otros",
-      descripcion: "Sesiones de asesoría con docentes expertos para apoyo en tus estudios",
-      validoHasta: "31/12/2025",
-      hora: "6:00pm",
-      imagen: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop",
-    },
-  ];
+  // Categorizar beneficios
+  const descuentos = beneficios.filter(b => b.tipo_beneficio === 'convenio');
+  const cursos = beneficios.filter(b => b.tipo_beneficio === 'academico');
+  const otrosBeneficios = beneficios.filter(b => ['laboral', 'salud', 'cultural'].includes(b.tipo_beneficio));
 
-  // Todos los beneficios combinados
-  const todosBeneficios = [...descuentos, ...cursos, ...otrosBeneficios];
+  // Todos los beneficios combinados para filtros
+  const todosBeneficios = [...beneficios];
 
   // Filtrar beneficios
   const beneficiosFilterados = todosBeneficios.filter((benef) => {
     const matchSearch = benef.titulo
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const matchType = selectedType ? benef.categoria === selectedType : true;
+    const matchType = selectedType ? getCategoryFromType(benef.tipo_beneficio) === selectedType : true;
     return matchSearch && matchType;
   });
+
+  // Función para mapear tipos a categorías
+  const getCategoryFromType = (tipo) => {
+    switch (tipo) {
+      case 'convenio':
+        return 'Descuentos';
+      case 'academico':
+        return 'Cursos';
+      case 'laboral':
+      case 'salud':
+      case 'cultural':
+        return 'Otros';
+      default:
+        return 'Otros';
+    }
+  };
 
   const handleSearch = () => {
     if (searchTerm || selectedType) {
@@ -190,18 +95,57 @@ export default function Cursos() {
     setShowFiltered(false);
   };
 
-  const handleReclamar = (beneficio) => {
-    if (!reclamados.includes(beneficio.id)) {
-      setReclamados([...reclamados, beneficio.id]);
-      setNotification({
-        titulo: beneficio.titulo,
-        tipo: beneficio.tipo,
-      });
-      setTimeout(() => setNotification(null), 5000);
+  const handleReclamar = async (beneficio) => {
+    if (!reclamados.includes(beneficio._id)) {
+      try {
+        await redimirBeneficioRequest(beneficio._id);
+        setReclamados([...reclamados, beneficio._id]);
+        setNotification({
+          titulo: beneficio.titulo,
+          tipo: beneficio.tipo_beneficio,
+        });
+        setTimeout(() => setNotification(null), 5000);
+      } catch (error) {
+        console.error('Error al reclamar beneficio:', error);
+        
+        // Determinar el tipo de error y mostrar mensaje apropiado
+        let errorMessage = 'Error al reclamar el beneficio';
+        let errorType = 'error';
+        
+        if (error.response?.status === 400) {
+          const errorData = error.response.data;
+          if (errorData.message?.includes('ya ha sido redimido')) {
+            errorMessage = 'Ya has reclamado este beneficio anteriormente';
+            errorType = 'warning';
+          } else if (errorData.message?.includes('no encontrado')) {
+            errorMessage = 'El beneficio no está disponible';
+            errorType = 'error';
+          } else {
+            errorMessage = errorData.message || 'Datos inválidos para reclamar el beneficio';
+            errorType = 'error';
+          }
+        } else if (error.response?.status === 401) {
+          errorMessage = 'Debes iniciar sesión para reclamar beneficios';
+          errorType = 'warning';
+        } else if (error.response?.status === 500) {
+          errorMessage = 'Error del servidor. Inténtalo más tarde';
+          errorType = 'error';
+        } else if (!error.response) {
+          errorMessage = 'Sin conexión a internet. Verifica tu conexión';
+          errorType = 'error';
+        }
+        
+        setErrorNotification({
+          titulo: beneficio.titulo,
+          mensaje: errorMessage,
+          tipo: errorType
+        });
+        setTimeout(() => setErrorNotification(null), 6000);
+      }
     }
   };
 
-  // Componente de notificación
+  // Componente de notificación de éxito
   const Notification = ({ notification, onClose }) => (
     <div className="fixed top-20 right-8 z-50 animate-slide-in">
       <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-start gap-3 min-w-[320px] border-2 border-green-500">
@@ -213,7 +157,7 @@ export default function Cursos() {
             ¡Beneficio Reclamado!
           </h4>
           <p className="text-gray-600 text-sm">{notification.titulo}</p>
-          <p className="text-green-500 text-xs mt-1">{notification.tipo}</p>
+          <p className="text-green-500 text-xs mt-1">{getTipoLabel(notification.tipo)}</p>
         </div>
         <button
           onClick={onClose}
@@ -224,6 +168,41 @@ export default function Cursos() {
       </div>
     </div>
   );
+
+  // Componente de notificación de error
+  const ErrorNotification = ({ errorNotification, onClose }) => {
+    const isWarning = errorNotification.tipo === 'warning';
+    const borderColor = isWarning ? 'border-yellow-500' : 'border-red-500';
+    const iconColor = isWarning ? 'text-yellow-500' : 'text-red-500';
+    const textColor = isWarning ? 'text-yellow-500' : 'text-red-500';
+    
+    return (
+      <div className="fixed top-20 right-8 z-50 animate-slide-in">
+        <div className={`bg-white rounded-2xl shadow-2xl p-4 flex items-start gap-3 min-w-[320px] border-2 ${borderColor}`}>
+          <div className="flex-shrink-0">
+            {isWarning ? (
+              <Clock className={iconColor} size={24} />
+            ) : (
+              <X className={iconColor} size={24} />
+            )}
+          </div>
+          <div className="flex-1">
+            <h4 className="text-gray-900 font-semibold mb-1">
+              {isWarning ? '¡Atención!' : '¡Error!'}
+            </h4>
+            <p className="text-gray-600 text-sm mb-1">{errorNotification.titulo}</p>
+            <p className={`text-sm font-medium ${textColor}`}>{errorNotification.mensaje}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 text-gray-400! hover:text-gray-900! transition-all!"
+          >
+            <X size={20} />
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // Componente para cada sección de carrusel
   const CarouselSection = ({
@@ -267,11 +246,11 @@ export default function Cursos() {
               style={{ transform: `translateX(-${currentSlide * 33.333}%)` }}
             >
               {beneficios.map((benef) => (
-                <div key={benef.id} className="w-1/3 flex-shrink-0 px-3">
+                <div key={benef._id} className="w-1/3 flex-shrink-0 px-3">
                   <BeneficioCard
                     benef={benef}
                     onReclamar={handleReclamar}
-                    isReclamado={reclamados.includes(benef.id)}
+                    isReclamado={reclamados.includes(benef._id)}
                   />
                 </div>
               ))}
@@ -291,19 +270,26 @@ export default function Cursos() {
 
   // Componente para cada tarjeta de beneficio
   const BeneficioCard = ({ benef, onReclamar, isReclamado }) => {
+    const fechaFin = benef.fecha_fin ? new Date(benef.fecha_fin) : null;
+    const hoy = new Date();
+    const vigente = !fechaFin || fechaFin >= hoy;
+
+    // Usar imagen por defecto si no hay imagen
+    const imagen = benef.imagen_beneficio || "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=400&fit=crop";
+
     // Tarjeta de curso con información detallada
-    if (benef.categoria === "Cursos") {
+    if (benef.tipo_beneficio === "academico") {
       return (
         <div className="bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-3 shadow-lg hover:shadow-xl">
           <div className="relative h-72 overflow-hidden">
             <img
-              src={benef.imagen}
+              src={imagen}
               alt={benef.titulo}
               className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
             <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
-              {benef.tipo}
+              Académico
             </div>
           </div>
 
@@ -313,26 +299,29 @@ export default function Cursos() {
             </h3>
 
             <div className="space-y-2 mb-4 text-gray-600 text-sm">
-              <div className="flex items-start gap-2">
-                <span className="font-medium">{benef.carrera}</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <div className="text-start">
-                  <span className="font-semibold text-gray-700">Docente: </span>
-                  <span>{benef.docente}</span>
+              {benef.empresa_asociada && (
+                <div className="flex items-start gap-2">
+                  <Building2 className="w-4 h-4 mt-1" />
+                  <span>{benef.empresa_asociada}</span>
                 </div>
-              </div>
-              <div className="flex font-bold items-center gap-2 text-gray-700">
-                <span>{benef.modalidad}</span>
-              </div>
+              )}
               <div className="flex items-center gap-2 text-green-600 font-semibold">
-                <span>DESCUENTO {benef.descuento} (Válido hasta {benef.validoHasta})</span>
+                <span>Beneficio Gratuito</span>
+                {fechaFin && (
+                  <span>(Válido hasta {fechaFin.toLocaleDateString()})</span>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-gray-500">
-                <Calendar size={16} style={{ color: '#5DC554' }} />
-                <span className="font-medium">Inicio: {benef.inicio}</span>
-              </div>
+              {benef.fecha_inicio && (
+                <div className="flex items-center gap-2 text-gray-500">
+                  <Calendar size={16} style={{ color: '#5DC554' }} />
+                  <span className="font-medium">Inicio: {new Date(benef.fecha_inicio).toLocaleDateString()}</span>
+                </div>
+              )}
             </div>
+
+            <p className="text-gray-600 text-start text-sm mb-4 line-clamp-3">
+              {benef.descripcion}
+            </p>
 
             <div className="flex items-center justify-between mt-4">
               <span className="font-bold text-xl transition-transform duration-300 hover:scale-110" style={{ color: '#5DC554' }}>
@@ -340,14 +329,16 @@ export default function Cursos() {
               </span>
               <button
                 onClick={() => onReclamar(benef)}
-                disabled={isReclamado}
+                disabled={isReclamado || !vigente}
                 className={`px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110! transform! hover:-translate-y-1 ${
                   isReclamado
                     ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    : !vigente
+                    ? "bg-red-400 text-white cursor-not-allowed"
                     : "bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
                 }`}
               >
-                {isReclamado ? "Reclamado" : "Reclamar"}
+                {isReclamado ? "Reclamado" : !vigente ? "Expirado" : "Reclamar"}
               </button>
             </div>
           </div>
@@ -360,31 +351,27 @@ export default function Cursos() {
       <div className="bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-3 shadow-lg hover:shadow-xl">
         <div className="relative h-72 overflow-hidden">
           <img
-            src={benef.imagen}
+            src={imagen}
             alt={benef.titulo}
             className="w-full h-full object-cover transition-transform duration-600 hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300"></div>
           <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
-            {benef.tipo}
+            {getTipoLabel(benef.tipo_beneficio)}
           </div>
         </div>
 
         <div className="p-6 bg-white">
           <div className="flex items-center gap-4 text-gray-500 text-sm mb-4">
-            <div className="flex items-center gap-2">
-              <Calendar size={16} style={{ color: '#5DC554' }} />
-              <span className="font-medium">Válido hasta {benef.validoHasta}</span>
-            </div>
-            {benef.hora && (
+            {fechaFin && (
               <div className="flex items-center gap-2">
-                <Clock size={16} style={{ color: '#5DC554' }} />
-                <span className="font-medium">{benef.hora}</span>
+                <Calendar size={16} style={{ color: '#5DC554' }} />
+                <span className="font-medium">Válido hasta {fechaFin.toLocaleDateString()}</span>
               </div>
             )}
           </div>
 
-          <h3 className="text-gray-800 text-start font-bold text-lg  line-clamp-2 mb-4 transition-colors duration-300 hover:text-green-500">
+          <h3 className="text-gray-800 text-start font-bold text-lg line-clamp-2 mb-4 transition-colors duration-300 hover:text-green-500">
             {benef.titulo}
           </h3>
 
@@ -394,25 +381,59 @@ export default function Cursos() {
             </p>
           )}
 
+          {benef.url_detalle && (
+            <div className="mb-4">
+              <a
+                href={benef.url_detalle}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-blue-600 text-sm hover:text-blue-800 transition-colors"
+              >
+                <Eye className="w-4 h-4 mr-1" />
+                Ver más detalles
+              </a>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <span className="font-bold text-xl transition-transform duration-300 hover:scale-110" style={{ color: '#5DC554' }}>
               Gratis
             </span>
             <button
               onClick={() => onReclamar(benef)}
-              disabled={isReclamado}
+              disabled={isReclamado || !vigente}
               className={`px-7 py-3 rounded-full! font-bold transition-all! duration-300 hover:shadow-2xl hover:scale-110 transform hover:-translate-y-1 ${
                 isReclamado
                   ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : !vigente
+                  ? "bg-red-400 text-white cursor-not-allowed"
                   : "bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
               }`}
             >
-              {isReclamado ? "Reclamado" : "Reclamar"}
+              {isReclamado ? "Reclamado" : !vigente ? "Expirado" : "Reclamar"}
             </button>
           </div>
         </div>
       </div>
     );
+  };
+
+  // Función para obtener etiqueta del tipo
+  const getTipoLabel = (tipo) => {
+    switch (tipo) {
+      case 'academico':
+        return 'Académico';
+      case 'laboral':
+        return 'Laboral';
+      case 'salud':
+        return 'Salud';
+      case 'cultural':
+        return 'Cultural';
+      case 'convenio':
+        return 'Convenio';
+      default:
+        return 'Beneficio';
+    }
   };
 
   return (
@@ -428,6 +449,13 @@ export default function Cursos() {
         <Notification
           notification={notification}
           onClose={() => setNotification(null)}
+        />
+      )}
+
+      {errorNotification && (
+        <ErrorNotification
+          errorNotification={errorNotification}
+          onClose={() => setErrorNotification(null)}
         />
       )}
 
@@ -515,7 +543,12 @@ export default function Cursos() {
         </div>
 
         {/* Mostrar vista filtrada en grid o carruseles */}
-        {showFiltered ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500 mx-auto"></div>
+            <p className="text-gray-500 text-xl mt-4">Cargando beneficios...</p>
+          </div>
+        ) : showFiltered ? (
           <div>
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-3xl font-bold" style={{ color: '#5DC554' }}>
@@ -525,10 +558,10 @@ export default function Cursos() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {beneficiosFilterados.map((benef) => (
                 <BeneficioCard
-                  key={benef.id}
+                  key={benef._id}
                   benef={benef}
                   onReclamar={handleReclamar}
-                  isReclamado={reclamados.includes(benef.id)}
+                  isReclamado={reclamados.includes(benef._id)}
                 />
               ))}
             </div>
@@ -540,17 +573,27 @@ export default function Cursos() {
               </div>
             )}
           </div>
+        ) : beneficios.length === 0 ? (
+          <div className="text-center py-20">
+            <Gift className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No hay beneficios disponibles
+            </h3>
+            <p className="text-gray-600">
+              Pronto habrá nuevos beneficios disponibles.
+            </p>
+          </div>
         ) : (
           <>
             <CarouselSection
-              titulo="Descuentos"
+              titulo="Convenios y Descuentos"
               beneficios={descuentos}
               currentSlide={currentSlide1}
               setCurrentSlide={setCurrentSlide1}
             />
 
             <CarouselSection
-              titulo="Cursos"
+              titulo="Beneficios Académicos"
               beneficios={cursos}
               currentSlide={currentSlide2}
               setCurrentSlide={setCurrentSlide2}

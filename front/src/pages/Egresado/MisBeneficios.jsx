@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
@@ -11,7 +11,10 @@ import {
   Gift,
   Tag,
   Award,
+  Building2,
 } from "lucide-react";
+import { getBeneficiosRedimidosRequest } from '../../api/gestionarBeneficiosApi';
+import { useUser } from '../../context/userContext';
 
 export default function MisBeneficios() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,6 +22,9 @@ export default function MisBeneficios() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBeneficio, setSelectedBeneficio] = useState(null);
   const [modalSolicitudOpen, setModalSolicitudOpen] = useState(false);
+  const [beneficiosReclamados, setBeneficiosReclamados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useUser();
   const [formData, setFormData] = useState({
     tipoBeneficio: "",
     nombreBeneficio: "",
@@ -29,168 +35,63 @@ export default function MisBeneficios() {
     modalidadPreferida: "",
   });
 
-  // Datos de beneficios reclamados
-  const beneficiosReclamados = [
-    {
-      id: 1,
-      nombre: "Descuento 15% en Libros Técnicos",
-      tipo: "Descuento",
-      fechaSolicitud: "15/11/2024",
-      horaSolicitud: "3:45pm",
-      fechaVencimiento: "31/12/2025",
-      estado: "Reclamado",
-      descripcion:
-        "Descuento especial en la librería universitaria para libros de especialización técnica y académica.",
-      categoria: "Descuentos",
-      porcentaje: "15%",
-      proveedor: "Librería Universitaria Central",
-      codigoDescuento: "LIB15-2024",
-      terminosCondiciones:
-        "Válido solo para compras presenciales. No acumulable con otras promociones.",
-      imagen:
-        "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&h=300&fit=crop",
-    },
-    {
-      id: 2,
-      nombre: "Descuento 20% en Coursera",
-      tipo: "Descuento",
-      fechaSolicitud: "20/10/2024",
-      horaSolicitud: "10:20am",
-      fechaVencimiento: "1/10/2025",
-      estado: "Canjeado",
-      descripcion:
-        "Accede a miles de cursos online con descuento exclusivo para estudiantes de la institución.",
-      categoria: "Descuentos",
-      porcentaje: "20%",
-      proveedor: "Coursera",
-      codigoDescuento: "COURS20-EDU",
-      fechaCanje: "25/10/2024",
-      terminosCondiciones:
-        "Aplicable a cualquier curso. Válido por 3 meses desde la activación.",
-      imagen:
-        "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=400&h=300&fit=crop",
-    },
-    {
-      id: 3,
-      nombre: "Curso Gratuito de Python",
-      tipo: "Curso",
-      fechaSolicitud: "01/11/2024",
-      horaSolicitud: "2:15pm",
-      fechaVencimiento: "1/10/2025",
-      fechaInicio: "10 de Julio 2025",
-      estado: "Aprobado",
-      descripcion:
-        "Curso completo de programación en Python desde nivel básico hasta intermedio con certificación oficial.",
-      categoria: "Cursos",
-      carrera: "Ingeniería Informática",
-      docente: "LINAREZ COLOMA, HUMBERTO VICTOR",
-      nivel: "Intermedio",
-      modalidad: "Presencial",
-      duracion: "40 horas",
-      lugar: "Laboratorio de Cómputo - Piso 2",
-      horario: "Lunes y Miércoles 6:00pm - 8:00pm",
-      imagen:
-        "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400&h=300&fit=crop",
-    },
-    {
-      id: 4,
-      nombre: "Marketing Digital para emprendedores",
-      tipo: "Curso",
-      fechaSolicitud: "28/10/2024",
-      horaSolicitud: "11:30am",
-      fechaVencimiento: "20/11/2024",
-      estado: "Canjeado",
-      descripcion:
-        "Estrategias actuales de marketing digital para impulsar tu emprendimiento en redes sociales y plataformas digitales.",
-      categoria: "Cursos",
-      carrera: "Administración de Empresas",
-      docente: "Mg. Andrea Vega",
-      nivel: "Básico",
-      modalidad: "Virtual",
-      duracion: "30 horas",
-      plataforma: "Google Meet",
-      horario: "Martes y Jueves 7:00pm - 9:00pm",
-      fechaCanje: "05/11/2024",
-      imagen:
-        "https://images.unsplash.com/photo-1432888622747-4eb9a8f2c293?w=400&h=300&fit=crop",
-    },
-    {
-      id: 5,
-      nombre: "Conferencia Ciberseguridad",
-      tipo: "Evento",
-      fechaSolicitud: "12/11/2024",
-      horaSolicitud: "9:00am",
-      fechaEvento: "15/10/2025",
-      horaEvento: "7:00pm",
-      estado: "Solicitado",
-      descripcion:
-        "Conferencia magistral sobre las nuevas tendencias en ciberseguridad y protección de datos en el entorno digital actual.",
-      categoria: "Eventos",
-      ponente: "Dr. Roberto Maldonado",
-      modalidad: "Presencial",
-      lugar: "Auditorio Principal",
-      duracion: "3 horas",
-      cupos: "200 participantes",
-      imagen:
-        "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop",
-    },
-    {
-      id: 6,
-      nombre: "Acceso a Biblioteca Digital Premium",
-      tipo: "Acceso",
-      fechaSolicitud: "05/11/2024",
-      horaSolicitud: "4:20pm",
-      fechaVencimiento: "31/12/2025",
-      estado: "Reclamado",
-      descripcion:
-        "Acceso ilimitado a recursos digitales académicos, bases de datos especializadas y revistas científicas internacionales.",
-      categoria: "Servicios",
-      proveedor: "Biblioteca Digital Universitaria",
-      recursos: "Más de 100,000 libros digitales, 5,000 revistas científicas",
-      plataformas: "EBSCO, ProQuest, JSTOR, IEEE Xplore",
-      codigoAcceso: "BDU-2024-PREMIUM",
-      imagen:
-        "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop",
-    },
-    {
-      id: 7,
-      nombre: "Descuento 25% en Material Deportivo",
-      tipo: "Descuento",
-      fechaSolicitud: "18/11/2024",
-      horaSolicitud: "1:45pm",
-      fechaVencimiento: "15/11/2025",
-      estado: "Aprobado",
-      descripcion:
-        "Equipamiento deportivo con descuento para miembros de la comunidad universitaria en tiendas seleccionadas.",
-      categoria: "Descuentos",
-      porcentaje: "25%",
-      proveedor: "SportZone Universitario",
-      codigoDescuento: "SPORT25-UNI",
-      terminosCondiciones:
-        "Válido en compras mayores a S/100. Presentar carnet universitario.",
-      imagen:
-        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&h=300&fit=crop",
-    },
-    {
-      id: 8,
-      nombre: "Membresía Gimnasio Universitario",
-      tipo: "Membresía",
-      fechaSolicitud: "22/10/2024",
-      horaSolicitud: "8:30am",
-      fechaVencimiento: "30/06/2025",
-      estado: "Reclamado",
-      descripcion:
-        "Acceso gratuito a las instalaciones deportivas durante todo el semestre académico con todas las facilidades.",
-      categoria: "Servicios",
-      beneficios:
-        "Acceso a gimnasio, piscina, canchas deportivas, clases grupales",
-      horarioDisponible: "Lunes a Sábado 6:00am - 10:00pm",
-      lugar: "Complejo Deportivo Universitario",
-      codigoMembresia: "GYM-2024-S2",
-      imagen:
-        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop",
-    },
-  ];
+  // Cargar beneficios reclamados del backend
+  useEffect(() => {
+    const fetchBeneficiosReclamados = async () => {
+      try {
+        setLoading(true);
+        const data = await getBeneficiosRedimidosRequest();
+        console.log('Beneficios reclamados:', data);
+        
+        // Mapear los datos del backend al formato esperado por el frontend
+        const beneficiosFormateados = (data?.beneficiosRedimidos || []).map((item) => ({
+          id: item._id,
+          nombre: item.beneficioId?.titulo || 'Beneficio no disponible',
+          tipo: item.beneficioId?.tipo_beneficio || 'N/A',
+          fechaSolicitud: new Date(item.fecha_redencion).toLocaleDateString(),
+          horaSolicitud: new Date(item.fecha_redencion).toLocaleTimeString(),
+          fechaVencimiento: item.beneficioId?.fecha_fin ? new Date(item.beneficioId.fecha_fin).toLocaleDateString() : 'Sin fecha límite',
+          estado: "Reclamado",
+          descripcion: item.beneficioId?.descripcion || 'Sin descripción',
+          categoria: getTipoLabel(item.beneficioId?.tipo_beneficio),
+          empresa: item.beneficioId?.empresa_asociada || '',
+          urlDetalle: item.beneficioId?.url_detalle || '',
+          imagen: item.beneficioId?.imagen_beneficio || "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&h=300&fit=crop",
+          // Datos adicionales del beneficio original
+          beneficioOriginal: item.beneficioId,
+          fechaRedencion: item.fecha_redencion,
+        }));
+
+        setBeneficiosReclamados(beneficiosFormateados);
+      } catch (error) {
+        console.error('Error al cargar beneficios reclamados:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchBeneficiosReclamados();
+    }
+  }, [user]);
+
+  // Función para obtener etiqueta del tipo
+  const getTipoLabel = (tipo) => {
+    switch (tipo) {
+      case 'academico':
+        return 'Académico';
+      case 'laboral':
+        return 'Laboral';
+      case 'salud':
+        return 'Salud';
+      case 'cultural':
+        return 'Cultural';
+      case 'convenio':
+        return 'Convenio';
+      default:
+        return 'Beneficio';
+    }
+  };
 
   // Filtrar beneficios
   const beneficiosFiltrados = beneficiosReclamados.filter((benef) => {
@@ -303,7 +204,7 @@ export default function MisBeneficios() {
             </button>
             <div className="absolute bottom-4 left-6">
               <span className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full! text-sm font-bold shadow-xl">
-                {beneficio.tipo}
+                {beneficio.categoria}
               </span>
             </div>
           </div>
@@ -322,7 +223,7 @@ export default function MisBeneficios() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 font-medium">
-                    Fecha de solicitud
+                    Fecha de reclamo
                   </p>
                   <p className="font-semibold text-gray-800">
                     {beneficio.fechaSolicitud}
@@ -336,7 +237,7 @@ export default function MisBeneficios() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 font-medium">
-                    Hora de solicitud
+                    Hora de reclamo
                   </p>
                   <p className="font-semibold text-gray-800">
                     {beneficio.horaSolicitud}
@@ -344,7 +245,7 @@ export default function MisBeneficios() {
                 </div>
               </div>
 
-              {beneficio.fechaVencimiento && (
+              {beneficio.fechaVencimiento && beneficio.fechaVencimiento !== 'Sin fecha límite' && (
                 <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
                   <div className="bg-green-100 p-3 rounded-lg">
                     <Calendar size={20} className="text-green-600" />
@@ -360,17 +261,17 @@ export default function MisBeneficios() {
                 </div>
               )}
 
-              {beneficio.fechaCanje && (
-                <div className="flex items-center gap-3 bg-purple-50 rounded-xl p-4">
-                  <div className="bg-purple-100 p-3 rounded-lg">
-                    <CheckCircle size={20} className="text-purple-600" />
+              {beneficio.empresa && (
+                <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
+                  <div className="bg-blue-100 p-3 rounded-lg">
+                    <Building2 size={20} className="text-blue-600" />
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 font-medium">
-                      Fecha de canje
+                      Empresa asociada
                     </p>
                     <p className="font-semibold text-gray-800">
-                      {beneficio.fechaCanje}
+                      {beneficio.empresa}
                     </p>
                   </div>
                 </div>
@@ -388,349 +289,20 @@ export default function MisBeneficios() {
               </p>
             </div>
 
-            {/* Información específica según el tipo - DESCUENTO */}
-            {beneficio.tipo === "Descuento" && (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-1 h-6 bg-gradient-to-b from-green-500 to-teal-500 rounded-full"></div>
-                  Detalles del Descuento
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {beneficio.porcentaje && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-green-100 p-3 rounded-lg">
-                        <Tag size={20} className="text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Descuento
-                        </p>
-                        <p className="font-bold text-green-600 text-xl">
-                          {beneficio.porcentaje}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.proveedor && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-blue-100 p-3 rounded-lg">
-                        <User size={20} className="text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Proveedor
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.proveedor}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {beneficio.codigoDescuento && (
-                  <div className="mt-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white text-sm font-medium mb-1">
-                          Código de descuento
-                        </p>
-                        <p className="font-bold text-white text-2xl tracking-wide">
-                          {beneficio.codigoDescuento}
-                        </p>
-                      </div>
-                      <Award size={32} className="text-white opacity-80" />
-                    </div>
-                  </div>
-                )}
-
-                {beneficio.terminosCondiciones && (
-                  <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4">
-                    <p className="text-sm text-gray-700 font-semibold mb-2">
-                      Términos y condiciones:
-                    </p>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      {beneficio.terminosCondiciones}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Información específica según el tipo - CURSO */}
-            {beneficio.tipo === "Curso" && (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-1 h-6 bg-gradient-to-b from-green-500 to-teal-500 rounded-full"></div>
-                  Información del Curso
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  {beneficio.carrera && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-purple-100 p-3 rounded-lg">
-                        <Award size={20} className="text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Carrera
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.carrera}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.docente && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-blue-100 p-3 rounded-lg">
-                        <User size={20} className="text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Docente
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.docente}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.nivel && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-green-100 p-3 rounded-lg">
-                        <Gift size={20} className="text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Nivel
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.nivel}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.duracion && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-orange-100 p-3 rounded-lg">
-                        <Clock size={20} className="text-orange-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Duración
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.duracion}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.modalidad && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4 md:col-span-2">
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-500 font-medium">
-                          Modalidad
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.modalidad}
-                        </p>
-                        {beneficio.lugar && (
-                          <p className="text-gray-600 text-sm mt-1">
-                            {beneficio.lugar}
-                          </p>
-                        )}
-                        {beneficio.plataforma && (
-                          <p className="text-gray-600 text-sm mt-1">
-                            {beneficio.plataforma}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {beneficio.horario && (
-                  <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-blue-900 font-semibold mb-1">
-                      Horario:
-                    </p>
-                    <p className="text-sm text-blue-800">{beneficio.horario}</p>
-                  </div>
-                )}
-
-                {beneficio.fechaInicio && (
-                  <div className="bg-green-50 border-l-4 border-green-500 rounded-lg p-4">
-                    <p className="text-sm text-green-900 font-semibold mb-1">
-                      Fecha de inicio:
-                    </p>
-                    <p className="text-sm font-semibold text-green-800">
-                      {beneficio.fechaInicio}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Información específica según el tipo - EVENTO/ACCESO/MEMBRESÍA */}
-            {(beneficio.tipo === "Evento" ||
-              beneficio.tipo === "Acceso" ||
-              beneficio.tipo === "Membresía") && (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-1 h-6 bg-gradient-to-b from-green-500 to-teal-500 rounded-full"></div>
-                  Detalles del {beneficio.tipo}
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  {beneficio.ponente && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-blue-100 p-3 rounded-lg">
-                        <User size={20} className="text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Ponente
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.ponente}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.proveedor && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-purple-100 p-3 rounded-lg">
-                        <Award size={20} className="text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Proveedor
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.proveedor}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.modalidad && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Modalidad
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.modalidad}
-                        </p>
-                        {beneficio.lugar && (
-                          <p className="text-gray-600 text-sm mt-1">
-                            📍 {beneficio.lugar}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.duracion && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                      <div className="bg-orange-100 p-3 rounded-lg">
-                        <Clock size={20} className="text-orange-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Duración
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.duracion}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {beneficio.fechaEvento && (
-                    <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4 md:col-span-2">
-                      <div className="bg-green-100 p-3 rounded-lg">
-                        <Calendar size={20} className="text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Fecha del evento
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          {beneficio.fechaEvento} - {beneficio.horaEvento}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {beneficio.recursos && (
-                  <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-blue-900 font-semibold mb-1">
-                      Recursos disponibles:
-                    </p>
-                    <p className="text-sm text-blue-800">
-                      {beneficio.recursos}
-                    </p>
-                  </div>
-                )}
-
-                {beneficio.plataformas && (
-                  <div className="bg-purple-50 border-l-4 border-purple-500 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-purple-900 font-semibold mb-1">
-                      Plataformas:
-                    </p>
-                    <p className="text-sm text-purple-800">
-                      {beneficio.plataformas}
-                    </p>
-                  </div>
-                )}
-
-                {beneficio.beneficios && (
-                  <div className="bg-green-50 border-l-4 border-green-500 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-green-900 font-semibold mb-1">
-                      Beneficios incluidos:
-                    </p>
-                    <p className="text-sm text-green-800">
-                      {beneficio.beneficios}
-                    </p>
-                  </div>
-                )}
-
-                {(beneficio.codigoAcceso || beneficio.codigoMembresia) && (
-                  <div className="bg-gradient-to-r from-green-500 to-teal-500 rounded-xl p-4 mb-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white text-sm font-medium mb-1">
-                          Código de acceso
-                        </p>
-                        <p className="font-bold text-white text-2xl tracking-wide">
-                          {beneficio.codigoAcceso || beneficio.codigoMembresia}
-                        </p>
-                      </div>
-                      <Award size={32} className="text-white opacity-80" />
-                    </div>
-                  </div>
-                )}
-
-                {beneficio.horarioDisponible && (
-                  <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4">
-                    <p className="text-sm text-yellow-900 font-semibold mb-1">
-                      - Horario disponible:
-                    </p>
-                    <p className="text-sm text-yellow-800">
-                      {beneficio.horarioDisponible}
-                    </p>
-                  </div>
-                )}
+            {/* URL de detalle si existe */}
+            {beneficio.urlDetalle && (
+              <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6">
+                <p className="text-sm text-blue-900 font-semibold mb-2">
+                  Más información:
+                </p>
+                <a
+                  href={beneficio.urlDetalle}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 transition-colors text-sm"
+                >
+                  {beneficio.urlDetalle}
+                </a>
               </div>
             )}
 
@@ -1054,6 +626,22 @@ export default function MisBeneficios() {
         </div>
 
         {/* Tabla de beneficios */}
+        {loading ? (
+          <div className="bg-white rounded-2xl shadow-lg p-20 text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500 mx-auto mb-4"></div>
+            <p className="text-gray-500 text-xl">Cargando beneficios reclamados...</p>
+          </div>
+        ) : beneficiosReclamados.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-lg p-20 text-center">
+            <Gift className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No tienes beneficios reclamados
+            </h3>
+            <p className="text-gray-600">
+              Cuando reclames beneficios, aparecerán aquí.
+            </p>
+          </div>
+        ) : (
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -1157,9 +745,11 @@ export default function MisBeneficios() {
             </div>
           )}
         </div>
+        )}
 
         {/* Resumen estadístico */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-12">
+        {!loading && beneficiosReclamados.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center gap-4">
               <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-full!">
@@ -1176,17 +766,13 @@ export default function MisBeneficios() {
 
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center gap-4">
-              <div className="bg-yellow-100 p-4 rounded-full!">
-                <Clock size={32} className="text-yellow-600" />
+              <div className="bg-blue-100 p-4 rounded-full!">
+                <CheckCircle size={32} className="text-blue-600" />
               </div>
               <div>
-                <p className="text-gray-500 text-sm font-medium">Solicitados</p>
+                <p className="text-gray-500 text-sm font-medium">Académicos</p>
                 <p className="text-3xl font-bold text-gray-800">
-                  {
-                    beneficiosReclamados.filter(
-                      (b) => b.estado === "Solicitado"
-                    ).length
-                  }
+                  {beneficiosReclamados.filter(b => b.tipo === 'academico').length}
                 </p>
               </div>
             </div>
@@ -1194,16 +780,13 @@ export default function MisBeneficios() {
 
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center gap-4">
-              <div className="bg-blue-100 p-4 rounded-full!">
-                <CheckCircle size={32} className="text-blue-600" />
+              <div className="bg-purple-100 p-4 rounded-full!">
+                <Award size={32} className="text-purple-600" />
               </div>
               <div>
-                <p className="text-gray-500 text-sm font-medium">Aprobados</p>
+                <p className="text-gray-500 text-sm font-medium">Convenios</p>
                 <p className="text-3xl font-bold text-gray-800">
-                  {
-                    beneficiosReclamados.filter((b) => b.estado === "Aprobado")
-                      .length
-                  }
+                  {beneficiosReclamados.filter(b => b.tipo === 'convenio').length}
                 </p>
               </div>
             </div>
@@ -1212,38 +795,18 @@ export default function MisBeneficios() {
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center gap-4">
               <div className="bg-green-100 p-4 rounded-full!">
-                <CheckCircle size={32} className="text-green-600" />
+                <Tag size={32} className="text-green-600" />
               </div>
               <div>
-                <p className="text-gray-500 text-sm font-medium">Reclamados</p>
+                <p className="text-gray-500 text-sm font-medium">Otros</p>
                 <p className="text-3xl font-bold text-gray-800">
-                  {
-                    beneficiosReclamados.filter((b) => b.estado === "Reclamado")
-                      .length
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Estadística adicional para canjeados */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <div className="flex items-center gap-4">
-              <div className="bg-purple-100 p-4 rounded-full!">
-                <Award size={32} className="text-purple-600" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Canjeados</p>
-                <p className="text-3xl font-bold text-gray-800">
-                  {
-                    beneficiosReclamados.filter((b) => b.estado === "Canjeado")
-                      .length
-                  }
+                  {beneficiosReclamados.filter(b => ['laboral', 'salud', 'cultural'].includes(b.tipo)).length}
                 </p>
               </div>
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

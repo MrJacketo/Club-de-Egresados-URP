@@ -17,6 +17,7 @@ import GestionarMembresia from './pages/Egresado/GestionarMembresia';
 import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
+import ModeradorRoute from './components/ModeradorRoute';
 import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
 import NoticiasPage from './pages/Egresado/Noticiaspage.jsx';
@@ -33,6 +34,7 @@ import Footer from './components/footer.jsx';
 
 import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
+import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -61,7 +63,6 @@ function App() {
           <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
           <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta/></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
-          <Route path="/VerTodosBeneficios" element={<VerBeneficios/>} />
           
           {/* RUTA DEL FORO CON ESTILOS ESPECIALES */}
           <Route path="/foro-egresados" element={
@@ -77,6 +78,8 @@ function App() {
 
           <Route path="/mis-conferencias" element={<PrivateRoute><MisConferencias /></PrivateRoute>} />
           <Route path="/mis-beneficios" element={<PrivateRoute><MisBeneficios /></PrivateRoute>} />
+          <Route path="/beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
+          <Route path="/ver-beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
 
           
 
@@ -86,6 +89,9 @@ function App() {
           <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
           <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
+
+          {/* Rutas de moderador */}
+          <Route path="/moderador/usuarios" element={<ModeradorRoute><ModeracionUsuarios /></ModeradorRoute>} />
         </Routes>
         <Footer/>
       </div>
