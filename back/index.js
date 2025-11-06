@@ -3,7 +3,6 @@ const dotenv = require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose"); // Keep MongoDB connection for future use
 const cookieParser = require("cookie-parser");
-const path = require("path"); // ← AGREGAR ESTA LÍNEA
 const authRoutes = require("./routes/authRoutes");
 const perfilRoutes = require("./routes/perfilRoutes");
 const membresiaRoutes = require("./routes/membresiaRoutes");
