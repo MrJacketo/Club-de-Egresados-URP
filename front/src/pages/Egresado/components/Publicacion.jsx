@@ -146,7 +146,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
               <div className="flex-1 min-w-0">
                 <div className="bg-gray-50 rounded-2xl rounded-tl-none px-3 py-2">
                   <p className="font-medium text-green-700 text-xs">{comentario.autor}</p>
-                  <p className="text-gray-800 mt-1">{comentario.texto}</p>
+                  <p className="text-gray-800 mt-1">{comentario.contenido}</p> 
                 </div>
                 <time className="text-xs text-gray-400 mt-1 block pl-1">Hace poco</time>
               </div>
