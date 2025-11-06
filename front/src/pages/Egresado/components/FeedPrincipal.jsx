@@ -9,7 +9,7 @@ function FeedPrincipal({
   darLike, 
   eliminarPost, 
   agregarComentario 
-}) {
+}) {//aqui se cambio y se puso un _id
   return (
     <div className="space-y-6">
       {posts.map((post) => (

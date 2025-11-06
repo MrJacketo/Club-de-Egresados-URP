@@ -1,109 +1,94 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SidebarIzquierda from "./components/SidebarIzquierda";
 import SidebarDerecha from "./components/SidebarDerecha";
 import FeedPrincipal from "./components/FeedPrincipal";
 import CrearPublicacion from "./components/CrearPublicacion";
+import { forosApi } from "../../api/ForosApi"; // 🔹 Importación del cliente API real
 
 function ForoEgresados() {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      autor: "Ana Pérez",
-      contenido: "¡Feliz de compartir mi nuevo proyecto con ustedes! 🚀",
-      likes: 12,
-      comentarios: [
-        { 
-          texto: "¡Felicitaciones Ana! 🎉", 
-          autor: "Carlos López",
-          perfilImg: null 
-        },
-        { 
-          texto: "Se ve increíble 👏", 
-          autor: "María García",
-          perfilImg: null 
-        }
-      ],
-      imagen: null,
-      video: null,
-      perfilImg: null,
-    },
-    {
-      id: 2,
-      autor: "Carlos López",
-      contenido: "¿Alguien tiene recursos para mejorar en React? 🤔",
-      likes: 5,
-      comentarios: [
-        { 
-          texto: "Te paso un curso buenazo 🔗", 
-          autor: "Ana Pérez",
-          perfilImg: null 
-        },
-        { 
-          texto: "Yo también ando en eso 💻", 
-          autor: "Pedro Martínez",
-          perfilImg: null 
-        }
-      ],
-      imagen: null,
-      video: null,
-      perfilImg: null,
-    },
-  ]);
-
+  const [posts, setPosts] = useState([]); // 🔹 Ahora los posts vienen del backend
   const [perfil, setPerfil] = useState(null);
   const [likedPosts, setLikedPosts] = useState([]);
-  const [perfilesUsuarios, setPerfilesUsuarios] = useState({
-    "Ana Pérez": null,
-    "Carlos López": null,
-    "María García": null,
-    "Pedro Martínez": null,
-    "Tú": null
-  });
+  const [perfilesUsuarios, setPerfilesUsuarios] = useState({ "Tú": null });
 
-  const agregarPost = (nuevoPost) => {
-    setPosts([nuevoPost, ...posts]);
+  // ===========================================================
+  // 🔹 1. Cargar publicaciones desde el backend al iniciar
+  // ===========================================================
+  useEffect(() => {
+    const cargarPublicaciones = async () => {
+      try {
+        const data = await forosApi.getAllPublicaciones();
+        setPosts(data);
+      } catch (error) {
+        console.error("❌ Error al obtener publicaciones:", error);
+      }
+    };
+    cargarPublicaciones();
+  }, []);
+
+  // ===========================================================
+  // 🔹 2. Crear nueva publicación
+  // ===========================================================
+  const agregarPost = async (contenido) => {
+    try {
+      const nuevaPublicacion = await forosApi.createPublicacion(contenido);
+      setPosts([nuevaPublicacion, ...posts]);
+    } catch (error) {
+      console.error("❌ Error al crear publicación:", error);
+    }
   };
 
+  // ===========================================================
+  // 🔹 3. Dar y quitar “like” (solo local, no guardado en backend)
+  // ===========================================================
   const darLike = (id) => {
     if (likedPosts.includes(id)) {
-      setPosts(posts.map((p) => (p.id === id ? { ...p, likes: p.likes - 1 } : p)));
+      setPosts(posts.map((p) => (p._id === id ? { ...p, likes: (p.likes || 0) - 1 } : p)));
       setLikedPosts(likedPosts.filter((postId) => postId !== id));
     } else {
-      setPosts(posts.map((p) => (p.id === id ? { ...p, likes: p.likes + 1 } : p)));
+      setPosts(posts.map((p) => (p._id === id ? { ...p, likes: (p.likes || 0) + 1 } : p)));
       setLikedPosts([...likedPosts, id]);
     }
   };
 
-  const eliminarPost = (id) => {
-    setPosts(posts.filter((p) => p.id !== id));
-    setLikedPosts(likedPosts.filter((postId) => postId !== id));
+  // ===========================================================
+  // 🔹 4. Ocultar (eliminar visualmente) una publicación
+  // ===========================================================
+  const eliminarPost = async (id) => {
+    try {
+      await forosApi.ocultarPublicacion(id);
+      setPosts(posts.filter((p) => p._id !== id));
+    } catch (error) {
+      console.error("❌ Error al ocultar publicación:", error);
+    }
   };
 
-  const agregarComentario = (id, texto) => {
-    const nuevoComentario = {
-      texto: texto,
-      autor: "Tú",
-      perfilImg: perfil || null
-    };
-
-    setPosts(
-      posts.map((p) =>
-        p.id === id ? { 
-          ...p, 
-          comentarios: [...p.comentarios, nuevoComentario] 
-        } : p
-      )
-    );
+  // ===========================================================
+  // 🔹 5. Agregar comentario a publicación
+  // ===========================================================
+  const agregarComentario = async (id, texto) => {
+    try {
+      const actualizada = await forosApi.addComentario(id, "Tú", texto);
+      setPosts(posts.map((p) => (p._id === id ? actualizada : p)));
+    } catch (error) {
+      console.error("❌ Error al agregar comentario:", error);
+    }
   };
 
+  // ===========================================================
+  // 🔹 6. Cambiar imagen de perfil local
+  // ===========================================================
   const cambiarPerfil = (nuevaImagen) => {
     setPerfil(nuevaImagen);
-    setPerfilesUsuarios(prev => ({
+    setPerfilesUsuarios((prev) => ({
       ...prev,
-      "Tú": nuevaImagen
+      "Tú": nuevaImagen,
     }));
   };
 
+  // ===========================================================
+  // 🔹 7. Renderizado visual
+  // ===========================================================
   return (
     <>
       <style>{`
@@ -112,7 +97,6 @@ function ForoEgresados() {
             display: none !important;
           }
         }
-        
         @media (max-width: 768px) {
           .foro-container {
             flex-direction: column !important;
@@ -132,100 +116,97 @@ function ForoEgresados() {
           }
         }
       `}</style>
-      
-      <div style={{ 
-        width: '100vw',
-        margin: 0, 
-        padding: 0, 
-        backgroundColor: '#f3f4f6',
-        minHeight: '100vh',
-        paddingTop: '80px',
-        overflow: 'auto'
-      }}>
-      <div 
-        className="foro-container"
-        style={{ 
-          display: 'flex', 
-          width: '100%', 
-          margin: 0, 
-          padding: '0 20px',
-          minHeight: '100%',
-          maxWidth: '1400px',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          gap: '16px'
+
+      <div
+        style={{
+          width: "100vw",
+          margin: 0,
+          padding: 0,
+          backgroundColor: "#f3f4f6",
+          minHeight: "100vh",
+          paddingTop: "80px",
+          overflow: "auto",
         }}
       >
-        
-        {/* Sidebar Izquierda */}
-        <div 
-          className="foro-sidebar-left"
-          style={{ 
-            width: '300px',
-            minWidth: '280px',
-            flexShrink: 1,
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
-            overflow: 'auto'
+        <div
+          className="foro-container"
+          style={{
+            display: "flex",
+            width: "100%",
+            margin: 0,
+            padding: "0 20px",
+            minHeight: "100%",
+            maxWidth: "1400px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            gap: "16px",
           }}
         >
-          <SidebarIzquierda 
-            perfil={perfil}
-            cambiarPerfil={cambiarPerfil}
-          />
-        </div>
-        
-        {/* Contenido Principal - OCUPA TODO EL ESPACIO */}
-        <div 
-          className="foro-contenido"
-          style={{ 
-            flex: 1,
-            padding: '24px 16px',
-            minWidth: '300px',
-            margin: 0
-          }}
-        >
-          <div style={{ 
-            width: '100%',
-            maxWidth: '700px',
-            margin: '0 auto'
-          }}>
-            <CrearPublicacion 
-              perfil={perfil}
-              agregarPost={agregarPost}
-            />
-            
-            <FeedPrincipal 
-              posts={posts}
-              perfil={perfil}
-              likedPosts={likedPosts}
-              perfilesUsuarios={perfilesUsuarios}
-              darLike={darLike}
-              eliminarPost={eliminarPost}
-              agregarComentario={agregarComentario}
-              cambiarPerfil={cambiarPerfil}
-            />
+          {/* Sidebar Izquierda */}
+          <div
+            className="foro-sidebar-left"
+            style={{
+              width: "300px",
+              minWidth: "280px",
+              flexShrink: 1,
+              position: "sticky",
+              top: 0,
+              height: "100vh",
+              overflow: "auto",
+            }}
+          >
+            <SidebarIzquierda perfil={perfil} cambiarPerfil={cambiarPerfil} />
+          </div>
+
+          {/* Contenido principal */}
+          <div
+            className="foro-contenido"
+            style={{
+              flex: 1,
+              padding: "24px 16px",
+              minWidth: "300px",
+              margin: 0,
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "700px",
+                margin: "0 auto",
+              }}
+            >
+              <CrearPublicacion perfil={perfil} agregarPost={agregarPost} />
+
+              <FeedPrincipal
+                posts={posts}
+                perfil={perfil}
+                likedPosts={likedPosts}
+                perfilesUsuarios={perfilesUsuarios}
+                darLike={darLike}
+                eliminarPost={eliminarPost}
+                agregarComentario={agregarComentario}
+                cambiarPerfil={cambiarPerfil}
+              />
+            </div>
+          </div>
+
+          {/* Sidebar Derecha */}
+          <div
+            className="foro-sidebar-right"
+            style={{
+              width: "300px",
+              minWidth: "280px",
+              flexShrink: 1,
+              position: "sticky",
+              top: 0,
+              height: "100vh",
+              overflow: "auto",
+            }}
+          >
+            <SidebarDerecha />
           </div>
         </div>
-
-        {/* Sidebar Derecha */}
-        <div 
-          className="foro-sidebar-right"
-          style={{ 
-            width: '300px',
-            minWidth: '280px',
-            flexShrink: 1,
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
-            overflow: 'auto'
-          }}
-        >
-          <SidebarDerecha />
-        </div>
       </div>
-    </div>
     </>
   );
 }
