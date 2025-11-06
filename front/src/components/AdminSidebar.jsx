@@ -8,7 +8,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Shield
 } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
@@ -109,15 +110,31 @@ export default function AdminSidebar() {
 
           <Link
             to="/admin/beneficios"
-            className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin/beneficios"
                 ? "bg-white! text-green-600! shadow-lg!"
                 : "text-white! hover:bg-white/20!"
             }`}
+            style={{ border: 'none' }}
           >
             <Percent size={24} />
-            <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
               Beneficios
+            </span>
+          </Link>
+                  
+          <Link
+            to="/admin/gestion-foro"
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
+              location.pathname === "/admin/gestion-foro"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
+            }`}
+            style={{ border: 'none' }}
+          >
+            <Shield size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
+              Moderar Foro
             </span>
           </Link>
 
@@ -138,29 +155,6 @@ export default function AdminSidebar() {
               </span>
             </Link>
           )}
-
-          {/*}          <Link
-            to="/admin/beneficios"
-            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
-              location.pathname === "/admin/beneficios"
-                ? "text-white! shadow-lg!"
-                : "text-gray-700! hover:bg-green-50! hover:text-green-600!"
-            }`}
-            style={
-              location.pathname === "/admin/beneficios"
-                ? { 
-                    background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
-                    border: 'none'
-                  }
-                : {}
-            }
-          >
-            <Percent size={24} />
-            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-              Beneficios
-            </span>
-          </Link>
-          */}
         </nav>
 
         <div className="mt-auto">
