@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-//puede ser con /foros/publicaciones
+
 export const forosApi = {
   // 🔹 Obtener todas las publicaciones visibles
   getAllPublicaciones: async () => {
@@ -12,10 +12,17 @@ export const forosApi = {
     }
   },
 
-  // 🔹 Crear una nueva publicación
-  createPublicacion: async (contenido) => {
+  // 🔹 Crear una nueva publicación (texto + multimedia opcional)
+  createPublicacion: async ({ contenido, archivo, autor }) => {
     try {
-      const response = await apiClient.post('/api/publicaciones', { contenido });
+      const formData = new FormData();
+      if (contenido) formData.append('contenido', contenido);
+      if (autor) formData.append('autor', autor);
+      if (archivo) formData.append('archivo', archivo);
+
+      const response = await apiClient.post('/api/publicaciones', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       return response.data;
     } catch (error) {
       console.error('Error al crear publicación:', error);
@@ -33,6 +40,19 @@ export const forosApi = {
       return response.data;
     } catch (error) {
       console.error('Error al agregar comentario:', error);
+      throw error;
+    }
+  },
+
+  // 🔹 Dar o quitar like a una publicación
+  toggleLike: async (publicacionId, userId) => {
+    try {
+      const response = await apiClient.put(`/api/publicaciones/${publicacionId}/like`, {
+        userId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error al dar o quitar like:', error);
       throw error;
     }
   },

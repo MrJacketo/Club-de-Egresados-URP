@@ -28,15 +28,11 @@ function CrearPublicacion({ perfil, agregarPost }) {
     if (nuevoPost.trim() === "" && !archivo) return;
 
     try {
-      const formData = new FormData();
-      formData.append("contenido", nuevoPost);
-      formData.append("autor", "Tú"); // o el UID real del usuario
-      if (archivo) {
-        formData.append("archivo", archivo);
-      }
-
-      // 🔹 Llamamos a la API actualizada con el nuevo endpoint
-      const data = await forosApi.createPublicacion(formData);
+      const data = await forosApi.createPublicacion({
+        contenido: nuevoPost,
+        autor: perfil?.nombre || "Tú",
+        archivo,
+      });
 
       // 🔹 Actualiza el feed en el front con la nueva publicación
       if (agregarPost) agregarPost(data);

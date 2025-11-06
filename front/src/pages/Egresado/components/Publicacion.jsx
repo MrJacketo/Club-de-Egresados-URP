@@ -83,7 +83,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
           
           {post.autor === "Tú" && (
             <button
-              onClick={() => onDelete(post.id)}
+              onClick={() => onDelete(post._id)}
               className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
             >
               <X size={16} />
@@ -94,33 +94,33 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
 
       <p className="text-gray-700 mt-3 leading-relaxed">{post.contenido}</p>
 
-      {post.imagen && (
+      {post.imagenUrl && (
         <img
-          src={post.imagen}
+          src={post.imagenUrl}
           alt="Adjunto"
           className="mt-3 rounded-xl w-full h-auto object-contain"
         />
       )}
 
-      {post.video && (
+      {post.videoUrl && (
         <video controls className="mt-3 rounded-xl max-h-96 w-full object-cover">
-          <source src={post.video} type="video/mp4" />
+          <source src={post.videoUrl} type="video/mp4" />
         </video>
       )}
 
       {/* Botones principales con mismo estilo */}
       <footer className="mt-4 flex items-center justify-around text-sm">
         <button
-          onClick={() => onLike(post.id)}
+          onClick={() => onLike(post._id)}
           className={`flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors ${
             isLiked ? "text-green-600 font-semibold" : ""
           }`}
         >
-          <ThumbsUp size={16} /> Me gusta ({post.likes})
+          <ThumbsUp size={16} /> Me gusta ({post.likes?.length})
         </button>
 
         <button className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors">
-          <MessageCircle size={16} /> Comentar ({post.comentarios.length})
+          <MessageCircle size={16} /> Comentar ({post.comentarios?.length})
         </button>
 
         <button className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors">
@@ -128,9 +128,9 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
         </button>
       </footer>
 
-      {post.comentarios.length > 0 && (
+      {post.comentarios?.length > 0 && (
         <div className="mt-4 pt-3 space-y-3 border-t border-gray-100">
-          {post.comentarios.map((comentario, i) => (
+          {post.comentarios?.map((comentario, i) => (
             <div key={i} className="text-sm text-gray-700 flex items-start gap-3">
               {obtenerImagenPerfil(comentario.autor, comentario.perfilImg) ? (
                 <img
@@ -160,7 +160,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
         {comentariosRapidos.map((c, i) => (
           <button
             key={i}
-            onClick={() => onAddComment(post.id, c)}
+            onClick={() => onAddComment(post._id, c)}
             className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors text-xs"
           >
             {c}

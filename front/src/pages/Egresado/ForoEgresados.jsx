@@ -29,14 +29,14 @@ function ForoEgresados() {
   // ===========================================================
   // 🔹 2. Crear nueva publicación
   // ===========================================================
-  const agregarPost = async (contenido) => {
-    try {
-      const nuevaPublicacion = await forosApi.createPublicacion(contenido);
-      setPosts([nuevaPublicacion, ...posts]);
-    } catch (error) {
-      console.error("❌ Error al crear publicación:", error);
-    }
-  };
+const agregarPost = async (formData) => {
+  try {
+    const nuevaPublicacion = await forosApi.createPublicacion(formData);
+    setPosts([nuevaPublicacion, ...posts]);
+  } catch (error) {
+    console.error("❌ Error al crear publicación:", error);
+  }
+};
 
   // ===========================================================
   // 🔹 3. Dar y quitar “like” (solo local, no guardado en backend)
