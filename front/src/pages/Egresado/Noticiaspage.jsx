@@ -3,55 +3,74 @@ import React, { useState } from "react";
 function Noticias() {
   const todasNoticias = [
     {
-        id: 1,
-        titulo: "URP fortalece lazos internacionales con nuevas universidades europeas",
-        autor: "Oficina de Cooperación Externa",
-        fecha: "05 Oct 2025",
-        resumen: "La Universidad Ricardo Palma amplía sus convenios con instituciones de educación superior en Europa ....",
-        categoria: "Internacional",
-        imagen: "Noticia01.jpg"
+      id: 1,
+      titulo:
+        "URP fortalece lazos internacionales con nuevas universidades europeas",
+      autor: "Oficina de Cooperación Externa",
+      fecha: "05 Oct 2025",
+      resumen:
+        "La Universidad Ricardo Palma amplía sus convenios con instituciones de educación superior en Europa ....",
+      categoria: "Internacional",
+      imagen: "Noticia01.jpg",
     },
     {
       id: 2,
       titulo: "URP presenta primera Clínica Veterinaria en feria de Surco",
       autor: "Facultad de Medicina Veterinaria",
       fecha: "06 Oct 2025",
-      resumen: "La Universidad Ricardo Palma inaugura su primera Clínica Veterinaria móvil en colaboración con la Municipalidad de Surco...",
+      resumen:
+        "La Universidad Ricardo Palma inaugura su primera Clínica Veterinaria móvil en colaboración con la Municipalidad de Surco...",
       categoria: "Extensión Universitaria",
-      imagen: "Noticia02.jpg"
+      imagen: "Noticia02.jpg",
     },
     {
       id: 3,
-      titulo: "URP obtiene acreditaciones internacionales para 14 carreras profesionales",
+      titulo:
+        "URP obtiene acreditaciones internacionales para 14 carreras profesionales",
       autor: "Oficina de Calidad Académica",
       fecha: "07 Oct 2025",
-      resumen: "Catorce carreras de la Universidad Ricardo Palma recibieron acreditaciones internacionales que reconocen ...",
+      resumen:
+        "Catorce carreras de la Universidad Ricardo Palma recibieron acreditaciones internacionales que reconocen ...",
       categoria: "Logros",
-      imagen: "Noticia03.jpg"
+      imagen: "Noticia03.jpg",
     },
     {
       id: 4,
       titulo: "URP establece nuevo convenio con municipalidad de San Bartolo",
       autor: "Oficina de Cooperación Externa",
       fecha: "08 Oct 2025",
-      resumen: "La Universidad Ricardo Palma firma convenio de colaboración con la Municipalidad de San Bartolo para ...",
+      resumen:
+        "La Universidad Ricardo Palma firma convenio de colaboración con la Municipalidad de San Bartolo para ...",
       categoria: "Extensión Universitaria",
-      imagen: "Noticia04.jpg"
+      imagen: "Noticia04.jpg",
     },
     {
       id: 5,
       titulo: "URP organiza X Fiesta de la Poda con celebración de pisco",
       autor: "Facultad de Derecho y Ciencia Política",
       fecha: "09 Oct 2025",
-      resumen: "La Universidad Ricardo Palma invita a la comunidad universitaria a la X Fiesta de la Poda, un evento que ...",
+      resumen:
+        "La Universidad Ricardo Palma invita a la comunidad universitaria a la X Fiesta de la Poda, un evento que ...",
       categoria: "Cultura",
-      imagen: "Noticia05.jpg"
+      imagen: "Noticia05.jpg",
     },
   ];
 
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
 
-  const categorias = ["Todos", "Institucional", "Académico", "Investigación", "Extensión Universitaria","Logros","Estudiantil","Internacional","Innovación","Cultura","Deportes"];
+  const categorias = [
+    "Todos",
+    "Institucional",
+    "Académico",
+    "Investigación",
+    "Extensión Universitaria",
+    "Logros",
+    "Estudiantil",
+    "Internacional",
+    "Innovación",
+    "Cultura",
+    "Deportes",
+  ];
 
   const noticiasFiltradas =
     categoriaSeleccionada === "Todos"
@@ -59,25 +78,23 @@ function Noticias() {
       : todasNoticias.filter((n) => n.categoria === categoriaSeleccionada);
 
   return (
-  <div
-    className="min-h-screen text-gray-900 flex flex-col pt-20"
-    style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}
-  >
+    <div
+      className="min-h-screen text-gray-900 flex flex-col pt-20"
+      style={{
+        background: "linear-gradient(to bottom right, #f9fafb, #ffffff)",
+      }}
+    >
       {/* HEADER - Fondo blanco */}
-      <header 
+      <header
         className="py-6 shadow-md w-full relative"
         style={{ backgroundColor: "rgba(255, 255, 255, 0.9)" }}
       >
         <div className="flex items-center justify-center">
           {/* Logo URP - Posicionado absolutamente a la izquierda */}
           <div className="absolute left-8">
-            <img 
-              src="LogoURP.png" 
-              alt="Logo URP" 
-              className="h-16"
-            />
+            <img src="LogoURP.png" alt="Logo URP" className="h-16" />
           </div>
-          
+
           {/* Texto centrado */}
           <div className="text-center">
             <h1 className="text-4xl font-bold" style={{ color: "#00BC4F" }}>
@@ -157,7 +174,6 @@ function Noticias() {
           </p>
         )}
       </main>
-
     </div>
   );
 }

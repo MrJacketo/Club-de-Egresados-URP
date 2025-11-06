@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { CheckCircle } from 'lucide-react';
-import { getMembresiaRequest } from '../../api/membresiaApi';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { CheckCircle } from "lucide-react";
+import { getMembresiaRequest } from "../../api/membresiaApi";
 
 const MembresiaSucess = () => {
   const [membresia, setMembresia] = useState(null);
@@ -13,7 +13,7 @@ const MembresiaSucess = () => {
         const data = await getMembresiaRequest();
         setMembresia(data);
       } catch (error) {
-        console.error('Error al verificar membresía:', error);
+        console.error("Error al verificar membresía:", error);
       } finally {
         setLoading(false);
       }
@@ -23,11 +23,11 @@ const MembresiaSucess = () => {
   }, []);
 
   const formatFecha = (fecha) => {
-    if (!fecha) return 'No disponible';
-    return new Date(fecha).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+    if (!fecha) return "No disponible";
+    return new Date(fecha).toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
   };
 
@@ -41,11 +41,11 @@ const MembresiaSucess = () => {
 
   // Lista de beneficios de la membresía
   const beneficios = [
-    'Acceso a Bolsa Laboral Premium',
-    'Descuentos en certificaciones profesionales',
-    'Networking profesional',
-    'Acceso a cursos de especialización',
-    'Asesorías personalizadas (CV, LinkedIn)'
+    "Acceso a Bolsa Laboral Premium",
+    "Descuentos en certificaciones profesionales",
+    "Networking profesional",
+    "Acceso a cursos de especialización",
+    "Asesorías personalizadas (CV, LinkedIn)",
   ];
 
   return (
@@ -66,7 +66,7 @@ const MembresiaSucess = () => {
             <div>
               <p className="text-sm text-gray-500">Estado de membresía</p>
               <p className="font-semibold text-teal-600 capitalize">
-                {membresia?.estado || 'Procesando'}
+                {membresia?.estado || "Procesando"}
               </p>
             </div>
             <div>
@@ -85,7 +85,9 @@ const MembresiaSucess = () => {
         </div>
 
         <div className="bg-gray-50 rounded-xl p-6 mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-3 text-left">Beneficios de tu Membresía</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-3 text-left">
+            Beneficios de tu Membresía
+          </h2>
           <ul className="space-y-2">
             {beneficios.map((beneficio, index) => (
               <li key={index} className="flex items-start gap-2 text-left">
@@ -103,7 +105,7 @@ const MembresiaSucess = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            to="/VerTodosBeneficios"
+            to="/Beneficios"
             className="bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300"
           >
             Ver beneficios
