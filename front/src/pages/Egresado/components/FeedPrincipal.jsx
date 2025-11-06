@@ -9,15 +9,15 @@ function FeedPrincipal({
   darLike, 
   eliminarPost, 
   agregarComentario 
-}) {//aqui se cambio y se puso un _id
+}) {
   return (
     <div className="space-y-6">
       {posts.map((post) => (
         <Publicacion
-          key={post.id}
+          key={post._id}
           post={post}
           perfil={perfil}
-          isLiked={likedPosts.includes(post.id)}
+          isLiked={likedPosts.includes(post._id)}
           perfilesUsuarios={perfilesUsuarios}
           onLike={darLike}
           onDelete={eliminarPost}
