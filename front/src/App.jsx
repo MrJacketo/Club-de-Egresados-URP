@@ -20,24 +20,25 @@ import AdminRoute from './components/AdminRoute';
 import ModeradorRoute from './components/ModeradorRoute';
 import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
-import NoticiasPage from './pages/Egresado/Noticiaspage.jsx';
-import ForoEgresados from '../src/pages/Egresado/ForoEgresados';
-import PostulantesOferta from './pages/Egresado/OfertaLaboral/PostulantesOfertas.jsx';
-import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
-import AdminUsers from './pages/Admin/AdminUsers.jsx';
-import GestionMembresiaAdmin from './pages/Admin/GestionMembresiaAdmin.jsx';
-import GestionNoticias from './pages/Admin/GestionNoticias.jsx';
-import GestionBeneficiosAdmin from './pages/Admin/GestionBeneficiosAdmin.jsx';
-import Cursos from './pages/Egresado/Cursos.jsx';
-import Conferencias from './pages/Egresado/Conferencias.jsx';
-import Footer from './components/footer.jsx';
+import NoticiasPage from "./pages/Egresado/Noticiaspage.jsx";
+import ForoEgresados from "../src/pages/Egresado/ForoEgresados";
+import PostulantesOferta from "./pages/Egresado/OfertaLaboral/PostulantesOfertas.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
+import AdminUsers from "./pages/Admin/AdminUsers.jsx";
+import GestionMembresiaAdmin from "./pages/Admin/GestionMembresiaAdmin.jsx";
+import GestionNoticias from "./pages/Admin/GestionNoticias.jsx";
+import GestionBeneficiosAdmin from "./pages/Admin/GestionBeneficiosAdmin.jsx";
+import Cursos from "./pages/Egresado/Cursos.jsx";
+import Conferencias from "./pages/Egresado/Conferencias.jsx";
+import Footer from "./components/footer.jsx";
+import NoticiaDetalle from "./pages/Egresado/DetalleNoticia.jsx";
 
 import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
 import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
 import GestionForo from './pages/Admin/GestionForo.jsx';
 
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 function App() {
@@ -66,16 +67,38 @@ function App() {
           <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
           
           {/* RUTA DEL FORO CON ESTILOS ESPECIALES */}
-          <Route path="/foro-egresados" element={
-            <div style={{ margin: 0, padding: 0, width: '100%', marginTop: '-0rem' }}>
-              <ForoEgresados />
-            </div>
-          } />
+          <Route
+            path="/foro-egresados"
+            element={
+              <div
+                style={{
+                  margin: 0,
+                  padding: 0,
+                  width: "100%",
+                  marginTop: "-0rem",
+                }}
+              >
+                <ForoEgresados />
+              </div>
+            }
+          />
 
-
-          <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
-          <Route path="/conferencias" element={<PrivateRoute><Conferencias /></PrivateRoute>} />
-          
+          <Route
+            path="/cursos"
+            element={
+              <PrivateRoute>
+                <Cursos />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/conferencias"
+            element={
+              <PrivateRoute>
+                <Conferencias />
+              </PrivateRoute>
+            }
+          />
 
           <Route path="/mis-conferencias" element={<PrivateRoute><MisConferencias /></PrivateRoute>} />
           <Route path="/mis-beneficios" element={<PrivateRoute><MisBeneficios /></PrivateRoute>} />
@@ -96,7 +119,7 @@ function App() {
           <Route path="/moderador/usuarios" element={<ModeradorRoute><ModeracionUsuarios /></ModeradorRoute>} />
            
         </Routes>
-        <Footer/>
+        <Footer />
       </div>
     </UserContextProvider>
   );
