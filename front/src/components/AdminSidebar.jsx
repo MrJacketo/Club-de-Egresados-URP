@@ -134,27 +134,11 @@ export default function AdminSidebar() {
           >
             <Shield size={24} />
             <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-              Moderar Foro
+              Gestionar Foro
             </span>
           </Link>
 
-          {/* Moderación - visible para admin y moderador */}
-          {(user?.rol === 'admin' || user?.rol === 'moderador') && (
-            <Link
-              to="/moderador/usuarios"
-              className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
-                location.pathname === "/moderador/usuarios"
-                  ? "bg-white! text-green-600! shadow-lg!"
-                  : "text-white! hover:bg-white/20!"
-              }`}
-              style={{ border: 'none' }}
-            >
-              <ShieldCheck size={24} />
-              <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-                Moderación
-              </span>
-            </Link>
-          )}
+          
         </nav>
 
         <div className="mt-auto">
