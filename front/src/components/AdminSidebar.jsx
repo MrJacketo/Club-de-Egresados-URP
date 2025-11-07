@@ -9,7 +9,8 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  Shield
+  Shield,
+  Workflow
 } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
@@ -123,6 +124,22 @@ export default function AdminSidebar() {
             </span>
           </Link>
                   
+                  <Link
+            to="/admin/gestion-ofertas"
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
+              location.pathname === "/admin/gestion-foro"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
+            }`}
+            style={{ border: 'none' }}
+          >
+            <Workflow size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
+              Ofertas Laborales
+            </span>
+          </Link>
+          
+
           <Link
             to="/admin/gestion-foro"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
