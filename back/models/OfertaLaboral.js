@@ -63,7 +63,21 @@ const ofertaLaboralSchema = new mongoose.Schema({
     estado: {
         type: String,
         enum: ESTADO,
-        default: 'Activo',
+        default: 'Pendiente',
+    },
+    aprobado: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    moderadorAprobador: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    fechaAprobacion: {
+        type: Date,
+        default: null
     }
 });
 
