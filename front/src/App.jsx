@@ -37,7 +37,8 @@ import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
 import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
 import GestionForo from './pages/Admin/GestionForo.jsx';
 import ModeradorRoute from './components/ModeradorRoute';
-
+import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
+import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -117,6 +118,9 @@ function App() {
 
           {/* Rutas de moderador */}
           <Route path="/moderador/usuarios" element={<ModeradorRoute><ModeracionUsuarios /></ModeradorRoute>} />
+          <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
+          <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
+          
            
         </Routes>
         <Footer />

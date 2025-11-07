@@ -4,7 +4,9 @@ import {
   Shield,
   ChevronLeft,
   ChevronRight,
-  Users
+  Users,
+  LayoutDashboard,
+  Tag
 } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../../../context/userContext";
@@ -43,21 +45,41 @@ export default function ModeradorSidebar() {
         </div>
 
         <nav className="flex flex-col space-y-4 mt-4">
+          {/* Dashboard */}
           <Link
-            to="/moderador/gestion-foro"
+            to="/moderador"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
-              location.pathname === "/moderador/gestion-foro"
+              location.pathname === "/moderador"
                 ? "bg-white! text-green-600! shadow-lg!"
                 : "text-white! hover:bg-white/20!"
             }`}
             style={{ border: 'none' }}
           >
-            <Shield size={24} />
+            <LayoutDashboard size={24} />
             <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-              Moderar Foro
+              Dashboard
             </span>
           </Link>
 
+          
+
+          {/* Gestión de Ofertas */}
+          <Link
+            to="/moderador/ofertas"
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
+              location.pathname === "/moderador/ofertas"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
+            }`}
+            style={{ border: 'none' }}
+          >
+            <Tag size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
+              Gestión Ofertas
+            </span>
+          </Link>
+
+          {/* Usuarios */}
           <Link
             to="/moderador/usuarios"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${

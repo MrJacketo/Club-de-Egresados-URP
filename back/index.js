@@ -15,6 +15,7 @@ const adminUserRoutes = require("./routes/userRoutes");
 const moderacionRoutes = require("./routes/moderacionRoutes");
 const publicacionesRoutes = require("./routes/publicacionesRoutes");
 
+const ofertaModeradorRoutes = require("./routes/ofertaModeradorRoutes.js");
 const conferenciaRoutes = require("./routes/conferenciaRoutes");
 
 const app = express();
@@ -63,6 +64,8 @@ app.use("/api/admin/users", adminUserRoutes); // Rutas de administración de usu
 app.use("/api/conferencias", conferenciaRoutes); // Rutas de conferencias
 app.use("/api/moderacion", moderacionRoutes); // Rutas de moderación
 app.use("/api", publicacionesRoutes);
+
+app.use("/api/moderador", ofertaModeradorRoutes); // Rutas de moderador
 
 
 app.use(express.json());

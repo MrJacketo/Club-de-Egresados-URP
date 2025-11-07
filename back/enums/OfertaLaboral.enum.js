@@ -64,6 +64,7 @@ const REQUISITOS = [
   ];
 
 const ESTADO = [ 
+    "Pendiente",
     "Activo",
     "Inactivo"
   ];
