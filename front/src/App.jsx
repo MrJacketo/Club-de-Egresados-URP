@@ -17,7 +17,6 @@ import GestionarMembresia from './pages/Egresado/GestionarMembresia';
 import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
-import ModeradorRoute from './components/ModeradorRoute';
 import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
 import NoticiasPage from "./pages/Egresado/Noticiaspage.jsx";
@@ -37,6 +36,7 @@ import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
 import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
 import GestionForo from './pages/Admin/GestionForo.jsx';
+import ModeradorRoute from './components/ModeradorRoute';
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;

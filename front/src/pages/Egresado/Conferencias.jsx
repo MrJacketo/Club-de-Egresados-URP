@@ -14,6 +14,7 @@ import {
 import {
   getConferenciasDisponibles,
   inscribirseConferencia,
+  getMisInscripciones,
 } from "../../api/conferenciaApi";
 import { useUser } from "../../context/userContext";
 
@@ -48,18 +49,37 @@ export default function Conferencias() {
     fetchConferencias();
   }, []);
 
-  // Categorizar conferencias
-  const destacadas = conferencias.filter((c) => c.destacado === true);
-  const ultimas = conferencias
+  // Cargar inscripciones del usuario
+  useEffect(() => {
+    const fetchInscripciones = async () => {
+      if (user) {
+        try {
+          const inscripciones = await getMisInscripciones();
+          const idsInscritos = inscripciones.map((insc) => insc.conferencia_id._id || insc.conferencia_id);
+          setInscritos(idsInscritos);
+        } catch (error) {
+          console.error("Error al cargar inscripciones:", error);
+        }
+      }
+    };
+
+    fetchInscripciones();
+  }, [user]);
+
+  // Categorizar conferencias (filtrar las que ya está inscrito)
+  const conferenciasFiltradas = conferencias.filter((c) => !inscritos.includes(c._id));
+  
+  const destacadas = conferenciasFiltradas.filter((c) => c.destacado === true);
+  const ultimas = conferenciasFiltradas
     .filter((c) => !c.destacado)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 6);
-  const podriaInteresar = conferencias
+  const podriaInteresar = conferenciasFiltradas
     .filter((c) => !c.destacado && !ultimas.includes(c))
     .slice(0, 6);
 
-  // Todas las conferencias combinadas
-  const todasConferencias = [...conferencias];
+  // Todas las conferencias combinadas (sin las inscritas)
+  const todasConferencias = [...conferenciasFiltradas];
 
   // Filtrar conferencias
   const conferenciasFilteradas = todasConferencias.filter((conf) => {
@@ -578,14 +598,16 @@ export default function Conferencias() {
               </div>
             )}
           </div>
-        ) : conferencias.length === 0 ? (
+        ) : conferenciasFiltradas.length === 0 ? (
           <div className="text-center py-20">
             <CalendarIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               No hay conferencias disponibles
             </h3>
             <p className="text-gray-600">
-              Pronto habrá nuevas conferencias disponibles.
+              {user 
+                ? "Ya estás inscrito en todas las conferencias disponibles o pronto habrá nuevas conferencias."
+                : "Pronto habrá nuevas conferencias disponibles."}
             </p>
           </div>
         ) : (

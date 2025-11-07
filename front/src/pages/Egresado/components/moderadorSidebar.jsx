@@ -1,21 +1,22 @@
 import { Link, useLocation } from "react-router-dom";
 import { 
   ShieldCheck,
-  Users,
-  LogOut,
+  Shield,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Users
 } from "lucide-react";
 import { useContext } from "react";
-import { UserContext } from "../context/userContext";
-import { useAdminSidebar } from "../context/adminSidebarContext";
+import { UserContext } from "../../../context/userContext";
+import { useModeradorSidebar } from "../../../context/moderadorSidebarContext";
 
 export default function ModeradorSidebar() {
   const location = useLocation();
   const { user } = useContext(UserContext);
-  const { collapsed, toggleSidebar } = useAdminSidebar();
+  const { collapsed, toggleSidebar } = useModeradorSidebar();
 
   const handleLogout = () => {
+    // Implementar lógica de logout
     console.log('Cerrando sesión');
   };
   
@@ -24,7 +25,7 @@ export default function ModeradorSidebar() {
       {/* Sidebar */}
       <aside
         className={`group fixed top-[64px] left-0 h-[calc(100vh-64px)] 
-        shadow-xl p-4 z-40 pt-8 bg-[#00BC4F]
+        shadow-xl p-4 z-40 pt-8  bg-gradient-to-b from-green-500 to-teal-500
         transition-all duration-300 flex flex-col justify-between
         ${collapsed ? 'w-20' : 'w-64'}`}
       >
@@ -43,17 +44,17 @@ export default function ModeradorSidebar() {
 
         <nav className="flex flex-col space-y-4 mt-4">
           <Link
-            to="/moderador/usuarios"
+            to="/moderador/gestion-foro"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
-              location.pathname === "/moderador/usuarios"
+              location.pathname === "/moderador/gestion-foro"
                 ? "bg-white! text-green-600! shadow-lg!"
                 : "text-white! hover:bg-white/20!"
             }`}
             style={{ border: 'none' }}
           >
-            <ShieldCheck size={24} />
+            <Shield size={24} />
             <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-              Moderación
+              Moderar Foro
             </span>
           </Link>
 
@@ -77,6 +78,8 @@ export default function ModeradorSidebar() {
           
         </div>
       </aside>
+
+      {/* No incluimos el main aquí ya que este componente es solo la barra lateral */}
     </div>
   );
 }

@@ -13,6 +13,8 @@ import {
 import { useModeracion } from "../../Hooks/useModeracion";
 import AdminSidebar from "../../components/AdminSidebar";
 import { AdminSidebarProvider, useAdminSidebar } from "../../context/adminSidebarContext";
+import ModeradorSidebar from "../Egresado/components/moderadorSidebar";
+import { ModeradorSidebarProvider, useModeradorSidebar } from "../../context/moderadorSidebarContext";
 import FiltrosModeracion from "../../components/moderacion/FiltrosModeracion";
 import ModalDetalleEgresado from "../../components/moderacion/ModalDetalleEgresado";
 import ModalCambiarEstado from "../../components/moderacion/ModalCambiarEstado";
@@ -20,15 +22,15 @@ import ModalCambiarEstado from "../../components/moderacion/ModalCambiarEstado";
 // Componente contenedor con el Provider
 const ModeracionUsuarios = () => {
   return (
-    <AdminSidebarProvider>
+    <ModeradorSidebarProvider>
       <ModeracionUsuariosContent />
-    </AdminSidebarProvider>
+    </ModeradorSidebarProvider>
   );
 };
 
 // Componente principal con acceso al contexto
 const ModeracionUsuariosContent = () => {
-  const { collapsed } = useAdminSidebar();
+  const { collapsed } = useModeradorSidebar();
   
   const {
     egresados,
@@ -85,7 +87,7 @@ const ModeracionUsuariosContent = () => {
 
   return (
     <div className="flex min-h-screen pt-12" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
-      <AdminSidebar />
+      <ModeradorSidebar />
       <div className={`flex-1 transition-all duration-300 py-8 px-8 ${
         collapsed ? "ml-20" : "ml-64"
       }`}>
