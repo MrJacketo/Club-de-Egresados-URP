@@ -8,7 +8,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Shield
+  ShieldCheck,
+  Workflow
 } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
@@ -107,59 +108,37 @@ export default function AdminSidebar() {
             </span>
           </Link>
 
-                  <Link
-                    to="/admin/beneficios"
-                    className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
-                      location.pathname === "/admin/beneficios"
-                        ? "bg-white! text-green-600! shadow-lg!"
-                        : "text-white! hover:bg-white/20!"
-                    }`}
-                  >
-                    <Percent size={24} />
-                    <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
-                      Beneficios
-                    </span>
-                  </Link>
-                  
-                  <Link
-                    to="/admin/gestion-foro"
-                    className={`p-3 rounded-lg flex items-center gap-3 text-gray-700 ${
-                      location.pathname === "/admin/gestion-foro"
-                        ? "bg-white! text-green-600! shadow-lg!"
-                        : "text-white! hover:bg-white/20!"
-                    }`}
-                  >
-                    <Shield size={24} />
-                    <span className={`${collapsed ? 'hidden' : ''} text-sm font-medium`}>
-                      Moderar Foro
-                    </span>
-                  </Link>
-                  
-
-          {/*}
-
           <Link
             to="/admin/beneficios"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
               location.pathname === "/admin/beneficios"
-                ? "text-white! shadow-lg!"
-                : "text-gray-700! hover:bg-green-50! hover:text-green-600!"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
             }`}
-            style={
-              location.pathname === "/admin/beneficios"
-                ? { 
-                    background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
-                    border: 'none'
-                  }
-                : {}
-            }
+            style={{ border: 'none' }}
           >
             <Percent size={24} />
             <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
               Beneficios
             </span>
           </Link>
-          */}
+                  
+                  <Link
+            to="/admin/gestion-ofertas"
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
+              location.pathname === "/admin/gestion-ofertas"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
+            }`}
+            style={{ border: 'none' }}
+          >
+            <Workflow size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
+              Ofertas Laborales
+            </span>
+          </Link>
+
+          
         </nav>
 
         <div className="mt-auto">

@@ -83,16 +83,18 @@ export function UserContextProvider({ children }) {
   };
 
   return (
-    <UserContext.Provider value={{ 
-      user, 
-      userName, 
-      setUser, 
-      login, 
-      register, 
-      logout, 
-      loading,
-      isAuthenticated: auth.isAuthenticated()
-    }}>
+    <UserContext.Provider
+      value={{
+        user,
+        userName,
+        setUser,
+        login,
+        register,
+        logout,
+        loading,
+        isAuthenticated: auth.isAuthenticated(),
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

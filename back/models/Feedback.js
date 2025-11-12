@@ -1,51 +1,84 @@
 const mongoose = require('mongoose');
 
-const comentarioSchema = new mongoose.Schema({
-  autor: {
-    type: String,
-    required: true
+const feedbackSchema = new mongoose.Schema({
+  userId: { 
+    type: String, 
+    required: true 
   },
-  contenido: {
-    type: String,
-    required: true
+  nombreUsuario: { 
+    type: String, 
+    trim: true 
   },
-  fechaCreacion: {
-    type: Date,
-    default: Date.now
+  emailUsuario: { 
+    type: String, 
+    trim: true 
+  },
+  beneficioDeseado: { 
+    type: String, 
+    required: true, 
+    trim: true 
+  },
+  tipoBeneficio: { 
+    type: String, 
+    trim: true 
+  },
+  facultad: { 
+    type: String, 
+    trim: true 
+  },
+  carrera: { 
+    type: String, 
+    trim: true 
+  },
+  fechaPreferida: { 
+    type: Date 
+  },
+  modalidadPreferida: { 
+    type: String, 
+    trim: true 
+  },
+  comentariosAdicionales: { 
+    type: String, 
+    default: '', 
+    trim: true 
+  },
+  estado: { 
+    type: String, 
+    enum: ['solicitado', 'aprobado', 'rechazado'], 
+    default: 'solicitado' 
+  },
+  prioridad: { 
+    type: String, 
+    enum: ['alta', 'media', 'baja'], 
+    default: 'media' 
+  },
+  respuestaAdministrador: { 
+    type: String, 
+    default: '' 
+  },
+  oculto: { 
+    type: Boolean, 
+    default: false 
+  },
+  fechaCreacion: { 
+    type: Date, 
+    default: Date.now 
+  },
+  ultimaActualizacion: { 
+    type: Date, 
+    default: Date.now 
   }
 });
 
-const publicacionSchema = new mongoose.Schema({
-  autor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  contenido: {
-    type: String,
-    required: true
-  },
-  fechaCreacion: {
-    type: Date,
-    default: Date.now
-  },
-  oculto: {
-    type: Boolean,
-    default: false
-  },
-  likes: {
-    type: Number,
-    default: 0
-  },
-  comentarios: [comentarioSchema],
-  imagen: {
-    type: String,
-    default: null
-  },
-  video: {
-    type: String,
-    default: null
-  }
+// Middleware para actualizar la fecha automáticamente
+feedbackSchema.pre('save', function (next) {
+  this.ultimaActualizacion = Date.now();
+  next();
 });
 
-module.exports = mongoose.model('Publicacion', publicacionSchema);
+feedbackSchema.pre('findOneAndUpdate', function (next) {
+  this.set({ ultimaActualizacion: Date.now() });
+  next();
+});
+
+module.exports = mongoose.model('Feedback', feedbackSchema);

@@ -1,27 +1,70 @@
-import { Briefcase, Award, Users, BookOpen, Calendar, CheckCircle, Sparkles, Zap, Star, TrendingUp, ShieldCheck, Loader } from "lucide-react"
+import {
+  Briefcase,
+  Award,
+  Users,
+  BookOpen,
+  Calendar,
+  CheckCircle,
+  Sparkles,
+  Zap,
+  Star,
+  TrendingUp,
+  ShieldCheck,
+  Loader,
+} from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/userContext";
-import { Toaster, toast} from "sonner";
+import { Toaster, toast } from "sonner";
+import { activateMembresiaRequest } from "../../api/membresiaApi";
+import {
+  createSubscriptionRequest,
+  simulatePagoRequest,
+} from "../../api/pagoApi";
 
 const beneficios = [
-  { icon: Briefcase, titulo: "Acceso a Bolsa Laboral Premium", descripcion: "Ofertas exclusivas para egresados de la URP" },
-  { icon: Award, titulo: "Certificaciones Profesionales", descripcion: "Descuento en certificaciones" },
-  { icon: Users, titulo: "Networking Profesional", descripcion: "Eventos con empleadores y alumnos" },
-  { icon: BookOpen, titulo: "Cursos de Especialización", descripcion: "Acceso a cursos profesionales" },
-  { icon: Calendar, titulo: "Asesorías Personalizadas", descripcion: "Optimización de CV y LinkedIn" },
-  { icon: Sparkles, titulo: "Eventos Exclusivos", descripcion: "Acceso prioritario a conferencias y talleres" },
+  {
+    icon: Briefcase,
+    titulo: "Acceso a Bolsa Laboral Premium",
+    descripcion: "Ofertas exclusivas para egresados de la URP",
+  },
+  {
+    icon: Award,
+    titulo: "Certificaciones Profesionales",
+    descripcion: "Descuento en certificaciones",
+  },
+  {
+    icon: Users,
+    titulo: "Networking Profesional",
+    descripcion: "Eventos con empleadores y alumnos",
+  },
+  {
+    icon: BookOpen,
+    titulo: "Cursos de Especialización",
+    descripcion: "Acceso a cursos profesionales",
+  },
+  {
+    icon: Calendar,
+    titulo: "Asesorías Personalizadas",
+    descripcion: "Optimización de CV y LinkedIn",
+  },
+  {
+    icon: Sparkles,
+    titulo: "Eventos Exclusivos",
+    descripcion: "Acceso prioritario a conferencias y talleres",
+  },
 ];
 
 const features = [
   "Acceso inmediato a todos los beneficios",
   "Renovación anual automática",
   "Cancela cuando quieras",
-  "Garantía de devolución en los primeros 14 días"
+  "Garantía de devolución en los primeros 14 días",
 ];
 
 export default function Membresia() {
-  const [loading, setLoading] = useState(false);
+  const [loadingActivation, setLoadingActivation] = useState(false);
+  const [loadingSimulation, setLoadingSimulation] = useState(false);
   const navigate = useNavigate();
   const { user } = useUser();
 
@@ -29,30 +72,35 @@ export default function Membresia() {
     <div className="min-h-screen w-full bg-white text-gray-900 font-sans">
       <Toaster position="bottom-center" richColors />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        
         <div className="mb-8 text-left">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 rounded-full px-4 py-2 mb-4 shadow-lg">
             <Star className="w-4 h-4 text-white fill-white" />
-            <span className="text-white text-sm font-semibold">Oferta Limitada</span>
+            <span className="text-white text-sm font-semibold">
+              Oferta Limitada
+            </span>
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-3 text-left">
             Únete a <span className="text-green-600">URPex</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl text-left">
-            La membresía exclusiva para egresados que impulsa tu crecimiento profesional
+            La membresía exclusiva para egresados que impulsa tu crecimiento
+            profesional
           </p>
         </div>
 
         <div className="mb-12 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 border border-gray-100 p-8 lg:p-12">
-          
           <div className="mb-6">
             <div className="flex items-baseline gap-3 flex-wrap mb-2">
               <span className="text-6xl font-black text-gray-900">S/ 120</span>
-              <span className="text-2xl text-gray-500 line-through">S/ 150</span>
+              <span className="text-2xl text-gray-500 line-through">
+                S/ 150
+              </span>
               <span className="text-green-600 font-semibold text-sm">/año</span>
               <div className="inline-flex items-center gap-2 bg-green-100 rounded-lg px-3 py-1">
                 <Zap className="w-4 h-4 text-green-600" />
-                <span className="text-green-600 font-bold text-sm">Ahorra S/ 30 hoy</span>
+                <span className="text-green-600 font-bold text-sm">
+                  Ahorra S/ 30 hoy
+                </span>
               </div>
             </div>
           </div>
@@ -67,21 +115,59 @@ export default function Membresia() {
           </div>
 
           <button
-            onClick={() => toast.error('Función aun no implementada')}
-            disabled={loading}
+            onClick={async () => {
+              try {
+                setLoadingActivation(true);
+                const response = await createSubscriptionRequest();
+                if (response.init_point) {
+                  window.location.href = response.init_point;
+                } else {
+                  toast.error("No se pudo iniciar el proceso de pago");
+                }
+              } catch (error) {
+                toast.error(error.message || "Error al procesar el pago");
+              } finally {
+                setLoadingActivation(false);
+              }
+            }}
+            disabled={loadingActivation}
             className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-4 px-6 rounded-xl mb-6 transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-2">
+              {loadingActivation ? (
                 <Loader className="animate-spin h-5 w-5" />
-                Procesando...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
+              ) : (
                 <Sparkles className="w-5 h-5" />
-                Activar Membresía
-              </span>
-            )}
+              )}
+              {loadingActivation ? "Procesando..." : "Activar Membresía"}
+              {/*/ MERCADOPAGO NECESITA CUENTAS DE TESTEO /*/}
+            </span>
+          </button>
+
+          <button
+            onClick={async () => {
+              try {
+                setLoadingSimulation(true);
+                await simulatePagoRequest();
+                toast.success("¡Pago simulado con éxito!");
+                setTimeout(() => navigate("/MembresiaCompletada"), 1000); //PARA QUE SE VEA EL TOAST :(
+              } catch (error) {
+                toast.error(error.message || "Error al simular el pago");
+              } finally {
+                setLoadingSimulation(false);
+              }
+            }}
+            disabled={loadingSimulation}
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-4 px-6 rounded-xl mb-6 transform transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            <span className="flex items-center justify-center gap-2">
+              {loadingSimulation ? (
+                <Loader className="animate-spin h-5 w-5" />
+              ) : (
+                <ShieldCheck className="w-5 h-5" />
+              )}
+              {loadingSimulation ? "Procesando..." : "Simular Pago"}
+            </span>
           </button>
 
           <div className="flex items-center justify-center gap-2 text-gray-600 text-xs">
@@ -96,14 +182,19 @@ export default function Membresia() {
               <TrendingUp className="w-10 h-10 text-green-600" />
               Todo lo que incluye
             </h2>
-            <p className="text-xl text-gray-600">Beneficios diseñados para acelerar tu carrera</p>
+            <p className="text-xl text-gray-600">
+              Beneficios diseñados para acelerar tu carrera
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             {beneficios.map((beneficio, idx) => {
               const Icon = beneficio.icon;
               return (
-                <div key={idx} className="group relative bg-white border border-gray-200 hover:border-green-300 hover:shadow-lg rounded-xl p-6 transition-all duration-300 hover:translate-x-2">
+                <div
+                  key={idx}
+                  className="group relative bg-white border border-gray-200 hover:border-green-300 hover:shadow-lg rounded-xl p-6 transition-all duration-300 hover:translate-x-2"
+                >
                   <div className="absolute -left-3 top-6 w-8 h-8 bg-green-600 text-white font-black rounded-full flex items-center justify-center text-sm shadow-lg">
                     {idx + 1}
                   </div>
@@ -115,7 +206,9 @@ export default function Membresia() {
                       <h3 className="text-gray-900 font-bold text-lg mb-1 group-hover:text-green-600 transition-colors">
                         {beneficio.titulo}
                       </h3>
-                      <p className="text-gray-600 text-sm">{beneficio.descripcion}</p>
+                      <p className="text-gray-600 text-sm">
+                        {beneficio.descripcion}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -127,12 +220,17 @@ export default function Membresia() {
             <div className="flex items-start gap-4">
               <div className="flex -space-x-2">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-green-600 border-2 border-white flex items-center justify-center text-white font-semibold text-sm">
+                  <div
+                    key={i}
+                    className="w-10 h-10 rounded-full bg-green-600 border-2 border-white flex items-center justify-center text-white font-semibold text-sm"
+                  >
                     {String.fromCharCode(64 + i)}
                   </div>
                 ))}
               </div>
-              <p className="text-gray-900 font-semibold">Únete a la comunidad más activa de la URP</p>
+              <p className="text-gray-900 font-semibold">
+                Únete a la comunidad más activa de la URP
+              </p>
             </div>
           </div>
         </div>

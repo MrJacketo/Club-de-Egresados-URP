@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AdminSidebar from '../../components/AdminSidebar';
 import { Users, Award, Newspaper, Percent } from "lucide-react";
-import axios from 'axios';
+import apiClient from '../../api/apiClient';
 import { AdminSidebarProvider, useAdminSidebar } from '../../context/adminSidebarContext';
 import { 
   Chart as ChartJS, 
@@ -45,12 +45,20 @@ const AdminDashboardContent = () => {
     totalEgresados: 0,
     egresadosActivos: 0,
     totalMembresias: 0,
-    membresiasPremium: 0,
-    membresiasBasicas: 0,
+    membresiasActivas: 0,
     totalNoticias: 0,
-    totalBeneficios: 0,
-    registrosRecientes: 0
+    totalBeneficios: 0
   });
+  
+  const [membresiasPorEstado, setMembresiasPorEstado] = useState({
+    activas: 0,
+    inactivas: 0,
+    vencidas: 0,
+    pendientes: 0,
+    sinMembresia: 0
+  });
+  
+  const [registrosPorMes, setRegistrosPorMes] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
   
   const [loading, setLoading] = useState(true);
   const [recentEgresados, setRecentEgresados] = useState([]);
@@ -73,39 +81,139 @@ const AdminDashboardContent = () => {
   }, []);
   
   useEffect(() => {
-    // Aquí se cargarían los datos reales desde el backend
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // Para una demo, usamos datos de ejemplo
-        // const response = await axios.get('/api/admin/dashboard');
-        // setStats(response.data.stats);
-        // setRecentEgresados(response.data.recentEgresados);
         
-        // Datos simulados
-        setTimeout(() => {
-          setStats({
-            totalEgresados: 1250,
-            egresadosActivos: 875,
-            totalMembresias: 950,
-            membresiasPremium: 320,
-            membresiasBasicas: 630,
-            totalNoticias: 45,
-            totalBeneficios: 28,
-            registrosRecientes: 68
-          });
-          
-          setRecentEgresados([
-            { id: 1, nombre: 'Christian Saavedra', carrera: 'Ingeniería Informática', fecha: '2024-06-05' },
-            { id: 2, nombre: 'Carlos López', carrera: 'Arquitectura', fecha: '2024-06-04' },
-            { id: 3, nombre: 'María Rodríguez', carrera: 'Medicina', fecha: '2024-06-03' },
-            { id: 4, nombre: 'Luis Gutierrez', carrera: 'Ingeniería Industrial', fecha: '2024-06-02' },
-          ]);
-          
-          setLoading(false);
-        }, 1000);
+        console.log('🔄 Iniciando carga de datos del dashboard...');
+        
+        // 1. OBTENER DATOS DE USUARIOS
+        console.log('📊 Petición 1: GET /api/admin/users');
+        const usersResponse = await apiClient.get('/api/admin/users');
+        console.log('✅ Respuesta usuarios:', usersResponse.data);
+        
+        const totalUsers = usersResponse.data.totalUsers || 0;
+        const activeUsers = usersResponse.data.activeUsers || 0;
+        const activeMembers = usersResponse.data.activeMembers || 0;
+        const todosLosUsuarios = usersResponse.data.users || [];
+        
+        // 2. OBTENER DATOS DE MEMBRESÍAS
+        console.log('📊 Petición 2: GET /api/membresia/getAll');
+        const membresiasResponse = await apiClient.get('/api/membresia/getAll');
+        console.log('✅ Respuesta membresías:', membresiasResponse.data);
+        
+        const todasLasMembresias = membresiasResponse.data || [];
+        const totalMembresias = todasLasMembresias.length;
+        
+        // Contar membresías por estado
+        const conteoEstados = {
+          activas: 0,
+          inactivas: 0,
+          vencidas: 0,
+          pendientes: 0
+        };
+        
+        todasLasMembresias.forEach(membresia => {
+          const estado = (membresia.estado || '').toLowerCase();
+          if (estado === 'activa') conteoEstados.activas++;
+          else if (estado === 'inactiva') conteoEstados.inactivas++;
+          else if (estado === 'vencida') conteoEstados.vencidas++;
+          else if (estado === 'pendiente') conteoEstados.pendientes++;
+        });
+        
+        const sinMembresia = totalUsers - totalMembresias;
+        
+        console.log('📈 Membresías por estado:', conteoEstados);
+        console.log('📉 Sin membresía:', sinMembresia);
+        
+        setMembresiasPorEstado({
+          activas: conteoEstados.activas,
+          inactivas: conteoEstados.inactivas,
+          vencidas: conteoEstados.vencidas,
+          pendientes: conteoEstados.pendientes,
+          sinMembresia: sinMembresia > 0 ? sinMembresia : 0
+        });
+        
+        // 3. OBTENER DATOS DE NOTICIAS
+        console.log('📊 Petición 3: GET /api/noticias');
+        const noticiasResponse = await apiClient.get('/api/noticias');
+        console.log('✅ Respuesta noticias:', noticiasResponse.data);
+        
+        const totalNoticias = noticiasResponse.data.pagination?.totalItems || 0;
+        
+        // 4. OBTENER DATOS DE BENEFICIOS
+        console.log('📊 Petición 4: GET /api/beneficios/ver-beneficios');
+        const beneficiosResponse = await apiClient.get('/api/beneficios/ver-beneficios');
+        console.log('✅ Respuesta beneficios:', beneficiosResponse.data);
+        
+        // Manejar la respuesta correctamente - el backend devuelve { success: true, data: [...] }
+        const todosBeneficios = beneficiosResponse.data?.data || [];
+        const totalBeneficios = Array.isArray(todosBeneficios) ? todosBeneficios.length : 0;
+        
+        // 5. ACTUALIZAR STATS DE LAS CARDS
+        setStats({
+          totalEgresados: totalUsers,
+          egresadosActivos: activeUsers,
+          totalMembresias: totalMembresias,
+          membresiasActivas: conteoEstados.activas,
+          totalNoticias: totalNoticias,
+          totalBeneficios: totalBeneficios
+        });
+        
+        console.log('📊 Stats actualizadas:', {
+          totalEgresados: totalUsers,
+          egresadosActivos: activeUsers,
+          totalMembresias: totalMembresias,
+          membresiasActivas: conteoEstados.activas,
+          totalNoticias: totalNoticias,
+          totalBeneficios: totalBeneficios
+        });
+        
+        // 6. PROCESAR REGISTROS POR MES (GRÁFICO DE LÍNEA)
+        const añoActual = new Date().getFullYear();
+        const registrosPorMesArray = [0,0,0,0,0,0,0,0,0,0,0,0];
+        
+        todosLosUsuarios.forEach(usuario => {
+          if (usuario.createdAt) {
+            const fechaCreacion = new Date(usuario.createdAt);
+            const añoCreacion = fechaCreacion.getFullYear();
+            
+            if (añoCreacion === añoActual) {
+              const mes = fechaCreacion.getMonth();
+              registrosPorMesArray[mes]++;
+            }
+          }
+        });
+        
+        console.log('📅 Registros por mes (2025):', registrosPorMesArray);
+        setRegistrosPorMes(registrosPorMesArray);
+        
+        // 7. PROCESAR REGISTROS RECIENTES (TABLA)
+        const usuariosOrdenados = todosLosUsuarios
+          .filter(usuario => usuario.createdAt) // Solo usuarios con fecha
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5);
+        
+        const registrosRecientesFormateados = usuariosOrdenados.map(usuario => ({
+          id: usuario._id,
+          nombre: usuario.name || 'Sin nombre',
+          carrera: usuario.carrera || 'Sin carrera',
+          fecha: usuario.createdAt
+        }));
+        
+        console.log('📋 Registros recientes:', registrosRecientesFormateados);
+        setRecentEgresados(registrosRecientesFormateados);
+        
+        console.log('✅ ¡Datos del dashboard cargados exitosamente!');
+        setLoading(false);
+        
       } catch (error) {
-        console.error('Error al cargar datos del dashboard:', error);
+        console.error('❌ Error al cargar datos del dashboard:', error);
+        console.error('Detalles del error:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
         setLoading(false);
       }
     };
@@ -127,14 +235,22 @@ const AdminDashboardContent = () => {
   
   // Datos para gráfica de dona - Tipos de membresías
   const membresiasData = {
-    labels: ['Premium', 'Básica', 'Sin membresía'],
+    labels: ['Activa', 'Inactiva', 'Vencida', 'Pendiente', 'Sin Membresía'],
     datasets: [
       {
-        data: [stats.membresiasPremium, stats.membresiasBasicas, stats.totalEgresados - stats.totalMembresias],
+        data: [
+          membresiasPorEstado.activas,
+          membresiasPorEstado.inactivas,
+          membresiasPorEstado.vencidas,
+          membresiasPorEstado.pendientes,
+          membresiasPorEstado.sinMembresia
+        ],
         backgroundColor: [
-          'rgba(255, 99, 132, 0.5)',
-          'rgba(54, 162, 235, 0.5)',
-          'rgba(255, 206, 86, 0.5)',
+          'rgba(34, 197, 94, 0.6)',   // Verde - Activa
+          'rgba(156, 163, 175, 0.5)', // Gris - Inactiva
+          'rgba(239, 68, 68, 0.5)',   // Rojo - Vencida
+          'rgba(251, 191, 36, 0.5)',  // Amarillo - Pendiente
+          'rgba(59, 130, 246, 0.5)',  // Azul - Sin membresía
         ],
         borderWidth: 1,
       },
@@ -143,11 +259,11 @@ const AdminDashboardContent = () => {
   
   // Datos para gráfica de línea - Registros mensuales
   const registrosMensualesData = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
     datasets: [
       {
         label: 'Nuevos registros',
-        data: [65, 59, 80, 81, 56, 68],
+        data: registrosPorMes,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.5)',
         tension: 0.3,
@@ -235,7 +351,7 @@ const AdminDashboardContent = () => {
                     <Award size={32} className="text-purple-400" />
                   </div>
                   <div className="px-2.5 py-1 rounded-full bg-purple-500/20 backdrop-blur-sm">
-                    <span className="text-xs font-bold text-purple-300 tracking-wider">PREMIUM</span>
+                    <span className="text-xs font-bold text-purple-300 tracking-wider">ACTIVAS</span>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -245,12 +361,12 @@ const AdminDashboardContent = () => {
                     <div className="flex-1 h-2.5 bg-purple-100 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-gradient-to-r from-purple-400 to-purple-500 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.round((stats.membresiasPremium/stats.totalMembresias)*100)}%` }}
+                        style={{ width: `${stats.totalMembresias > 0 ? Math.round((stats.membresiasActivas/stats.totalMembresias)*100) : 0}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm font-bold text-purple-600">{Math.round((stats.membresiasPremium/stats.totalMembresias)*100)}%</span>
+                    <span className="text-sm font-bold text-purple-600">{stats.totalMembresias > 0 ? Math.round((stats.membresiasActivas/stats.totalMembresias)*100) : 0}%</span>
                   </div>
-                  <p className="text-xs text-gray-600 pt-0.5">{stats.membresiasPremium} premium</p>
+                  <p className="text-xs text-gray-600 pt-0.5">{stats.membresiasActivas} activas</p>
                 </div>
                 </div>
               </div>

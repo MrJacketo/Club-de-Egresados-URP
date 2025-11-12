@@ -69,8 +69,9 @@ const getOferta = async (req, res) => {
 // Obtener todas las ofertas laborales
 const getOfertas = async (req, res) => {
   try {
-    const ofertas = await OfertaLaboral.find({ estado: "Activo" });  // Obtener todas las ofertas laborales
-    res.json(ofertas);  // Devolver las ofertas
+    // Solo mostrar ofertas que estén activas Y aprobadas
+    const ofertas = await OfertaLaboral.find({ estado: "Activo", aprobado: true });
+    res.json(ofertas);
   } catch (error) {
     console.error('Error obteniendo las ofertas laborales:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
