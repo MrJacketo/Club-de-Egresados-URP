@@ -1,7 +1,7 @@
 // src/pages/Admin/GestionForo.jsx
 import React, { useState } from 'react';
-import AdminSidebar from '../../components/AdminSidebar';
-import { AdminSidebarProvider, useAdminSidebar } from '../../context/adminSidebarContext';
+import ModeradorSidebar from '../Egresado/components/moderadorSidebar';
+import { ModeradorSidebarProvider, useModeradorSidebar } from '../../context/moderadorSidebarContext';
 import ModalRevisarPost from "../../components/ModeracionForo/ModalRevisarPost";
 import ModalRevisarReportes from "../../components/ModeracionForo/ModalRevisarReportes";
 import AccionesRapidas from "../../components/ModeracionForo/AccionesRapidas";
@@ -110,7 +110,7 @@ const datosReportes = [
 
 // Componente interno que usa el contexto
 const GestionForoContent = () => {
-  const { collapsed } = useAdminSidebar();
+  const { collapsed } = useModeradorSidebar();
   const { mostrarAlerta } = useAlerta();
   
   // Estados principales
@@ -278,7 +278,7 @@ const GestionForoContent = () => {
       className="flex min-h-screen pt-12"
       style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}
     >
-      <AdminSidebar />
+      <ModeradorSidebar />
       
       <div className={`flex-1 transition-all duration-300 px-8 py-8 ${collapsed ? 'ml-20' : 'ml-64'}`}>
         
@@ -643,9 +643,9 @@ const GestionForoContent = () => {
 // Componente principal
 const GestionForo = () => {
   return (
-    <AdminSidebarProvider>
+    <ModeradorSidebarProvider>
       <GestionForoContent />
-    </AdminSidebarProvider>
+    </ModeradorSidebarProvider>
   );
 };
 

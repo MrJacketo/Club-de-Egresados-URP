@@ -115,13 +115,13 @@ function App() {
           <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin /></AdminRoute>} />
           <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin /></AdminRoute>} />
           <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias /></AdminRoute>} />
-          <Route path="/admin/gestion-foro" element={<AdminRoute><GestionForo /></AdminRoute>} />
           <Route path="/admin/gestion-ofertas" element={<AdminRoute><AdminOfertas /></AdminRoute>} />
 
           {/* Rutas de moderador */}
           <Route path="/moderador/usuarios" element={<ModeradorRoute><ModeracionUsuarios /></ModeradorRoute>} />
           <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
           <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
+          <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
 
 
         </Routes>

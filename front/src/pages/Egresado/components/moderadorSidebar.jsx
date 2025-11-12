@@ -79,6 +79,22 @@ export default function ModeradorSidebar() {
             </span>
           </Link>
 
+          {/* Gestionar Foro */}
+          <Link
+            to="/moderador/foro"
+            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
+              location.pathname === "/moderador/foro"
+                ? "bg-white! text-green-600! shadow-lg!"
+                : "text-white! hover:bg-white/20!"
+            }`}
+            style={{ border: 'none' }}
+          >
+            <Shield size={24} />
+            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
+              Gestionar Foro
+            </span>
+          </Link>
+
           {/* Usuarios */}
           <Link
             to="/moderador/usuarios"
