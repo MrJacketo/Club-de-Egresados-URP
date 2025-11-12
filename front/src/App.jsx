@@ -53,21 +53,21 @@ function App() {
       <div className="relative pt-16 transition-all duration-300 min-h-screen w-full bg-gray-130">
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/register' element={<Register/>} />
+          <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/beneficios' element={<Beneficios/>} />  
-          <Route path='/membresia' element={<Membresia/>} /> 
-          <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
-          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />    
-          <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta/></PrivateRoute>} />
-          <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas/></PrivateRoute>} />  
-          <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia/></PrivateRoute>} />
+          <Route path='/beneficios' element={<Beneficios />} />
+          <Route path='/membresia' element={<Membresia />} />
+          <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado /></PrivateRoute>} />
+          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm /></PrivateRoute>} />
+          <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta /></PrivateRoute>} />
+          <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas /></PrivateRoute>} />
+          <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia /></PrivateRoute>} />
           <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
           <Route path='/noticias' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
-          <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
-          <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta/></PrivateRoute>} />
-          <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
-          
+          <Route path='/noticias/:id' element={<PrivateRoute><NoticiaDetalle /></PrivateRoute>} />
+          <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta /></PrivateRoute>} />
+          <Route path="/MembresiaCompletada" element={<MembresiaSucess />} />
+
           {/* RUTA DEL FORO CON ESTILOS ESPECIALES */}
           <Route
             path="/foro-egresados"
@@ -107,23 +107,23 @@ function App() {
           <Route path="/beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/ver-beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
 
-          
+
 
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-          <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
-          <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
-          <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
-          <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
-          <Route path="/admin/gestion-foro" element={<AdminRoute><GestionForo/></AdminRoute>} />
-          <Route path="/admin/gestion-ofertas" element={<AdminRoute><AdminOfertas/></AdminRoute>} />
+          <Route path='/admin/egresados' element={<AdminRoute><AdminUsers /></AdminRoute>} />
+          <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin /></AdminRoute>} />
+          <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin /></AdminRoute>} />
+          <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias /></AdminRoute>} />
+          <Route path="/admin/gestion-foro" element={<AdminRoute><GestionForo /></AdminRoute>} />
+          <Route path="/admin/gestion-ofertas" element={<AdminRoute><AdminOfertas /></AdminRoute>} />
 
           {/* Rutas de moderador */}
           <Route path="/moderador/usuarios" element={<ModeradorRoute><ModeracionUsuarios /></ModeradorRoute>} />
           <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
           <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
-          
-           
+
+
         </Routes>
         <Footer />
       </div>
