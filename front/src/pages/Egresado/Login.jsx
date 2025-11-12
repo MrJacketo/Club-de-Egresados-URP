@@ -44,6 +44,9 @@ export default function Login() {
       if (response.user.rol === "admin") {
         navigate("/admin");
         toast.success("Bienvenido, Administrador");
+      } else if (response.user.rol === "moderador") {
+        navigate("/moderador");
+        toast.success("Bienvenido, Moderador");
       } else {
         try {
           const profileResponse = await getGraduateProfileRequest();

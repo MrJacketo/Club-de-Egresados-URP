@@ -1,17 +1,26 @@
+import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useUser } from '../context/userContext';
+import { UserContext } from '../context/userContext';
 
 const ModeradorRoute = ({ children }) => {
-  const { user } = useUser();
+  const { user, loading } = useContext(UserContext);
 
-  // Si no hay usuario, redirigir al login
-  if (!user) {
-    return <Navigate to="/login" />;
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-4 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-semibold">Verificando acceso...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Solo permitir acceso a moderadores y admins
-  if (user.rol !== 'moderador' && user.rol !== 'admin') {
-    return <Navigate to="/welcome-egresado" />;
+  // Check if user is authenticated and is moderador or admin
+  // Admin también puede acceder a rutas de moderador
+  if (!user || (user.rol !== 'moderador' && user.rol !== 'admin')) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

@@ -146,7 +146,8 @@ const AdminDashboardContent = () => {
         const beneficiosResponse = await apiClient.get('/api/beneficios/ver-beneficios');
         console.log('✅ Respuesta beneficios:', beneficiosResponse.data);
         
-        const todosBeneficios = beneficiosResponse.data || [];
+        // Manejar la respuesta correctamente - el backend devuelve { success: true, data: [...] }
+        const todosBeneficios = beneficiosResponse.data?.data || [];
         const totalBeneficios = Array.isArray(todosBeneficios) ? todosBeneficios.length : 0;
         
         // 5. ACTUALIZAR STATS DE LAS CARDS

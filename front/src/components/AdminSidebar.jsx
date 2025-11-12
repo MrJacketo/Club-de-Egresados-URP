@@ -9,7 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  Shield
+  Workflow
 } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
@@ -123,38 +123,22 @@ export default function AdminSidebar() {
             </span>
           </Link>
                   
-          <Link
-            to="/admin/gestion-foro"
+                  <Link
+            to="/admin/gestion-ofertas"
             className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
-              location.pathname === "/admin/gestion-foro"
+              location.pathname === "/admin/gestion-ofertas"
                 ? "bg-white! text-green-600! shadow-lg!"
                 : "text-white! hover:bg-white/20!"
             }`}
             style={{ border: 'none' }}
           >
-            <Shield size={24} />
+            <Workflow size={24} />
             <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-              Moderar Foro
+              Ofertas Laborales
             </span>
           </Link>
 
-          {/* Moderación - visible para admin y moderador */}
-          {(user?.rol === 'admin' || user?.rol === 'moderador') && (
-            <Link
-              to="/moderador/usuarios"
-              className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
-                location.pathname === "/moderador/usuarios"
-                  ? "bg-white! text-green-600! shadow-lg!"
-                  : "text-white! hover:bg-white/20!"
-              }`}
-              style={{ border: 'none' }}
-            >
-              <ShieldCheck size={24} />
-              <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-                Moderación
-              </span>
-            </Link>
-          )}
+          
         </nav>
 
         <div className="mt-auto">

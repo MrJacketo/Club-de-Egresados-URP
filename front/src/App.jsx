@@ -17,7 +17,6 @@ import GestionarMembresia from './pages/Egresado/GestionarMembresia';
 import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
-import ModeradorRoute from './components/ModeradorRoute';
 import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
 import NoticiasPage from "./pages/Egresado/Noticiaspage.jsx";
@@ -37,7 +36,10 @@ import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
 import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
 import GestionForo from './pages/Admin/GestionForo.jsx';
-
+import ModeradorRoute from './components/ModeradorRoute';
+import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
+import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
+import AdminOfertas from './pages/Admin/AdminOfertas.jsx';
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -51,21 +53,21 @@ function App() {
       <div className="relative pt-16 transition-all duration-300 min-h-screen w-full bg-gray-130">
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/register' element={<Register/>} />
+          <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/beneficios' element={<Beneficios/>} />  
-          <Route path='/membresia' element={<Membresia/>} /> 
-          <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado/></PrivateRoute>} />
-          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm/></PrivateRoute>} />    
-          <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta/></PrivateRoute>} />
-          <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas/></PrivateRoute>} />  
-          <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia/></PrivateRoute>} />
+          <Route path='/beneficios' element={<Beneficios />} />
+          <Route path='/membresia' element={<Membresia />} />
+          <Route path='/welcome-egresado' element={<PrivateRoute><WelcomeEgresado /></PrivateRoute>} />
+          <Route path='/perfil-egresado-form' element={<PrivateRoute><PerfilEgresadoForm /></PrivateRoute>} />
+          <Route path='/guardar-oferta' element={<PrivateRoute><GuardarOferta /></PrivateRoute>} />
+          <Route path='/gestion-oferta' element={<PrivateRoute><GestionOfertas /></PrivateRoute>} />
+          <Route path="/VerMembresia" element={<PrivateRoute><GestionarMembresia /></PrivateRoute>} />
           <Route path='/feedback' element={<PrivateRoute><Feedback /></PrivateRoute>} />
           <Route path='/noticias' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
-          <Route path='/noticias/:id' element={<PrivateRoute><NoticiasPage /></PrivateRoute>} />
-          <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta/></PrivateRoute>} />
-          <Route path="/MembresiaCompletada" element={<MembresiaSucess/>} />
-          
+          <Route path='/noticias/:id' element={<PrivateRoute><NoticiaDetalle /></PrivateRoute>} />
+          <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta /></PrivateRoute>} />
+          <Route path="/MembresiaCompletada" element={<MembresiaSucess />} />
+
           {/* RUTA DEL FORO CON ESTILOS ESPECIALES */}
           <Route
             path="/foro-egresados"
@@ -105,19 +107,23 @@ function App() {
           <Route path="/beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/ver-beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
 
-          
+
 
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-          <Route path='/admin/egresados' element={<AdminRoute><AdminUsers/></AdminRoute>} />        
-          <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin/></AdminRoute>} />
-          <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin/></AdminRoute>} />
-          <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias/></AdminRoute>} />
-          <Route path="/admin/gestion-foro" element={<AdminRoute><GestionForo/></AdminRoute>} />
+          <Route path='/admin/egresados' element={<AdminRoute><AdminUsers /></AdminRoute>} />
+          <Route path="/admin/membresias" element={<AdminRoute><GestionMembresiaAdmin /></AdminRoute>} />
+          <Route path="/admin/beneficios" element={<AdminRoute><GestionBeneficiosAdmin /></AdminRoute>} />
+          <Route path='/admin/gestion-noticias' element={<AdminRoute><GestionNoticias /></AdminRoute>} />
+          <Route path="/admin/gestion-ofertas" element={<AdminRoute><AdminOfertas /></AdminRoute>} />
 
           {/* Rutas de moderador */}
           <Route path="/moderador/usuarios" element={<ModeradorRoute><ModeracionUsuarios /></ModeradorRoute>} />
-           
+          <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
+          <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
+          <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
+
+
         </Routes>
         <Footer />
       </div>
