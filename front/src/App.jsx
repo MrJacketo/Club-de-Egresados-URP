@@ -40,6 +40,8 @@ import ModeradorRoute from './components/ModeradorRoute';
 import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
 import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
 import AdminOfertas from './pages/Admin/AdminOfertas.jsx';
+import IncidentDashboard from "./pages/Moderador/IncidentDashboard.jsx";
+
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -122,8 +124,7 @@ function App() {
           <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
           <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
           <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
-
-
+          <Route path="/moderador/Incidencias" element={<ModeradorRoute><IncidentDashboard /></ModeradorRoute>} />
         </Routes>
         <Footer />
       </div>
