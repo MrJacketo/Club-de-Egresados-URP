@@ -40,6 +40,8 @@ import ModeradorRoute from './components/ModeradorRoute';
 import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
 import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
 import AdminOfertas from './pages/Admin/AdminOfertas.jsx';
+import InspectorLaboralRoute from './components/InspectorLaboralRoute';
+import InspeccionLaboral from './pages/InspectorLaboral/InspeccionLaboral.jsx';
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -123,6 +125,8 @@ function App() {
           <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
           <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
 
+          {/* Rutas de inspector laboral */}
+          <Route path="/inspector-laboral" element={<InspectorLaboralRoute><InspeccionLaboral /></InspectorLaboralRoute>} />
 
         </Routes>
         <Footer />
