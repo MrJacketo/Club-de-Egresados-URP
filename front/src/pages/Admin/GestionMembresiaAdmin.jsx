@@ -17,18 +17,7 @@ const estadoConfig = {
   inactiva: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, iconColor: 'text-yellow-600' }
 };
 
-const handleEliminar = async (firebaseUid) => {
-  if (confirm("¿Estás seguro de que deseas eliminar esta membresía?")) {
-    try {
-      await eliminarMembresiaAdmin(firebaseUid);
-      alert("Membresía eliminada correctamente.");
-      await cargarMembresias(); // vuelve a cargar la lista actualizada
-    } catch (error) {
-      console.error(error);
-      alert("Ocurrió un error al eliminar la membresía.");
-    }
-  }
-};
+
 // Componentes
 const EstadisticaCard = ({ titulo, valor, icon: Icon, color = "blue", extra }) => (
   <div className="bg-white rounded-lg p-6 shadow-sm border">
@@ -70,11 +59,11 @@ const BarraProgreso = ({ usado = 0, total = 5 }) => {
   );
 };
 
-const FilaMembresia = ({ membresia, onVerDetalles, onEditarDetalles }) => {
+const FilaMembresia = ({ membresia, onVerDetalles, onEditarDetalles, onEliminar }) => {
   const diasRestantes = calcularDiasRestantes(membresia.fechaVencimiento);
   
   return (
-    <tr className="hover:bg-gray-50">
+    <tr className="hover:bg-green-50 transition-colors duration-200">
       <td className="px-4 py-4 whitespace-nowrap max-w-[200px]">
         <div className="truncate">
           <div className="text-sm font-medium text-gray-900 truncate">{membresia.usuario?.nombre}</div>
@@ -105,27 +94,27 @@ const FilaMembresia = ({ membresia, onVerDetalles, onEditarDetalles }) => {
         S/ {membresia.precio || 0}
       </td>
       <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-3">
           <button 
             onClick={() => onVerDetalles(membresia)} 
-            className="text-teal-600 hover:text-teal-900 p-1"
+            className="bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 p-3 rounded-xl transition-all duration-200 border border-green-200 hover:border-green-300 hover:shadow-md"
             title="Ver detalles"
           >
-            <Eye size={14} />
+            <Eye size={18} />
           </button>
           <button 
             onClick={() => onEditarDetalles(membresia)} 
-            className="text-blue-600 hover:text-blue-900 p-1"
+            className="bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 p-3 rounded-xl transition-all duration-200 border border-blue-200 hover:border-blue-300 hover:shadow-md"
             title="Editar"
           >
-            <Edit3 size={14} />
+            <Edit3 size={18} />
           </button>
           <button
-            onClick={() => handleEliminar(membresia.usuario.codigo)}
-            className="text-red-600 hover:text-red-900 p-1"
+            onClick={() => onEliminar(membresia.usuario.codigo)}
+            className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 p-3 rounded-xl transition-all duration-200 border border-red-200 hover:border-red-300 hover:shadow-md"
             title="Eliminar"
           >
-            <Trash2 size={14} />
+            <Trash2 size={18} />
           </button>
         </div>
       </td>
@@ -244,22 +233,22 @@ const Paginacion = ({ paginaActual, totalPaginas, onCambioPagina, totalItems, it
   const fin = Math.min(paginaActual * itemsPorPagina, totalItems);
   
   return (
-    <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <p className="text-sm text-gray-700">
-          Mostrando <span className="font-medium">{inicio}</span> a{' '}
-          <span className="font-medium">{fin}</span> de{' '}
-          <span className="font-medium">{totalItems}</span> resultados
+    <div className="bg-white px-6 py-4 flex items-center justify-between border-t border-gray-200 rounded-b-2xl">
+      <div className="flex-1 flex items-center justify-between">
+        <p className="text-sm text-gray-700 font-medium">
+          Mostrando <span className="font-bold text-green-600">{inicio}</span> a{' '}
+          <span className="font-bold text-green-600">{fin}</span> de{' '}
+          <span className="font-bold text-green-600">{totalItems}</span> resultados
         </p>
-        <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+        <nav className="relative z-0 inline-flex rounded-lg shadow-sm -space-x-px">
           {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((pagina) => (
             <button
               key={pagina}
               onClick={() => onCambioPagina(pagina)}
-              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-all duration-200 ${
                 pagina === paginaActual
-                  ? 'z-10 bg-teal-50 border-teal-500 text-teal-600'
-                  : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                  ? 'z-10 bg-gradient-to-r from-green-500 to-teal-500 border-green-500 text-white'
+                  : 'bg-white border-gray-300 text-gray-500 hover:bg-green-50 hover:text-green-600 hover:border-green-300'
               }`}
             >
               {pagina}
@@ -356,6 +345,20 @@ const GestionMembresiaAdmin = () => {
     setMostrarModal(false);
     setMembresiaSeleccionada(null);
   };
+
+  const handleEliminar = async (firebaseUid) => {
+    if (confirm("¿Estás seguro de que deseas eliminar esta membresía?")) {
+      try {
+        await eliminarMembresiaAdmin(firebaseUid);
+        alert("Membresía eliminada correctamente.");
+        await handleActualizarDatos(); // vuelve a cargar la lista actualizada
+      } catch (error) {
+        console.error(error);
+        alert("Ocurrió un error al eliminar la membresía.");
+      }
+    }
+  };
+
   const calcularEstadisticas = (data) => {
     const total = data.length;
     const activas = data.filter(m => m.estado === 'activa').length;
@@ -479,83 +482,100 @@ const handleExportar = () => {
   }
 
   return (
-    <div className="flex min-h-screen" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+    <div className="flex min-h-screen pt-12" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
       <AdminSidebar />
-      <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'} overflow-auto h-screen`}>
-        <div className="max-w-[1644px] mx-auto px-8 py-10 relative">
+      <div className={`flex-1 transition-all duration-300 py-8 px-8 ${collapsed ? 'ml-20' : 'ml-64'} overflow-auto h-screen`}>
+        <div className="max-w-[1644px] mx-auto relative">
           {/* Header */}
-<div className="mb-8">
-  <div className="flex justify-between items-center mb-6">
-    <h1 className="text-5xl font-bold mb-2">
-      <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
-        Gestión de Membresías
-      </span>
-    </h1>
-    <div className="flex gap-4">
-      <button 
-        onClick={handleExportar}
-        disabled={loadingExport || loadingDatos}
-        className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
-        style={{ 
-          background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
-          border: 'none'
-        }}
-        title={`Exportar ${membresiasFiltradas.length} registros`}
-      >
-        {loadingExport ? (
-          <>
-            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
-            Exportando
-          </>
-        ) : (
-          <>
-            <Download size={20} className="mr-2" />
-            Exportar
-          </>
-        )}
-      </button>
-      <button
-        onClick={handleActualizarDatos}
-        disabled={loadingDatos}
-        className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{ 
-          background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
-          border: 'none'
-        }}
-      >
-        <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
-        Actualizar
-      </button>
-    </div>
-  </div>
-</div>
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h1 className="text-5xl! font-bold! mb-2!">
+                    <span className="bg-gradient-to-r! from-green-500! to-teal-500! bg-clip-text! text-transparent!">
+                      Gestión de Membresías
+                    </span>
+                  </h1>
+                  <div className="flex gap-4">
+                    <button 
+                      onClick={handleExportar}
+                      disabled={loadingExport || loadingDatos}
+                      className="flex items-center px-6 py-3 text-white rounded-full font-bold transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px] justify-center"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #16a34a, #14b8a6)',
+                        border: 'none'
+                      }}
+                      title={`Exportar ${membresiasFiltradas.length} registros`}
+                    >
+                      {loadingExport ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                          Exportando
+                        </>
+                      ) : (
+                        <>
+                          <Download size={20} className="mr-2" />
+                          Exportar
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={handleActualizarDatos}
+                      disabled={loadingDatos}
+                      className="flex items-center px-6 py-3 border-2 border-[#00BC4F] text-[#00BC4F] font-semibold rounded-2xl hover:bg-[#00BC4F]/10"
+                    >
+                      <RefreshCw size={20} className={`mr-2 ${loadingDatos ? 'animate-spin' : ''}`} />
+                      Actualizar
+                    </button>
+                  </div>
+                </div>
+              </div>
+               </div>
 
           {/* Estadísticas */}
-<div className="grid grid-cols-4 gap-6 mb-12">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
   <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div className="flex items-center justify-between mb-4">
+      <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-xl">
+        <Users className="w-8 h-8 text-white" />
+      </div>
+    </div>
     <p className="text-gray-500 text-sm font-medium mb-1">Total Membresías</p>
     <p className="text-4xl font-bold text-gray-800">{estadisticas.totalMembresias || 0}</p>
   </div>
 
   <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-    <p className="text-gray-500 text-sm font-medium mb-1">Activas</p>
+    <div className="flex items-center justify-between mb-4">
+      <div className="bg-green-100 p-4 rounded-xl">
+        <CheckCircle className="w-8 h-8 text-green-600" />
+      </div>
+    </div>
+    <p className="text-gray-500 text-sm font-medium mb-1">Membresías Activas</p>
     <p className="text-4xl font-bold text-gray-800">{estadisticas.membresiasActivas || 0}</p>
   </div>
 
   <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div className="flex items-center justify-between mb-4">
+      <div className="bg-red-100 p-4 rounded-xl">
+        <AlertTriangle className="w-8 h-8 text-red-600" />
+      </div>
+    </div>
     <p className="text-gray-500 text-sm font-medium mb-1">Vencidas / Inactivas</p>
     <p className="text-4xl font-bold text-gray-800">{estadisticas.membresiasInactivas || 0}</p>
   </div>
 
   <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div className="flex items-center justify-between mb-4">
+      <div className="bg-blue-100 p-4 rounded-xl">
+        <DollarSign className="w-8 h-8 text-blue-600" />
+      </div>
+    </div>
     <p className="text-gray-500 text-sm font-medium mb-1">Ingresos Mensuales</p>
-    <p className="text-3xl font-bold text-gray-800">S/. {estadisticas.ingresosMensuales.toLocaleString()}</p>
+    <p className="text-4xl font-bold text-gray-800">S/. {estadisticas.ingresosMensuales.toLocaleString()}</p>
   </div>
 </div>
 
 
          {/* Filtros */}
-<div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 mb-8">
+<div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
     <div className="relative w-[400px]">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -567,7 +587,7 @@ const handleExportar = () => {
           setFiltros(prev => ({ ...prev, busqueda: e.target.value }));
           setPaginaActual(1);
         }}
-        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 bg-white"
       />
     </div>
 <div className="ml-[-20px]"></div>
@@ -577,7 +597,7 @@ const handleExportar = () => {
         setFiltros(prev => ({ ...prev, estado: e.target.value }));
         setPaginaActual(1);
       }}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 bg-white"
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 bg-white"
     >
       <option value="todos">Todos los estados</option>
       <option value="activa">Activas</option>
@@ -593,17 +613,17 @@ const handleExportar = () => {
           {/* Tabla */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
   <table className="w-full">
-    <thead className="bg-gray-50">
+    <thead className="bg-gradient-to-r from-green-500 to-teal-500 text-white">
       <tr>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beneficios</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Usuario</th>
+        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Estado</th>
+        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Fechas</th>
+        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Beneficios</th>
+        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Precio</th>
+        <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wider">Acciones</th>
       </tr>
     </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 bg-white">
                   {membresiasActuales.length > 0 ? (
                     membresiasActuales.map((membresia) => (
                       <FilaMembresia
@@ -611,6 +631,7 @@ const handleExportar = () => {
                         membresia={membresia}
                         onVerDetalles={handleVerDetalles}
                         onEditarDetalles={handleEditar}
+                        onEliminar={handleEliminar}
                       />
                     ))
                   ) : (
@@ -633,7 +654,6 @@ const handleExportar = () => {
               />
             )}
           </div>
-        </div>
 
         <ModalDetalles
           membresia={membresiaSeleccionada}

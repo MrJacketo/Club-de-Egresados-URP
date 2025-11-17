@@ -4,14 +4,13 @@ const Membresia = require("../models/Membresia.js");
 const mercadopago = require("mercadopago");
 
 const config = new mercadopago.MercadoPagoConfig({
-    accessToken: "APP_USR-7882162770540444-050618-87ccb203c08fabd550b498e4ccb6ae72-2428020760", //test access token from Vendedor
-    
+  accessToken:
+    "APP_USR-7882162770540444-050618-87ccb203c08fabd550b498e4ccb6ae72-2428020760", //test access token from Vendedor
 });
 
 const handleSubscription = async (req, res) => {
-
-    try {
-      /*/ PARA DATOS REALES DEL USER
+  try {
+    /*/ PARA DATOS REALES DEL USER
       const userId = req.user._id; // Changed from firebaseUid
       const usuario = await Usuario.findById(userId); // Changed to findById
 
@@ -19,30 +18,31 @@ const handleSubscription = async (req, res) => {
         return res.status(404).json({ error: "Usuario no encontrado o sin email" });
       }
       /*/
-        const preApproval = new mercadopago.PreApproval(config);
-        const newSubscriber = await preApproval.create({
-            body: {
-                payer_email: "test_user_1757711752@testuser.com",//usuario.email, PARA DATOS REALES | CAMBIAR TEST PARA LOCAL
-                auto_recurring: {
-                    frequency: 12,
-                    frequency_type: "months",
-                    transaction_amount: 150,
-                    currency_id: "PEN"
-                },                reason: "Subscripcion anual",
-                back_url: "https://1f8f-38-25-16-212.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
-                notification_url: "https://3e24-38-25-16-212.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
-                external_reference: req.user._id.toString() // Changed from firebaseUid to _id
-            }
-        });
+    const preApproval = new mercadopago.PreApproval(config);
+    const newSubscriber = await preApproval.create({
+      body: {
+        payer_email: "test_user_1757711752@testuser.com", //usuario.email, PARA DATOS REALES | CAMBIAR TEST PARA LOCAL
+        auto_recurring: {
+          frequency: 12,
+          frequency_type: "months",
+          transaction_amount: 150,
+          currency_id: "PEN",
+        },
+        reason: "Subscripcion anual",
+        back_url: "https://6f3a56cb51cf.ngrok-free.app/MembresiaCompletada", // USADO ANTES CON LOCAL TUNNEL, VOLATIL
+        notification_url: "3250b968b77e.ngrok-free.app/api/pago/webhook", //NGROK, VOLATIL VERIFICAR EN WEBHOOK DEL VENDEDOR
+        auto_return: "approved",
+        external_reference: req.user._id.toString(), // Changed from firebaseUid to _id
+      },
+    });
 
-        console.log("Respuesta de MercadoPago:", newSubscriber);
-        res.status(200).json({ init_point: newSubscriber.init_point });
-    } catch (error) {
-        console.error("Error al crear suscripción:", error);
-        res.status(500).json({ error: "Error al crear suscripción" });
-    }
+    console.log("Respuesta de MercadoPago:", newSubscriber);
+    res.status(200).json({ init_point: newSubscriber.init_point });
+  } catch (error) {
+    console.error("Error al crear suscripción:", error);
+    res.status(500).json({ error: "Error al crear suscripción" });
+  }
 };
-
 
 const handleWebhook = async (req, res) => {
   const event = req.body;
@@ -64,20 +64,24 @@ const handleWebhook = async (req, res) => {
             {
               estado: "activa",
               fechaActivacion: new Date(),
-              fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+              fechaVencimiento: new Date(
+                new Date().setFullYear(new Date().getFullYear() + 1)
+              ),
             },
             { new: true, upsert: true }
           );
 
           if (membresia) {
-            console.log("Membresía activada para el usuario con UID:", externalReference);
-          }
-          else {
+            console.log(
+              "Membresía activada para el usuario con UID:",
+              externalReference
+            );
+          } else {
             console.log("Pago no aprobado o no se encontro la membresia");
-          } 
+          }
         }
         break;
-        /*/
+      /*/
         Ver casos Preapproval updated
         /*/
       default:
@@ -95,7 +99,7 @@ const handleWebhook = async (req, res) => {
 const simulatePagoAprobado = async (req, res) => {
   try {
     const userId = req.user._id; // Changed from firebaseUid
-    
+
     if (!userId) {
       return res.status(400).json({ error: "Se requiere userId" });
     }
@@ -106,20 +110,24 @@ const simulatePagoAprobado = async (req, res) => {
       {
         estado: "activa",
         fechaActivacion: new Date(),
-        fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+        fechaVencimiento: new Date(
+          new Date().setFullYear(new Date().getFullYear() + 1)
+        ),
       },
       { new: true, upsert: true }
     );
 
     if (membresia) {
       console.log("Membresía activada para el usuario con ID:", userId); // Changed from firebaseUid
-      return res.status(200).json({ 
-        success: true, 
+      return res.status(200).json({
+        success: true,
         message: "Pago simulado correctamente",
-        membresia 
+        membresia,
       });
     } else {
-      return res.status(500).json({ error: "Error al actualizar la membresía" });
+      return res
+        .status(500)
+        .json({ error: "Error al actualizar la membresía" });
     }
   } catch (error) {
     console.error("Error al simular pago:", error);
@@ -130,5 +138,5 @@ const simulatePagoAprobado = async (req, res) => {
 module.exports = {
   handleSubscription,
   handleWebhook,
-  simulatePagoAprobado
+  simulatePagoAprobado,
 };

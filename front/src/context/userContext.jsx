@@ -5,32 +5,45 @@ export const UserContext = createContext({});
 
 export function UserContextProvider({ children }) {
   const [user, setUser] = useState(() => {
-    // Retrieve user from localStorage on initialization
     return auth.getUser();
   });
   const [userName, setUserName] = useState(() => {
-    // Retrieve userName from user data
     const userData = auth.getUser();
     return userData?.name || "";
   });
-  const [loading, setLoading] = useState(true); // Loading state for authentication
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Check if user is authenticated
+        setLoading(true);
+        
+        // ✅ CORREGIDO: Usar el método seguro que nunca falla
         if (auth.isAuthenticated()) {
-          // Try to get current user data from server
-          const currentUser = await auth.getCurrentUser();
+          const currentUser = await auth.getCurrentUserSafe();
           setUser(currentUser);
           setUserName(currentUser.name);
         } else {
-          // No token found, user is not authenticated
+          // Si no está autenticado, verificar si hay datos locales
+          const localUser = auth.getUser();
+          if (localUser) {
+            setUser(localUser);
+            setUserName(localUser.name);
+          } else {
+            setUser(null);
+            setUserName("");
+          }
+        }
+      } catch (error) {
+        console.log("✅ Inicializando con datos locales después de error");
+        const localUser = auth.getUser();
+        if (localUser) {
+          setUser(localUser);
+          setUserName(localUser.name);
+        } else {
           setUser(null);
           setUserName("");
         }
-      } catch (error) {
-        console.error("Error initializing auth:", error);
       } finally {
         setLoading(false);
       }
@@ -70,16 +83,18 @@ export function UserContextProvider({ children }) {
   };
 
   return (
-    <UserContext.Provider value={{ 
-      user, 
-      userName, 
-      setUser, 
-      login, 
-      register, 
-      logout, 
-      loading,
-      isAuthenticated: auth.isAuthenticated()
-    }}>
+    <UserContext.Provider
+      value={{
+        user,
+        userName,
+        setUser,
+        login,
+        register,
+        logout,
+        loading,
+        isAuthenticated: auth.isAuthenticated(),
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
