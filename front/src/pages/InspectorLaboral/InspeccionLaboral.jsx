@@ -428,77 +428,87 @@ const InspeccionLaboral = () => {
       )}
 
       {vistaActual === "empresas" && (
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800">Gestión de Empresas</h2>
-            <p className="text-gray-600 mt-1">Supervisa y gestiona empresas con ofertas publicadas</p>
-          </div>
-          
-          {empresas.length === 0 ? (
-            <div className="p-8 text-center">
-              <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No se encontraron empresas</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-200">
-              {empresas.map((empresa, index) => (
-                <div key={index} className="p-6 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-800">{empresa.nombre}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-green-500 to-teal-500 text-white">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-bold">Empresa</th>
+                  <th className="px-6 py-4 text-center text-sm font-bold">Estado</th>
+                  <th className="px-6 py-4 text-center text-sm font-bold">Total Ofertas</th>
+                  <th className="px-6 py-4 text-center text-sm font-bold">Activas</th>
+                  <th className="px-6 py-4 text-center text-sm font-bold">Bloqueadas</th>
+                  <th className="px-6 py-4 text-center text-sm font-bold">Suspendidas</th>
+                  <th className="px-6 py-4 text-center text-sm font-bold">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {empresas.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                      <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      No se encontraron empresas
+                    </td>
+                  </tr>
+                ) : (
+                  empresas.map((empresa, index) => (
+                    <tr key={index} className="hover:bg-green-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-gray-900">{empresa.nombre}</p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                           empresa.estadoGeneral === 'Suspendida' 
-                            ? 'bg-orange-100 text-orange-800' 
-                            : 'bg-green-100 text-green-800'
+                            ? 'bg-orange-100 text-orange-700' 
+                            : 'bg-green-100 text-green-700'
                         }`}>
                           {empresa.estadoGeneral}
                         </span>
-                      </div>
-                      <div className="grid grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <p className="text-gray-600">Total Ofertas</p>
-                          <p className="font-semibold text-gray-800">{empresa.totalOfertas}</p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <p className="font-semibold text-gray-800">{empresa.totalOfertas}</p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <p className="font-semibold text-green-600">{empresa.ofertasActivas}</p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <p className="font-semibold text-red-600">{empresa.ofertasBloqueadas}</p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <p className="font-semibold text-orange-600">{empresa.ofertasSuspendidas}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleSuspenderEmpresa(empresa)}
+                            className="flex items-center justify-center gap-1.5 w-28! h-10! rounded-lg! transition-colors! font-bold! text-xs!"
+                            style={{ 
+                              background: empresa.estadoGeneral === 'Suspendida' ? '#16a34a' : '#ea580c',
+                              color: '#fff',
+                              border: 'none'
+                            }}
+                            title={empresa.estadoGeneral === 'Suspendida' ? "Reactivar empresa" : "Suspender empresa"}
+                          >
+                            {empresa.estadoGeneral === 'Suspendida' ? (
+                              <>
+                                <CheckCircle className="w-4! h-4!" />
+                                <span>Reactivar</span>
+                              </>
+                            ) : (
+                              <>
+                                <ShieldAlert className="w-4! h-4!" />
+                                <span>Suspender</span>
+                              </>
+                            )}
+                          </button>
                         </div>
-                        <div>
-                          <p className="text-gray-600">Activas</p>
-                          <p className="font-semibold text-green-600">{empresa.ofertasActivas}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Bloqueadas</p>
-                          <p className="font-semibold text-red-600">{empresa.ofertasBloqueadas}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Suspendidas</p>
-                          <p className="font-semibold text-orange-600">{empresa.ofertasSuspendidas}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      <button
-                        onClick={() => handleSuspenderEmpresa(empresa)}
-                        className="inline-flex! items-center! gap-2! px-4! py-2! rounded-lg! transition-all! duration-300! hover:shadow-md! hover:scale-105!"
-                        style={{ background: empresa.estadoGeneral === 'Suspendida' ? '#16a34a' : '#ea580c', border: 'none' }}
-                        title={empresa.estadoGeneral === 'Suspendida' ? "Reactivar empresa" : "Suspender empresa"}
-                      >
-                        {empresa.estadoGeneral === 'Suspendida' ? (
-                          <>
-                            <CheckCircle className="w-4! h-4!" style={{ color: '#fff' }} />
-                            <span className="text-white! text-xs! font-bold!">Reactivar</span>
-                          </>
-                        ) : (
-                          <>
-                            <ShieldAlert className="w-4! h-4!" style={{ color: '#fff' }} />
-                            <span className="text-white! text-xs! font-bold!">Suspender</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
