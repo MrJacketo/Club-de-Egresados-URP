@@ -20,10 +20,22 @@ export const useInspeccionLaboral = () => {
     totalItems: 0,
     itemsPerPage: 10
   });
+  const [empresasPagination, setEmpresasPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10
+  });
   const [filtros, setFiltros] = useState({
     estado: "",
     empresa: "",
     search: "",
+    page: 1,
+    limit: 10
+  });
+  const [empresasFiltros, setEmpresasFiltros] = useState({
+    search: "",
+    estado: "",
     page: 1,
     limit: 10
   });
@@ -49,8 +61,11 @@ export const useInspeccionLaboral = () => {
   // Cargar empresas
   const cargarEmpresas = async () => {
     try {
-      const response = await getEmpresas();
+      const response = await getEmpresas(empresasFiltros);
       setEmpresas(response.data || []);
+      if (response.pagination) {
+        setEmpresasPagination(response.pagination);
+      }
     } catch (err) {
       console.error("Error al cargar empresas:", err);
     }
@@ -128,12 +143,35 @@ export const useInspeccionLaboral = () => {
     setFiltros({ ...filtros, page: nuevaPagina });
   };
 
+  // Cambiar página de empresas
+  const cambiarPaginaEmpresas = (nuevaPagina) => {
+    setEmpresasFiltros({ ...empresasFiltros, page: nuevaPagina });
+  };
+
+  // Aplicar filtros de empresas
+  const aplicarFiltrosEmpresas = (nuevosFiltros) => {
+    setEmpresasFiltros({ ...empresasFiltros, ...nuevosFiltros, page: 1 });
+  };
+
+  // Limpiar filtros de empresas
+  const limpiarFiltrosEmpresas = () => {
+    setEmpresasFiltros({
+      search: "",
+      estado: "",
+      page: 1,
+      limit: 10
+    });
+  };
+
   // Cargar datos iniciales
   useEffect(() => {
     cargarOfertas();
     cargarEstadisticas();
-    cargarEmpresas();
   }, [filtros]);
+
+  useEffect(() => {
+    cargarEmpresas();
+  }, [empresasFiltros]);
 
   return {
     ofertas,
@@ -143,12 +181,17 @@ export const useInspeccionLaboral = () => {
     error,
     filtros,
     pagination,
+    empresasPagination,
+    empresasFiltros,
     cargarOfertas,
     bloquearOferta,
     suspenderEmpresa,
     obtenerDetalleOferta,
     aplicarFiltros,
     limpiarFiltros,
-    cambiarPagina
+    cambiarPagina,
+    cambiarPaginaEmpresas,
+    aplicarFiltrosEmpresas,
+    limpiarFiltrosEmpresas
   };
 };

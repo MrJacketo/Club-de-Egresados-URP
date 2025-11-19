@@ -30,12 +30,12 @@ export const getEstadisticasInspeccion = async () => {
 };
 
 // Obtener lista de empresas
-export const getEmpresas = async () => {
+export const getEmpresas = async (filtros = {}) => {
   try {
     if (!auth.isAuthenticated()) {
       throw new Error("Usuario no autenticado");
     }
-    const response = await apiClient.get("/api/inspeccion-laboral/empresas");
+    const response = await apiClient.get("/api/inspeccion-laboral/empresas", { params: filtros });
     return response.data;
   } catch (error) {
     console.error("Error al obtener empresas:", error);

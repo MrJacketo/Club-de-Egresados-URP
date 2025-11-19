@@ -250,29 +250,80 @@ const getEstadisticasInspeccion = async (req, res) => {
 // Obtener lista de empresas con sus ofertas
 const getEmpresas = async (req, res) => {
   try {
-    const empresas = await OfertaLaboral.aggregate([
-      {
-        $group: {
-          _id: "$empresa",
-          totalOfertas: { $sum: 1 },
-          ofertasActivas: {
-            $sum: { $cond: [{ $eq: ["$estado", "Activo"] }, 1, 0] }
-          },
-          ofertasBloqueadas: {
-            $sum: { $cond: [{ $eq: ["$estado", "Bloqueado"] }, 1, 0] }
-          },
-          ofertasSuspendidas: {
-            $sum: { $cond: [{ $eq: ["$estado", "Suspendido"] }, 1, 0] }
-          },
-          ultimaPublicacion: { $max: "$fechaPublicacion" }
+    const { page = 1, limit = 10, search, estado } = req.query;
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Construir pipeline de agregación
+    const pipeline = [];
+
+    // Filtros iniciales a nivel de oferta
+    const matchStage = {};
+    if (search) {
+      matchStage.empresa = { $regex: search, $options: 'i' };
+    }
+
+    if (Object.keys(matchStage).length > 0) {
+      pipeline.push({ $match: matchStage });
+    }
+
+    // Agrupar por empresa
+    pipeline.push({
+      $group: {
+        _id: "$empresa",
+        totalOfertas: { $sum: 1 },
+        ofertasActivas: {
+          $sum: { $cond: [{ $eq: ["$estado", "Activo"] }, 1, 0] }
+        },
+        ofertasBloqueadas: {
+          $sum: { $cond: [{ $eq: ["$estado", "Bloqueado"] }, 1, 0] }
+        },
+        ofertasSuspendidas: {
+          $sum: { $cond: [{ $eq: ["$estado", "Suspendido"] }, 1, 0] }
+        },
+        ultimaPublicacion: { $max: "$fechaPublicacion" }
+      }
+    });
+
+    // Agregar campo de estado general
+    pipeline.push({
+      $addFields: {
+        estadoGeneral: {
+          $cond: [
+            { $gt: ["$ofertasSuspendidas", 0] },
+            "Suspendida",
+            "Activa"
+          ]
         }
-      },
-      { $sort: { totalOfertas: -1 } }
-    ]);
+      }
+    });
+
+    // Filtrar por estado general si se especifica
+    if (estado) {
+      pipeline.push({
+        $match: { estadoGeneral: estado }
+      });
+    }
+
+    // Ordenar
+    pipeline.push({ $sort: { totalOfertas: -1 } });
+
+    // Facet para paginación
+    pipeline.push({
+      $facet: {
+        metadata: [{ $count: "total" }],
+        data: [{ $skip: skip }, { $limit: parseInt(limit) }]
+      }
+    });
+
+    const empresas = await OfertaLaboral.aggregate(pipeline);
+
+    const total = empresas[0].metadata.length > 0 ? empresas[0].metadata[0].total : 0;
+    const empresasData = empresas[0].data;
 
     res.json({
       success: true,
-      data: empresas.map(emp => ({
+      data: empresasData.map(emp => ({
         nombre: emp._id,
         totalOfertas: emp.totalOfertas,
         ofertasActivas: emp.ofertasActivas,
@@ -280,7 +331,13 @@ const getEmpresas = async (req, res) => {
         ofertasSuspendidas: emp.ofertasSuspendidas,
         ultimaPublicacion: emp.ultimaPublicacion,
         estadoGeneral: emp.ofertasSuspendidas > 0 ? 'Suspendida' : 'Activa'
-      }))
+      })),
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(total / parseInt(limit)),
+        totalItems: total,
+        itemsPerPage: parseInt(limit)
+      }
     });
 
   } catch (error) {
