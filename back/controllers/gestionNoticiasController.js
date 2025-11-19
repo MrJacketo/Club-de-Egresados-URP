@@ -63,8 +63,6 @@ const obtenerNoticias = async (req, res) => {
       filtros.estado = estado
     }
 
-    console.log("Filtros aplicados:", filtros)
-
     const skip = (Number.parseInt(page) - 1) * Number.parseInt(limit)
 
     const noticias = await Noticia.find(filtros).sort({ fechaCreacion: -1 }).skip(skip).limit(Number.parseInt(limit))

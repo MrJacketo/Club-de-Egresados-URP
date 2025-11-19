@@ -1,11 +1,30 @@
 import React, { useState } from "react";
-import { ThumbsUp, MessageCircle, Share, MoreHorizontal, X, Bookmark, Link, Flag } from "lucide-react";
+import { ThumbsUp, MessageCircle, Share, MoreHorizontal, X, Bookmark, Link, Flag, Trash2 } from "lucide-react";
 
 function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddComment }) {
   const [menuActivo, setMenuActivo] = useState(false);
   const comentariosRapidos = ["¡Qué buena noticia! 🎉", "Felicidades 👏", "Éxitos 💪"];
 
+  // ✅ SOLO ESTO SE AGREGÓ - Cargar imagen del sidebar
+  const obtenerImagenSidebar = () => {
+    try {
+      const imagen = localStorage.getItem('imagenPerfil');
+      if (imagen && imagen.startsWith('data:image')) {
+        return imagen;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  };
+
   const obtenerImagenPerfil = (autor, perfilImgEspecifico = null) => {
+    // ✅ SOLO ESTO SE AGREGÓ - Si es el usuario actual, usar imagen del sidebar
+    if (autor === "Tú") {
+      const imagenSidebar = obtenerImagenSidebar();
+      if (imagenSidebar) return imagenSidebar;
+    }
+    
     if (perfilImgEspecifico) return perfilImgEspecifico;
     return perfilesUsuarios[autor] || null;
   };
@@ -17,6 +36,11 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
       alert("Contenido copiado al portapapeles");
     }
     if (accion === "reportar") alert(`Reportaste la publicación de ${post.autor}`);
+    if (accion === "borrar") {
+      if (window.confirm("¿Estás seguro de que quieres borrar esta publicación?")) {
+        onDelete(post.id);
+      }
+    }
     setMenuActivo(false);
   };
 
@@ -24,17 +48,21 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
     <article className="bg-white rounded-2xl p-10 relative shadow-sm">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          {obtenerImagenPerfil(post.autor, post.perfilImg) ? (
-            <img
-              src={obtenerImagenPerfil(post.autor, post.perfilImg)}
-              alt="Perfil"
-              className="w-11 h-11 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-11 h-11 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
-              {post.autor.charAt(0)}
-            </div>
-          )}
+          {post.perfilImg ? (
+  <img
+    src={post.perfilImg}
+    alt="Perfil"
+    className="w-11 h-11 rounded-full object-cover"
+    onError={(e) => {
+      console.log('Error cargando imagen de perfil, usando avatar por defecto');
+      e.target.style.display = 'none';
+    }}
+  />
+) : (
+  <div className="w-11 h-11 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
+    {post.autor.charAt(0)}
+  </div>
+)}
           <div>
             <h4 className="font-semibold text-green-700">{post.autor}</h4>
             <time className="text-xs text-gray-400">Hace poco</time>
@@ -69,6 +97,15 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
                 </button>
                 
                 <div className="border-t border-gray-100 my-1"></div>
+                
+                {/* NUEVO BOTÓN ELIMINAR */}
+                <button
+                  onClick={() => manejarMenu("borrar")}
+                  className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
+                >
+                  <Trash2 size={16} />
+                  <span>Borrar publicación</span>
+                </button>
                 
                 <button
                   onClick={() => manejarMenu("reportar")}

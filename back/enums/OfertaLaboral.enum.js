@@ -64,8 +64,11 @@ const REQUISITOS = [
   ];
 
 const ESTADO = [ 
+    "Pendiente",
     "Activo",
-    "Inactivo"
+    "Inactivo",
+    "Bloqueado",
+    "Suspendido"
   ];
 
 module.exports={

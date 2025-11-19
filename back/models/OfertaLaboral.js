@@ -63,7 +63,49 @@ const ofertaLaboralSchema = new mongoose.Schema({
     estado: {
         type: String,
         enum: ESTADO,
-        default: 'Activo',
+        default: 'Pendiente',
+    },
+    aprobado: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    moderadorAprobador: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    fechaAprobacion: {
+        type: Date,
+        default: null
+    },
+    // Campos para bloqueo de oferta individual
+    motivoBloqueo: {
+        type: String,
+        default: null
+    },
+    fechaBloqueo: {
+        type: Date,
+        default: null
+    },
+    inspectorBloqueo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    // Campos para suspensión de empresa
+    motivoSuspension: {
+        type: String,
+        default: null
+    },
+    fechaSuspension: {
+        type: Date,
+        default: null
+    },
+    inspectorSuspension: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
     }
 });
 

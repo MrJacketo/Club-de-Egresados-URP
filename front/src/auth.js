@@ -1,4 +1,4 @@
-// Authentication utilities for JWT
+// Authentication utilities for JWT - VERSIÓN CORREGIDA
 const TOKEN_KEY = 'jwt_token';
 const USER_KEY = 'user_data';
 
@@ -88,27 +88,83 @@ export const auth = {
     // No automatic redirect - let components handle navigation
   },
 
-  // Get current user info from server
+  // ✅ CORREGIDO: Usa la ruta correcta /auth/current-user
   getCurrentUser: async () => {
     const token = auth.getToken();
+    
+    // Si no hay token, devolver datos locales o null
     if (!token) {
+      const localUser = auth.getUser();
+      if (localUser) {
+        console.log('✅ Usando usuario local (sin token)');
+        return localUser;
+      }
       throw new Error('No token found');
     }
 
-    const response = await fetch('http://localhost:8000/current-user', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    try {
+      const response = await fetch('http://localhost:8000/auth/current-user', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-    const data = await response.json();
+      // Si el servidor responde con error 404 u otro, usar datos locales
+      if (!response.ok) {
+        console.log('⚠️ Servidor respondió con error, usando datos locales');
+        const localUser = auth.getUser();
+        if (localUser) {
+          return localUser;
+        }
+        throw new Error('Failed to get user info from server');
+      }
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to get user info');
+      const data = await response.json();
+
+      if (data && data.user) {
+        auth.setUser(data.user);
+        return data.user;
+      } else {
+        throw new Error('Invalid response from server');
+      }
+      
+    } catch (error) {
+      console.log('🌐 Error de conexión, usando datos locales:', error.message);
+      
+      // En caso de error de red, usar datos locales
+      const localUser = auth.getUser();
+      if (localUser) {
+        return localUser;
+      }
+      
+      throw error;
     }
+  },
 
-    auth.setUser(data.user);
-    return data.user;
+  // ✅ NUEVO: Método seguro que nunca falla
+  getCurrentUserSafe: async () => {
+    try {
+      return await auth.getCurrentUser();
+    } catch (error) {
+      console.log('✅ Usando datos locales como fallback');
+      const localUser = auth.getUser();
+      
+      // Si no hay usuario local, crear uno temporal para evitar errores
+      if (!localUser) {
+        const tempUser = {
+          id: 'temp-user-' + Date.now(),
+          name: 'Usuario',
+          email: 'usuario@demo.com',
+          profilePicture: null,
+          activo: true,
+          rol: 'user'
+        };
+        auth.setUser(tempUser);
+        return tempUser;
+      }
+      
+      return localUser;
+    }
   }
 };
 

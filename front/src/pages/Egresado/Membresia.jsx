@@ -91,17 +91,21 @@ export default function Membresia() {
         <div className="mb-12 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group hover:-translate-y-2 border border-gray-100 p-8 lg:p-12">
           <div className="mb-6">
             <div className="flex items-baseline gap-3 flex-wrap mb-2">
-              <span className="text-6xl font-black text-gray-900">S/ 120</span>
+              <span className="text-6xl font-black text-gray-900">S/ 150</span>
+              {/*/ 
               <span className="text-2xl text-gray-500 line-through">
                 S/ 150
               </span>
+              /*/}
               <span className="text-green-600 font-semibold text-sm">/año</span>
+              {/*/ 
               <div className="inline-flex items-center gap-2 bg-green-100 rounded-lg px-3 py-1">
                 <Zap className="w-4 h-4 text-green-600" />
                 <span className="text-green-600 font-bold text-sm">
                   Ahorra S/ 30 hoy
                 </span>
               </div>
+              /*/}
             </div>
           </div>
 
