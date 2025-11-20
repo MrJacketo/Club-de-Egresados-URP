@@ -142,7 +142,7 @@ const GestionPostulantesContent = () => {
                     <div className="max-w-7xl mx-auto">
                         <h1 className="text-5xl text-start font-bold mb-2">
                             <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
-                                Gestión de Postulantes
+                                Inspección de Oferta Laboral
                             </span>
                         </h1>
                         <p className="text-gray-600 font-medium text-lg mb-6">
