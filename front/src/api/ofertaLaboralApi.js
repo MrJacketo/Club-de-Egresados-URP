@@ -113,12 +113,24 @@ export const getOfertasPostuladasPorUsuario = async (userId) => {
 export const getPostulantesDeOfertaRequest = async (idOferta) => {
     try {
         const response = await apiClient.get(`/api/oferta/${idOferta}/postulantes`);
-        return response.data; 
+        return response.data;
     } catch (error) {
         console.error("Error al obtener postulantes:", error.response?.data || error.message);
         throw error;
     }
 };
+
+//Actualizar estado Postulante
+export const updateEstadoPostulante = async (idPostulacion, apto) => {
+    try {
+        const response = await apiClient.patch(`/api/postulacion/${idPostulacion}/apto`, { apto });
+        return response.data;
+    } catch (error) {
+        console.error("Error al actualizar estado de postulante:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
 
 // Obtener ofertas creadas por un usuario
 export const getOfertasCreadasPorUsuario = async (uid) => {

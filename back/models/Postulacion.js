@@ -20,13 +20,18 @@ const PostulacionSchema = new mongoose.Schema({
         required: true,
     },
     cv: {
-        type: String, 
+        type: String,
         required: false,
     },
     fechaPostulacion: {
         type: Date,
         default: Date.now,
+    },
+    apto: {
+        type: Boolean,
+        default: true
     }
+
 });
 
 const Postulacion = mongoose.model('Postulacion', PostulacionSchema);

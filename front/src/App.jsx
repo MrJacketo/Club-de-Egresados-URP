@@ -31,7 +31,7 @@ import Cursos from "./pages/Egresado/Cursos.jsx";
 import Conferencias from "./pages/Egresado/Conferencias.jsx";
 import Footer from "./components/footer.jsx";
 import NoticiaDetalle from "./pages/Egresado/DetalleNoticia.jsx";
-
+import InspeccionLaboral from './pages/Moderador/InspeccionOfertas.jsx';
 import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
 import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
@@ -122,6 +122,7 @@ function App() {
           <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
           <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
           <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
+          <Route path="/inspeccion/ofertas" element={<InspeccionLaboral />} />
 
 
         </Routes>

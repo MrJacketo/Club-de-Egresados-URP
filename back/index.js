@@ -15,6 +15,8 @@ const adminUserRoutes = require("./routes/userRoutes");
 const moderacionRoutes = require("./routes/moderacionRoutes");
 const publicacionesRoutes = require("./routes/publicacionesRoutes");
 
+
+
 const ofertaModeradorRoutes = require("./routes/ofertaModeradorRoutes.js");
 const conferenciaRoutes = require("./routes/conferenciaRoutes");
 
@@ -86,11 +88,11 @@ const host = '0.0.0.0'; // Permite conexiones desde cualquier IP
 
 app.listen(port, host, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
-  
+
   // Mostrar IPs de la máquina actual
   const os = require('os');
   const interfaces = os.networkInterfaces();
-  
+
   Object.keys(interfaces).forEach(name => {
     interfaces[name].forEach(iface => {
       if (iface.family === 'IPv4' && !iface.internal) {

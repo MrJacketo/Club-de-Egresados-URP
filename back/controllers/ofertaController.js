@@ -141,7 +141,7 @@ const postularOferta = async (req, res) => {
   console.log('postularOferta req.user:', req.user);
   console.log('postularOferta req.body:', req.body);
   console.log('postularOferta req.file:', req.file);
-  
+
   const { id } = req.params;
   const { correo, numero } = req.body;
 
@@ -153,7 +153,7 @@ const postularOferta = async (req, res) => {
     // Get user from JWT token
     const userId = req.user._id;
     console.log('userId from JWT:', userId);
-    
+
     // Ejecutar en paralelo
     const [oferta, perfil] = await Promise.all([
       OfertaLaboral.findById(id),
@@ -201,7 +201,7 @@ const postularOferta = async (req, res) => {
 
     await nuevaPostulacion.save();
 
-    res.json({ message: 'Postulación realizada con éxito'});
+    res.json({ message: 'Postulación realizada con éxito' });
   } catch (error) {
     console.error('Error al postular a la oferta:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
@@ -248,11 +248,13 @@ const getPostulantesDeOferta = async (req, res) => {
 
     // Mapear para devolver datos limpios
     const postulantes = postulaciones.map((postulacion) => ({
+      idPostulacion: postulacion._id,
       _id: postulacion.perfil?._id,
       nombreCompleto: postulacion.perfil?.name || "Nombre no registrado",
       correo: postulacion.correo,
       numero: postulacion.numero,
       cv: postulacion.cv || null,
+      apto: postulacion.apto
     }));
 
     return res.json(postulantes);
@@ -287,6 +289,39 @@ const getOfertasCreadasPorUsuario = async (req, res) => {
 };
 
 
+// Actualizar el estado 'apto' de una postulación
+const updateAptoPostulacion = async (req, res) => {
+  const { idPostulacion } = req.params;
+  const { apto } = req.body;
+
+  try {
+    // Validar que el valor de apto sea booleano
+    if (typeof apto !== 'boolean') {
+      return res.status(400).json({ error: 'El campo apto debe ser un valor booleano (true/false)' });
+    }
+
+    // Buscar y actualizar la postulación
+    const postulacion = await Postulacion.findByIdAndUpdate(
+      idPostulacion,
+      { apto },
+      { new: true }
+    ).populate('perfil').populate('ofertaLaboral');
+
+    if (!postulacion) {
+      return res.status(404).json({ error: 'Postulación no encontrada' });
+    }
+
+    res.json({
+      message: `Postulación marcada como ${apto ? 'apto' : 'no apto'} exitosamente`,
+      postulacion
+    });
+  } catch (error) {
+    console.error('Error actualizando el estado apto de la postulación:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+
 
 
 module.exports = {
@@ -299,5 +334,6 @@ module.exports = {
   postularOferta,
   verificarPostulacion,
   getPostulantesDeOferta,
-  getOfertasCreadasPorUsuario
+  getOfertasCreadasPorUsuario,
+  updateAptoPostulacion // nueva función
 };
