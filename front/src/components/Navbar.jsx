@@ -19,7 +19,7 @@ import {
   Book,
   Videotape,
   Calendar,
-  Gift
+  Gift,
 } from "lucide-react";
 import logo from "../assets/logoUrpex2.svg";
 import fotoPerfil from "../assets/foto.jpeg";
@@ -37,10 +37,10 @@ export default function Navbar() {
     try {
       // Cerrar dropdown inmediatamente
       setIsDropdownOpen(false);
-      
+
       // Ejecutar logout
       await logout();
-      
+
       // Navegar directamente sin pasar por Home usando replace
       navigate("/login", { replace: true });
     } catch (error) {
@@ -56,7 +56,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 shadow-lg" style={{ backgroundColor: '#1E1E1E' }}>
+    <nav
+      className="fixed top-0 left-0 w-full z-50 shadow-lg"
+      style={{ backgroundColor: "#1E1E1E" }}
+    >
       <div className="flex justify-between items-center px-6 py-4">
         {/* Logo */}
         <div className="flex items-center">
@@ -72,20 +75,21 @@ export default function Navbar() {
                 ? "text-white shadow-xl"
                 : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
             }`}
-            style={location.pathname === "/" 
-              ? { backgroundColor: '#119e04', borderColor: '#119e04' }
-              : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+            style={
+              location.pathname === "/"
+                ? { backgroundColor: "#119e04", borderColor: "#119e04" }
+                : { borderColor: "#5DC554", backgroundColor: "transparent" }
             }
             onMouseEnter={(e) => {
               if (location.pathname !== "/") {
-                e.target.style.backgroundColor = '#119e04';
-                e.target.style.borderColor = '#119e04';
+                e.target.style.backgroundColor = "#119e04";
+                e.target.style.borderColor = "#119e04";
               }
             }}
             onMouseLeave={(e) => {
               if (location.pathname !== "/") {
-                e.target.style.backgroundColor = 'transparent';
-                e.target.style.borderColor = '#5DC554';
+                e.target.style.backgroundColor = "transparent";
+                e.target.style.borderColor = "#5DC554";
               }
             }}
           >
@@ -102,20 +106,21 @@ export default function Navbar() {
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
-                style={location.pathname === "/gestion-oferta" 
-                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
-                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                style={
+                  location.pathname === "/gestion-oferta"
+                    ? { backgroundColor: "#119e04", borderColor: "#119e04" }
+                    : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
                   if (location.pathname !== "/gestion-oferta") {
-                    e.target.style.backgroundColor = '#119e04';
-                    e.target.style.borderColor = '#119e04';
+                    e.target.style.backgroundColor = "#119e04";
+                    e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (location.pathname !== "/gestion-oferta") {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#5DC554';
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.borderColor = "#5DC554";
                   }
                 }}
               >
@@ -130,20 +135,21 @@ export default function Navbar() {
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
-                style={location.pathname === "/foro-egresados" 
-                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
-                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                style={
+                  location.pathname === "/foro-egresados"
+                    ? { backgroundColor: "#119e04", borderColor: "#119e04" }
+                    : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
                   if (location.pathname !== "/foro-egresados") {
-                    e.target.style.backgroundColor = '#119e04';
-                    e.target.style.borderColor = '#119e04';
+                    e.target.style.backgroundColor = "#119e04";
+                    e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (location.pathname !== "/foro-egresados") {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#5DC554';
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.borderColor = "#5DC554";
                   }
                 }}
               >
@@ -158,20 +164,21 @@ export default function Navbar() {
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
-                style={location.pathname.startsWith("/noticias") 
-                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
-                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                style={
+                  location.pathname.startsWith("/noticias")
+                    ? { backgroundColor: "#119e04", borderColor: "#119e04" }
+                    : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
                   if (!location.pathname.startsWith("/noticias")) {
-                    e.target.style.backgroundColor = '#119e04';
-                    e.target.style.borderColor = '#119e04';
+                    e.target.style.backgroundColor = "#119e04";
+                    e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!location.pathname.startsWith("/noticias")) {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#5DC554';
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.borderColor = "#5DC554";
                   }
                 }}
               >
@@ -186,20 +193,21 @@ export default function Navbar() {
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
-                style={location.pathname.startsWith("/cursos") 
-                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
-                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                style={
+                  location.pathname.startsWith("/cursos")
+                    ? { backgroundColor: "#119e04", borderColor: "#119e04" }
+                    : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
                   if (!location.pathname.startsWith("/cursos")) {
-                    e.target.style.backgroundColor = '#119e04';
-                    e.target.style.borderColor = '#119e04';
+                    e.target.style.backgroundColor = "#119e04";
+                    e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!location.pathname.startsWith("/cursos")) {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#5DC554';
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.borderColor = "#5DC554";
                   }
                 }}
               >
@@ -214,20 +222,21 @@ export default function Navbar() {
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
-                style={location.pathname.startsWith("/conferencias") 
-                  ? { backgroundColor: '#119e04', borderColor: '#119e04' }
-                  : { borderColor: '#5DC554', backgroundColor: 'transparent' }
+                style={
+                  location.pathname.startsWith("/conferencias")
+                    ? { backgroundColor: "#119e04", borderColor: "#119e04" }
+                    : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
                   if (!location.pathname.startsWith("/conferencias")) {
-                    e.target.style.backgroundColor = '#119e04';
-                    e.target.style.borderColor = '#119e04';
+                    e.target.style.backgroundColor = "#119e04";
+                    e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!location.pathname.startsWith("/conferencias")) {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#5DC554';
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.borderColor = "#5DC554";
                   }
                 }}
               >
@@ -245,26 +254,33 @@ export default function Navbar() {
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-300 outline-none focus:outline-none"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                  e.target.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
                 }}
               >
-                <img 
-                  src={fotoPerfil} 
-                  alt="Foto de perfil" 
+                <img
+                  src={fotoPerfil}
+                  alt="Foto de perfil"
                   className="w-10 h-10 rounded-full object-cover ring-2"
-                  style={{ ringColor: '#5DC554' }}
+                  style={{ ringColor: "#5DC554" }}
                 />
                 <div className="text-left">
                   <p className="text-white text-sm font-bold">
-                    {user.name?.length > 10 ? user.name.substring(0, 15) + '...' : user.name}
+                    {user.name?.length > 10
+                      ? user.name.substring(0, 15) + "..."
+                      : user.name}
                   </p>
-                  <p className="text-xs font-medium" style={{ color: '#5DC554' }}>
-                    {user.email?.length > 10 ? user.email.substring(0, 15) + '...' : user.email}
+                  <p
+                    className="text-xs font-medium"
+                    style={{ color: "#5DC554" }}
+                  >
+                    {user.email?.length > 10
+                      ? user.email.substring(0, 15) + "..."
+                      : user.email}
                   </p>
                 </div>
                 <ChevronDown
@@ -272,45 +288,48 @@ export default function Navbar() {
                   className={`transition-transform duration-300 ${
                     isDropdownOpen ? "rotate-180" : ""
                   }`}
-                  style={{ color: '#5DC554' }}
+                  style={{ color: "#5DC554" }}
                 />
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-64 rounded-3xl shadow-2xl overflow-hidden border-2" style={{ backgroundColor: '#1E1E1E', borderColor: '#5DC554' }}>
+                <div
+                  className="absolute right-0 mt-3 w-64 rounded-3xl shadow-2xl overflow-hidden border-2"
+                  style={{ backgroundColor: "#1E1E1E", borderColor: "#5DC554" }}
+                >
                   <Link
                     to="/perfil-egresado-form"
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium hover:bg-white hover:bg-opacity-20 hover:text-black"
                   >
-                    <User size={20} style={{ color: '#5DC554' }} />
+                    <User size={20} style={{ color: "#5DC554" }} />
                     <span>Mi Perfil</span>
                   </Link>
                   <Link
                     to="/VerMembresia"
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
-                    style={{ borderColor: 'rgba(93, 197, 84, 0.3)' }}
+                    style={{ borderColor: "rgba(93, 197, 84, 0.3)" }}
                   >
-                    <User size={20} style={{ color: '#5DC554' }} />
+                    <User size={20} style={{ color: "#5DC554" }} />
                     <span>Mi Membresía</span>
                   </Link>
                   <Link
                     to="/mis-conferencias"
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
-                    style={{ borderColor: 'rgba(93, 197, 84, 0.3)' }}
+                    style={{ borderColor: "rgba(93, 197, 84, 0.3)" }}
                   >
-                    <Calendar size={20} style={{ color: '#5DC554' }} />
+                    <Calendar size={20} style={{ color: "#5DC554" }} />
                     <span>Mis Conferencias</span>
                   </Link>
                   <Link
                     to="/mis-beneficios"
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
-                    style={{ borderColor: 'rgba(93, 197, 84, 0.3)' }}
+                    style={{ borderColor: "rgba(93, 197, 84, 0.3)" }}
                   >
-                    <Gift size={20} style={{ color: '#5DC554' }} />
+                    <Gift size={20} style={{ color: "#5DC554" }} />
                     <span>Mis Beneficios</span>
                   </Link>
                   <button
@@ -319,17 +338,17 @@ export default function Navbar() {
                       handleLogout();
                     }}
                     className="w-full flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 cursor-pointer"
-                    style={{ 
-                      backgroundColor: '#119e04', 
-                      borderColor: 'rgba(93, 197, 84, 0.3)',
-                      border: 'none',
-                      borderTop: '2px solid rgba(93, 197, 84, 0.3)'
+                    style={{
+                      backgroundColor: "#119e04",
+                      borderColor: "rgba(93, 197, 84, 0.3)",
+                      border: "none",
+                      borderTop: "2px solid rgba(93, 197, 84, 0.3)",
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#0E7E04';
+                      e.target.style.backgroundColor = "#0E7E04";
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = '#119e04';
+                      e.target.style.backgroundColor = "#119e04";
                     }}
                   >
                     <LogOut size={20} className="text-white" />
@@ -342,12 +361,12 @@ export default function Navbar() {
             <Link
               to="/login"
               className="text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
-              style={{ backgroundColor: '#119e04' }}
+              style={{ backgroundColor: "#119e04" }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#0E7E04';
+                e.target.style.backgroundColor = "#0E7E04";
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#119e04';
+                e.target.style.backgroundColor = "#119e04";
               }}
             >
               Iniciar Sesión
@@ -357,4 +376,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-} 
+}

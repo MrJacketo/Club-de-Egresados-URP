@@ -1,3 +1,4 @@
+// back/controllers/publicacionesController.js - CORREGIDO
 const Publicacion = require('../models/Publicacion');
 const path = require('path');
 const fs = require('fs');
@@ -12,7 +13,7 @@ const obtenerPublicaciones = async (req, res) => {
   }
 };
 
-// Crear una nueva publicación
+// Crear publicación - CON USUARIO AUTENTICADO
 const crearPublicacion = async (req, res) => {
   try {
     const { contenido, autor } = req.body;
@@ -44,22 +45,26 @@ const crearPublicacion = async (req, res) => {
   }
 };
 
-// Comentar una publicación existente
+// Agregar comentario - CON USUARIO AUTENTICADO
 const comentarPublicacion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { autor, contenido } = req.body;
+    const { contenido } = req.body;
 
-    const publicacion = await Publicacion.findById(id);
-    if (!publicacion || publicacion.oculto) {
-      return res.status(404).json({ error: 'Publicación no encontrada' });
+    // Validaciones
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        error: 'Usuario no autenticado'
+      });
     }
 
-    publicacion.comentarios.push({
-      autor,
-      contenido,
-      fechaCreacion: new Date()
-    });
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'ID de publicación inválido'
+      });
+    }
 
     const actualizada = await publicacion.save();
     res.json(actualizada);
@@ -96,10 +101,13 @@ const toggleLike = async (req, res) => {
 const ocultarPublicacion = async (req, res) => {
   try {
     const { id } = req.params;
-    const publicacion = await Publicacion.findByIdAndUpdate(id, { oculto: true }, { new: true });
-
-    if (!publicacion) {
-      return res.status(404).json({ error: 'Publicación no encontrada' });
+    
+    // Validaciones
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        error: 'Usuario no autenticado'
+      });
     }
 
     res.json({ mensaje: 'Publicación ocultada correctamente', publicacion });
@@ -109,6 +117,63 @@ const ocultarPublicacion = async (req, res) => {
   }
 };
 
+// Eliminar publicación - SOLO EL AUTOR PUEDE ELIMINAR
+const eliminarPublicacion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Validaciones
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        error: 'Usuario no autenticado'
+      });
+    }
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'ID de publicación inválido'
+      });
+    }
+
+    const usuarioId = req.user.id;
+
+    const publicacion = await Publicacion.findById(id);
+
+    if (!publicacion) {
+      return res.status(404).json({
+        success: false,
+        error: 'Publicación no encontrada'
+      });
+    }
+
+    // Verificar que el usuario es el autor
+    if (publicacion.autor.toString() !== usuarioId.toString()) {
+      return res.status(403).json({
+        success: false,
+        error: 'No tienes permiso para eliminar esta publicación'
+      });
+    }
+
+    // Soft delete - cambiar estado en lugar de eliminar
+    publicacion.estado = 'eliminado';
+    await publicacion.save();
+
+    res.json({
+      success: true,
+      message: 'Publicación eliminada correctamente'
+    });
+  } catch (error) {
+    console.error('Error al eliminar publicación:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al eliminar publicación: ' + error.message
+    });
+  }
+};
+
+// ✅ EXPORTAR TODAS LAS FUNCIONES CORRECTAMENTE
 module.exports = {
   obtenerPublicaciones,
   crearPublicacion,

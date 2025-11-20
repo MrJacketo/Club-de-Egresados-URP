@@ -1,9 +1,21 @@
+// back/models/Publicacion.js
 const mongoose = require('mongoose');
 
 const comentarioSchema = new mongoose.Schema({
-  autor: { type: String, required: true },
-  contenido: { type: String, required: true },
-  fechaCreacion: { type: Date, default: Date.now }
+  autor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  contenido: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  fechaCreacion: {
+    type: Date,
+    default: Date.now
+  }
 });
 // Media schema (opcional, guarda url + tipo)
 const mediaSchema = new mongoose.Schema({

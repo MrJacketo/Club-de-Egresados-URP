@@ -23,4 +23,12 @@ router.post('/:id/comentarios', publicacionesController.comentarPublicacion);
 router.put('/:id/like', publicacionesController.toggleLike);
 router.put('/:id/ocultar', publicacionesController.ocultarPublicacion);
 
+// Rutas protegidas
+router.post('/publicaciones', verifyJWTToken, publicacionesController.crearPublicacion);
+router.post('/publicaciones/:id/comentarios', verifyJWTToken, publicacionesController.comentarPublicacion);
+router.post('/publicaciones/:id/like', verifyJWTToken, publicacionesController.darLikePublicacion);
+router.delete('/publicaciones/:id/like', verifyJWTToken, publicacionesController.quitarLikePublicacion);
+router.put('/publicaciones/:id/ocultar', verifyJWTToken, publicacionesController.ocultarPublicacion);
+router.delete('/publicaciones/:id', verifyJWTToken, publicacionesController.eliminarPublicacion);
+
 module.exports = router;

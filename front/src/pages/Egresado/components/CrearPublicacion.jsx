@@ -5,6 +5,7 @@ import { forosApi } from "../../../api/ForosApi";
 function CrearPublicacion({ perfil, agregarPost }) {
   const [nuevoPost, setNuevoPost] = useState("");
   const [archivo, setArchivo] = useState(null);
+  const [tipoPublicacion, setTipoPublicacion] = useState("texto"); // ✅ CORREGIDO
   const [mostrarEmojis, setMostrarEmojis] = useState(false);
 
   const emojis = [
@@ -16,6 +17,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
   const handleArchivoChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setArchivo(e.target.files[0]);
+      setTipoPublicacion(tipo); // ✅ AHORA FUNCIONA
     }
   };
 
@@ -34,15 +36,30 @@ function CrearPublicacion({ perfil, agregarPost }) {
         archivo,
       });
 
-      // 🔹 Actualiza el feed en el front con la nueva publicación
-      if (agregarPost) agregarPost(data);
-
-      // Reset de campos
-      setNuevoPost("");
-      setArchivo(null);
+    if (archivo) {
+      if (archivo.type.startsWith("image/")) {
+        // CONVERTIR IMAGEN A BASE64 para que persista
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          nuevo.imagen = event.target.result; // Base64
+          agregarPost(nuevo);
+          setNuevoPost("");
+          setArchivo(null);
+          setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
+        };
+        reader.readAsDataURL(archivo);
+        return; // Salir aquí porque es asíncrono
+      } else if (archivo.type.startsWith("video/")) {
+        nuevo.video = URL.createObjectURL(archivo);
+      }
+    }
+    
+    agregarPost(nuevo);
+    setNuevoPost("");
+    setArchivo(null);
+    setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
     } catch (error) {
       console.error("Error al publicar:", error);
-    }
   };
 
   return (
@@ -136,7 +153,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
             />
           </label>
 
-          <label className="flex items-center gap-3 bg-gray-50 text-gray-700 px-4 py-3 rounded-xl cursor-pointer hover:bg-gray-100 border border-gray-200 font-medium">
+          <label className="flex items-center gap-3 bg-gray-50 text-gray-700 px-4 py-3 rounded-xl cursor-pointer transition-colors hover:bg-gray-100 border border-gray-200 font-medium">
             <Image size={20} />
             <span className="text-base">Foto</span>
             <input
@@ -158,6 +175,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
       </div>
     </div>
   );
+}
 }
 
 export default CrearPublicacion;

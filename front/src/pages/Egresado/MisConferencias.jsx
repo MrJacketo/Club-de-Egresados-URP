@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
@@ -9,123 +9,106 @@ import {
   Eye,
   MapPin,
   User,
-  Mail,
-  Phone,
+  Loader,
 } from "lucide-react";
+import {getMisInscripciones} from "../../api/conferenciaApi";
 
 export default function MisConferencias() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEstado, setSelectedEstado] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedConferencia, setSelectedConferencia] = useState(null);
+  const [conferenciasInscritas, setConferenciasInscritas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Datos de conferencias inscritas
-  const conferenciasInscritas = [
-    {
-      id: 1,
-      nombre: "WEBINAR: Configuración de tablas y figuras en APA 7",
-      fechaConferencia: "28/11/2024",
-      horaConferencia: "6:30pm",
-      fechaInscripcion: "15/11/2024",
-      horaInscripcion: "3:45pm",
-      estado: "Inscrito",
-      tipo: "Webinar",
-      descripcion: "Aprende a configurar correctamente tablas y figuras según las normas APA 7ma edición para tus trabajos académicos.",
-      modalidad: "Virtual",
-      plataforma: "Zoom",
-      enlace: "https://zoom.us/j/123456789",
-      ponente: "Dr. Carlos Mendoza",
-      duracion: "2 horas",
-      cupos: "150 participantes",
-      imagen: "https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=400&h=300&fit=crop",
-    },
-    {
-      id: 2,
-      nombre: "SEMINARIO de Defensa Nacional",
-      fechaConferencia: "26/11/2024",
-      horaConferencia: "7:30pm",
-      fechaInscripcion: "10/11/2024",
-      horaInscripcion: "2:20pm",
-      estado: "Culminado",
-      tipo: "Seminario",
-      descripcion: "Análisis profundo sobre estrategias de defensa nacional y seguridad ciudadana en el contexto actual.",
-      modalidad: "Presencial",
-      lugar: "Auditorio Principal - Campus Lima",
-      ponente: "Gral. Roberto Sánchez",
-      duracion: "3 horas",
-      cupos: "200 participantes",
-      imagen: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop",
-    },
-    {
-      id: 3,
-      nombre: "CONFERENCIA: Impulsa tu carrera con bolsa de empleo",
-      fechaConferencia: "28/11/2024",
-      horaConferencia: "6:30pm",
-      fechaInscripcion: "18/11/2024",
-      horaInscripcion: "11:15am",
-      estado: "Inscrito",
-      tipo: "Conferencia",
-      descripcion: "Descubre estrategias efectivas para destacar en procesos de selección y aprovecha nuestra bolsa de trabajo.",
-      modalidad: "Híbrido",
-      lugar: "Sala de Conferencias 201",
-      plataforma: "Microsoft Teams",
-      ponente: "Lic. María Torres",
-      duracion: "2.5 horas",
-      cupos: "100 participantes",
-      imagen: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=300&fit=crop",
-    },
-    {
-      id: 4,
-      nombre: "Marketing Digital para emprendedores",
-      fechaConferencia: "20/11/2024",
-      horaConferencia: "7:00pm",
-      fechaInscripcion: "05/11/2024",
-      horaInscripcion: "9:30am",
-      estado: "Culminado",
-      tipo: "Webinar",
-      descripcion: "Estrategias actuales de marketing digital para impulsar tu emprendimiento en redes sociales y plataformas digitales.",
-      modalidad: "Virtual",
-      plataforma: "Google Meet",
-      ponente: "Mg. Andrea Vega",
-      duracion: "2 horas",
-      cupos: "120 participantes",
-      imagen: "https://images.unsplash.com/photo-1432888622747-4eb9a8f2c293?w=400&h=300&fit=crop",
-    },
-    {
-      id: 5,
-      nombre: "TALLER: Inteligencia Artificial aplicada a negocios",
-      fechaConferencia: "05/12/2024",
-      horaConferencia: "5:00pm",
-      fechaInscripcion: "20/11/2024",
-      horaInscripcion: "4:10pm",
-      estado: "Inscrito",
-      tipo: "Taller",
-      descripcion: "Taller práctico sobre implementación de IA en procesos empresariales para optimizar resultados.",
-      modalidad: "Presencial",
-      lugar: "Laboratorio de Innovación - Piso 3",
-      ponente: "PhD. Luis Ramírez",
-      duracion: "4 horas",
-      cupos: "50 participantes",
-      imagen: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop",
-    },
-    {
-      id: 6,
-      nombre: "Liderazgo transformacional en el siglo XXI",
-      fechaConferencia: "15/11/2024",
-      horaConferencia: "7:30pm",
-      fechaInscripcion: "01/11/2024",
-      horaInscripcion: "10:00am",
-      estado: "Culminado",
-      tipo: "Conferencia",
-      descripcion: "Desarrollo de competencias de liderazgo adaptadas a los desafíos del mundo empresarial moderno.",
-      modalidad: "Virtual",
-      plataforma: "Zoom",
-      ponente: "Dr. Fernando Castillo",
-      duracion: "2 horas",
-      cupos: "180 participantes",
-      imagen: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=300&fit=crop",
-    },
-  ];
+  // Cargar conferencias inscritas desde el backend
+  useEffect(() => {
+    cargarMisInscripciones();
+  }, []);
+
+  const cargarMisInscripciones = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getMisInscripciones();
+      
+      // Transformar datos del backend al formato del frontend
+      const conferenciasTransformadas = data.map(inscripcion => ({
+        id: inscripcion._id,
+        inscripcion_id: inscripcion._id,
+        nombre: inscripcion.conferencia_id?.titulo || "Sin título",
+        fechaConferencia: formatearFecha(inscripcion.conferencia_id?.fecha_evento),
+        horaConferencia: inscripcion.conferencia_id?.hora_inicio || "N/A",
+        fechaInscripcion: formatearFecha(inscripcion.fecha_inscripcion),
+        horaInscripcion: formatearHora(inscripcion.fecha_inscripcion),
+        estado: mapearEstado(inscripcion.estado_inscripcion),
+        tipo: obtenerTipo(inscripcion.conferencia_id?.titulo),
+        descripcion: inscripcion.conferencia_id?.descripcion || "Sin descripción",
+        modalidad: capitalizarModalidad(inscripcion.conferencia_id?.modalidad),
+        plataforma: inscripcion.conferencia_id?.plataforma || "N/A",
+        enlace: inscripcion.conferencia_id?.enlace_acceso || "",
+        lugar: inscripcion.conferencia_id?.modalidad === "presencial" ? "Auditorio Principal" : null,
+        ponente: inscripcion.conferencia_id?.ponente || "Por confirmar",
+        duracion: `${inscripcion.conferencia_id?.duracion_horas || 2} horas`,
+        cupos: inscripcion.conferencia_id?.cupos_disponibles 
+          ? `${inscripcion.conferencia_id.cupos_disponibles} participantes` 
+          : "Ilimitado",
+        imagen: inscripcion.conferencia_id?.imagen_conferencia || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop",
+        calificacion: inscripcion.calificacion,
+        comentario: inscripcion.comentario,
+      }));
+
+      setConferenciasInscritas(conferenciasTransformadas);
+    } catch (err) {
+      console.error("Error al cargar inscripciones:", err);
+      setError("No se pudieron cargar tus conferencias. Por favor, intenta nuevamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Funciones auxiliares para formatear datos
+  const formatearFecha = (fecha) => {
+    if (!fecha) return "N/A";
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  const formatearHora = (fecha) => {
+    if (!fecha) return "N/A";
+    const date = new Date(fecha);
+    return date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: true });
+  };
+
+  const mapearEstado = (estadoBackend) => {
+    const estadosMap = {
+      'confirmado': 'Inscrito',
+      'asistio': 'Culminado',
+      'no_asistio': 'Culminado',
+      'cancelado': 'Cancelado',
+    };
+    return estadosMap[estadoBackend] || 'Inscrito';
+  };
+
+  const capitalizarModalidad = (modalidad) => {
+    if (!modalidad) return "Virtual";
+    const modalidadesMap = {
+      'virtual': 'Virtual',
+      'presencial': 'Presencial',
+      'hibrida': 'Híbrido'
+    };
+    return modalidadesMap[modalidad] || modalidad.charAt(0).toUpperCase() + modalidad.slice(1);
+  };
+
+  const obtenerTipo = (titulo) => {
+    if (!titulo) return "Conferencia";
+    if (titulo.includes("WEBINAR")) return "Webinar";
+    if (titulo.includes("SEMINARIO")) return "Seminario";
+    if (titulo.includes("TALLER")) return "Taller";
+    if (titulo.includes("CONFERENCIA")) return "Conferencia";
+    return "Conferencia";
+  };
 
   // Filtrar conferencias
   const conferenciasFiltradas = conferenciasInscritas.filter((conf) => {
@@ -153,7 +136,7 @@ export default function MisConferencias() {
 
   // Modal de detalle
   const DetalleModal = ({ conferencia, onClose }) => (
-    <div className="fixed inset-0 bg-[#00000092] backdrop-blur-xs  z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#00000092] backdrop-blur-xs z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header con imagen */}
         <div className="relative h-64 overflow-hidden rounded-t-3xl">
@@ -165,7 +148,7 @@ export default function MisConferencias() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-white! hover:bg-gray-100! p-2 rounded-full! transition-all! duration-300 shadow-lg!"
+            className="absolute top-4 right-4 bg-white hover:bg-gray-100 p-2 rounded-full transition-all duration-300 shadow-lg"
           >
             <X size={24} className="text-gray-800" />
           </button>
@@ -230,7 +213,7 @@ export default function MisConferencias() {
                 {conferencia.lugar && (
                   <p className="text-gray-600 text-sm">{conferencia.lugar}</p>
                 )}
-                {conferencia.plataforma && (
+                {conferencia.plataforma && conferencia.plataforma !== "N/A" && (
                   <p className="text-gray-600 text-sm">Plataforma: {conferencia.plataforma}</p>
                 )}
                 {conferencia.enlace && (
@@ -266,16 +249,21 @@ export default function MisConferencias() {
                   <CheckCircle size={24} className="text-green-500" />
                   <span className="text-green-600 font-bold">Inscrito</span>
                 </>
-              ) : (
+              ) : conferencia.estado === "Culminado" ? (
                 <>
                   <CheckCircle size={24} className="text-blue-500" />
                   <span className="text-blue-600 font-bold">Culminado</span>
+                </>
+              ) : (
+                <>
+                  <XCircle size={24} className="text-red-500" />
+                  <span className="text-red-600 font-bold">Cancelado</span>
                 </>
               )}
             </div>
             <button
               onClick={onClose}
-              className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-bold transition-all! duration-300 hover:shadow-xl hover:scale-105"
+              className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105"
             >
               Cerrar
             </button>
@@ -284,6 +272,37 @@ export default function MisConferencias() {
       </div>
     </div>
   );
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen mb-10 pt-16 flex items-center justify-center" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+        <div className="text-center">
+          <Loader size={48} className="animate-spin text-green-500 mx-auto mb-4" />
+          <p className="text-xl text-gray-600">Cargando tus conferencias...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen mb-10 pt-16 flex items-center justify-center" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
+        <div className="text-center bg-white p-8 rounded-2xl shadow-lg max-w-md">
+          <XCircle size={64} className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={cargarMisInscripciones}
+            className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-3 rounded-full font-bold transition-all duration-300"
+          >
+            Intentar nuevamente
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen mb-10 pt-16" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
@@ -320,7 +339,7 @@ export default function MisConferencias() {
                 placeholder="Buscar conferencias..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-gray-50 text-gray-800 px-6 py-4 pl-14 rounded-xl transition-all! duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg"
+                className="w-full bg-gray-50 text-gray-800 px-6 py-4 pl-14 rounded-xl transition-all duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg"
                 style={{ outline: 'none', border: '2px solid #e5e7eb' }}
                 onFocus={(e) => {
                   e.target.style.borderColor = '#5DC554';
@@ -343,7 +362,7 @@ export default function MisConferencias() {
               <select
                 value={selectedEstado}
                 onChange={(e) => setSelectedEstado(e.target.value)}
-                className="bg-gray-50 text-gray-800 px-6 py-4 pr-10 rounded-xl cursor-pointer transition-all! duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg appearance-none"
+                className="bg-gray-50 text-gray-800 px-6 py-4 pr-10 rounded-xl cursor-pointer transition-all duration-300 border-2 border-gray-200 hover:border-green-300 focus:border-green-500 focus:bg-white focus:shadow-lg appearance-none"
                 style={{ outline: 'none', border: '2px solid #e5e7eb' }}
                 onFocus={(e) => {
                   e.target.style.borderColor = '#5DC554';
@@ -357,6 +376,7 @@ export default function MisConferencias() {
                 <option value="">Todos los estados</option>
                 <option value="Inscrito">Inscrito</option>
                 <option value="Culminado">Culminado</option>
+                <option value="Cancelado">Cancelado</option>
               </select>
             </div>
 
@@ -364,7 +384,7 @@ export default function MisConferencias() {
             {(searchTerm || selectedEstado) && (
               <button
                 onClick={clearFilters}
-                className="bg-gray-100! hover:bg-gray-200! text-gray-600! px-8! py-4! rounded-xl! font-bold transition-all! duration-300 hover:shadow-lg"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-lg"
               >
                 Limpiar
               </button>
@@ -442,17 +462,22 @@ export default function MisConferencias() {
                           <CheckCircle size={16} />
                           Inscrito
                         </span>
-                      ) : (
+                      ) : conf.estado === "Culminado" ? (
                         <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold">
                           <CheckCircle size={16} />
                           Culminado
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-semibold">
+                          <XCircle size={16} />
+                          Cancelado
                         </span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-center">
                       <button
                         onClick={() => openModal(conf)}
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-full!  text-sm font-bold transition-all! duration-300 hover:shadow-lg hover:scale-105"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 hover:shadow-lg hover:scale-105"
                       >
                         <Eye size={16} />
                         Ver Detalle
@@ -467,54 +492,58 @@ export default function MisConferencias() {
           {conferenciasFiltradas.length === 0 && (
             <div className="text-center py-20">
               <p className="text-gray-500 text-xl">
-                No se encontraron conferencias con los filtros seleccionados
+                {conferenciasInscritas.length === 0 
+                  ? "No tienes conferencias inscritas aún" 
+                  : "No se encontraron conferencias con los filtros seleccionados"}
               </p>
             </div>
           )}
         </div>
 
         {/* Resumen estadístico */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-full">
-                <Calendar size={32} className="text-white" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Total</p>
-                <p className="text-3xl font-bold text-gray-800">{conferenciasInscritas.length}</p>
+        {conferenciasInscritas.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-full">
+                  <Calendar size={32} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-gray-500 text-sm font-medium">Total</p>
+                  <p className="text-3xl font-bold text-gray-800">{conferenciasInscritas.length}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <div className="flex items-center gap-4">
-              <div className="bg-green-100 p-4 rounded-full">
-                <CheckCircle size={32} className="text-green-600" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Inscritas</p>
-                <p className="text-3xl font-bold text-gray-800">
-                  {conferenciasInscritas.filter((c) => c.estado === "Inscrito").length}
-                </p>
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="bg-green-100 p-4 rounded-full">
+                  <CheckCircle size={32} className="text-green-600" />
+                </div>
+                <div>
+                  <p className="text-gray-500 text-sm font-medium">Inscritas</p>
+                  <p className="text-3xl font-bold text-gray-800">
+                    {conferenciasInscritas.filter((c) => c.estado === "Inscrito").length}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <div className="flex items-center gap-4">
-              <div className="bg-blue-100 p-4 rounded-full">
-                <CheckCircle size={32} className="text-blue-600" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Culminadas</p>
-                <p className="text-3xl font-bold text-gray-800">
-                  {conferenciasInscritas.filter((c) => c.estado === "Culminado").length}
-                </p>
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="bg-blue-100 p-4 rounded-full">
+                  <CheckCircle size={32} className="text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-gray-500 text-sm font-medium">Culminadas</p>
+                  <p className="text-3xl font-bold text-gray-800">
+                    {conferenciasInscritas.filter((c) => c.estado === "Culminado").length}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
