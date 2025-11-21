@@ -8,7 +8,7 @@ import {
 import { userApi } from "../api/userApi";
 import { toast } from "react-hot-toast";
 import { useUser } from "../context/userContext";
-import fotoPerfil from "../assets/foto_perfil_xdefecto.png"; // Asegúrate de importar la imagen por defecto
+import fotoPerfil from "../assets/foto_perfil_xdefecto.png"; 
 
 export default function PerfilEgresadoForm() {
   const navigate = useNavigate();
@@ -396,6 +396,7 @@ export default function PerfilEgresadoForm() {
           >
             Editar foto de perfil
           </label>
+          
           <input type="file" id="photo" accept="image/*" className="hidden" onChange={handlePhotoChange} />
           
           {/* Botón para eliminar foto - solo mostrar si no es la imagen por defecto */}
@@ -407,7 +408,9 @@ export default function PerfilEgresadoForm() {
             >
               Eliminar foto
             </button>
+            
           )}
+          
         </div>
 
         {/* FORMULARIO */}
@@ -691,7 +694,7 @@ export default function PerfilEgresadoForm() {
                 <button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
+                  className="px-6 py-2 bg-gray-300 text-white-800 rounded-lg hover:bg-gray-400 transition"
                 >
                   Cancelar
                 </button>
@@ -707,7 +710,19 @@ export default function PerfilEgresadoForm() {
                 >
                   {isLoading ? "Guardando..." : "Guardar Perfil"}
                 </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`px-6 py-2 rounded-lg text-white font-semibold transition ${
+                    isLoading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-[#00BC4F] hover:bg-[#009B42]"
+                  }`}
+                >
+                  {isLoading ? "Vincular Datos Academicos..." : "Vincular Datos Academicos"}
+                </button>
               </div>
+              
           </form>
           </div>
           </main>

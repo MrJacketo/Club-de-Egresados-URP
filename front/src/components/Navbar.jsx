@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import logo from "../assets/logoUrpex2.svg";
 import fotoPerfil from "../assets/foto_perfil_xdefecto.png";
-import { useState, useEffect } from "react"; // Agregué useEffect
+import { useState, useEffect } from "react";
 
 //Funcion Navbar Principal
 export default function Navbar() {
@@ -31,42 +31,66 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userPhoto, setUserPhoto] = useState(fotoPerfil); // Estado para la foto del usuario
+  const [userPhoto, setUserPhoto] = useState(fotoPerfil);
 
-  // Cargar foto del localStorage al iniciar
-  useEffect(() => {
-    const savedPhoto = localStorage.getItem('userProfilePhoto');
-    if (savedPhoto) {
-      setUserPhoto(savedPhoto);
-    }
-  }, []);
-
-  // Escuchar cambios en localStorage (por si se actualiza la foto en otro componente)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const savedPhoto = localStorage.getItem('userProfilePhoto');
-      if (savedPhoto) {
-        setUserPhoto(savedPhoto);
-      } else {
-        setUserPhoto(fotoPerfil); // Volver a la foto por defecto si se elimina
+  // Obtener ID del usuario actual
+  const getCurrentUserId = () => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        const userData = JSON.parse(currentUser);
+        return userData.id || userData._id || 'default-user';
       }
+      return 'default-user';
+    } catch (error) {
+      console.error('Error obteniendo ID del usuario:', error);
+      return 'default-user';
+    }
+  };
+
+  // Cargar foto del localStorage ESPECÍFICA DEL USUARIO
+  useEffect(() => {
+    const loadPhoto = () => {
+      try {
+        const userId = getCurrentUserId();
+        
+        // PRIMERO intentar con clave específica de usuario
+        const userPhotoKey = `userProfilePhoto_${userId}`;
+        let savedPhoto = localStorage.getItem(userPhotoKey);
+        
+        // SI NO HAY foto específica, intentar con la clave general
+        if (!savedPhoto) {
+          savedPhoto = localStorage.getItem('userProfilePhoto');
+        }
+
+        if (savedPhoto) {
+          setUserPhoto(savedPhoto);
+        } else {
+          setUserPhoto(fotoPerfil);
+        }
+      } catch (error) {
+        console.error('Error cargando foto:', error);
+        setUserPhoto(fotoPerfil);
+      }
+    };
+
+    loadPhoto();
+
+    // Escuchar cambios en localStorage
+    const handleStorageChange = () => {
+      loadPhoto();
     };
 
     window.addEventListener('storage', handleStorageChange);
     
-    // También verificar periódicamente por cambios (para misma pestaña)
-    const interval = setInterval(() => {
-      const savedPhoto = localStorage.getItem('userProfilePhoto');
-      if (savedPhoto && savedPhoto !== userPhoto) {
-        setUserPhoto(savedPhoto);
-      }
-    }, 1000);
+    // También verificar periódicamente por cambios
+    const interval = setInterval(loadPhoto, 1000);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(interval);
     };
-  }, [userPhoto]);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -298,7 +322,7 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={userPhoto} //  Cambiado: ahora usa la foto del localStorage
+                  src={userPhoto}
                   alt="Foto de perfil"
                   className="w-10 h-10 rounded-full object-cover ring-2"
                   style={{ ringColor: "#5DC554" }}
@@ -369,7 +393,7 @@ export default function Navbar() {
                   </Link>
                   <button
                     onClick={(e) => {
-                      e.preventDefault(); // Prevenir cualquier comportamiento por defecto
+                      e.preventDefault();
                       handleLogout();
                     }}
                     className="w-full flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 cursor-pointer"

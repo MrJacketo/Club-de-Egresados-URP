@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { GraduationCap } from "lucide-react";
 import fotoPerfil from "../../../assets/foto_perfil_xdefecto.png";
+import { useProfilePhoto, getCurrentUserId } from "../../../Hooks/useProfilePhoto"; 
 
 function SidebarIzquierda({ perfil, cambiarPerfil, datosAcademicos }) {
-  const [userPhoto, setUserPhoto] = useState(perfil || fotoPerfil);
   const [informacionAcademica, setInformacionAcademica] = useState(null);
+  
+  // ✅ Usar el hook personalizado para la foto (solo lectura)
+  const { photo: userPhoto } = useProfilePhoto();
 
   // Obtener ID del usuario actual de forma segura
   const getCurrentUserId = () => {
@@ -26,27 +29,26 @@ function SidebarIzquierda({ perfil, cambiarPerfil, datosAcademicos }) {
     const loadAcademicData = () => {
       try {
         const userId = getCurrentUserId();
-        console.log('User ID encontrado:', userId); // Para debug
+        console.log('User ID encontrado:', userId);
 
         // PRIMERO intentar con clave específica de usuario
         const userAcademicKey = `academicData_${userId}`;
         let savedData = localStorage.getItem(userAcademicKey);
         
-        // SI NO HAY datos específicos, intentar con la clave general (backward compatibility)
+        // SI NO HAY datos específicos, intentar con la clave general
         if (!savedData) {
           savedData = localStorage.getItem('academicData');
-          console.log('Intentando con clave general...', !!savedData); // Para debug
+          console.log('Intentando con clave general...', !!savedData);
         }
 
         if (savedData) {
           const parsedData = JSON.parse(savedData);
-          console.log('Datos académicos cargados:', parsedData); // Para debug
+          console.log('Datos académicos cargados:', parsedData);
           setInformacionAcademica(parsedData);
         } else if (datosAcademicos) {
-          // Si se pasan datos por props
           setInformacionAcademica(datosAcademicos);
         } else {
-          console.log('No se encontraron datos académicos'); // Para debug
+          console.log('No se encontraron datos académicos');
           setInformacionAcademica(null);
         }
       } catch (error) {
@@ -73,113 +75,37 @@ function SidebarIzquierda({ perfil, cambiarPerfil, datosAcademicos }) {
     };
   }, [datosAcademicos]);
 
-  // Cargar foto del localStorage ESPECÍFICA DEL USUARIO
-  useEffect(() => {
-    const loadPhoto = () => {
-      try {
-        const userId = getCurrentUserId();
-        
-        // PRIMERO intentar con clave específica de usuario
-        const userPhotoKey = `userProfilePhoto_${userId}`;
-        let savedPhoto = localStorage.getItem(userPhotoKey);
-        
-        // SI NO HAY foto específica, intentar con la clave general
-        if (!savedPhoto) {
-          savedPhoto = localStorage.getItem('userProfilePhoto');
-        }
-
-        if (savedPhoto) {
-          setUserPhoto(savedPhoto);
-          if (cambiarPerfil) {
-            cambiarPerfil(savedPhoto);
-          }
-        } else {
-          setUserPhoto(fotoPerfil);
-          if (cambiarPerfil) {
-            cambiarPerfil(fotoPerfil);
-          }
-        }
-      } catch (error) {
-        console.error('Error cargando foto:', error);
-        setUserPhoto(fotoPerfil);
-      }
-    };
-
-    loadPhoto();
-
-    const handleStorageChange = () => {
-      loadPhoto();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    const interval = setInterval(loadPhoto, 1000);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
-  }, [perfil, cambiarPerfil]);
-
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      
-      if (!file.type.startsWith('image/')) {
-        alert("Por favor, selecciona un archivo de imagen válido");
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        alert("La imagen debe ser menor a 5MB");
-        return;
-      }
-
-      const reader = new FileReader();
-      
-      reader.onload = (event) => {
-        const nuevaImagen = event.target.result;
-        const userId = getCurrentUserId();
-        
-        // ✅ GUARDAR FOTO CON CLAVE ESPECÍFICA DEL USUARIO
-        const userPhotoKey = `userProfilePhoto_${userId}`;
-        localStorage.setItem(userPhotoKey, nuevaImagen);
-        
-        setUserPhoto(nuevaImagen);
-        if (cambiarPerfil) {
-          cambiarPerfil(nuevaImagen);
-        }
-        
-        window.dispatchEvent(new Event('storage'));
-      };
-      
-      reader.readAsDataURL(file);
-    }
+  // Función para redirigir al formulario de perfil
+  const handleEditProfile = () => {
+    window.location.href = '/perfil-egresado-form';
   };
 
   // Si no hay datos académicos, mostrar mensaje
-  if (!informacionAcademica) {
-    return (
-      <aside style={{ display: 'block', width: '100%' }}>
-        <div className="bg-white rounded-2xl p-4 mb-6">
-          <h2 className="text-green-600 font-bold text-lg mb-4 flex items-center gap-2">
-            <GraduationCap size={20} />
-            Información Académica
-          </h2>
-          <div className="text-center py-4">
-            
-            <p className="text-gray-500">Complete su perfil académico en la sección de Mi Perfil</p>
-            
+if (!informacionAcademica) {
+  return (
+    <aside style={{ display: 'block', width: '100%' }}>
+      <div className="bg-white rounded-2xl p-4 mb-6">
+        <h2 className="text-green-600 font-bold text-lg mb-4 flex items-center gap-2">
+          <GraduationCap size={20} />
+          Información Académica
+        </h2>
+        <div className="text-center py-4">
+          <p className="text-gray-500">Complete su perfil académico en la sección de Mi Perfil</p>
+          
+          {/* Botón centrado */}
+          <div className="text-center mt-3">
             <button 
-              onClick={() => window.location.href = '/perfil-egresado-form'}
-              className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
+              onClick={handleEditProfile}
+              className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors inline-flex"
             >
               Completar Perfil
             </button>
           </div>
         </div>
-      </aside>
-    );
-  }
+      </div>
+    </aside>
+  );
+}
 
   return (
     <aside style={{ display: 'block', width: '100%' }}>
@@ -190,26 +116,15 @@ function SidebarIzquierda({ perfil, cambiarPerfil, datosAcademicos }) {
         </h2>
         
         <div className="text-center mb-4">
-          <label className="relative cursor-pointer">
+          {/* ✅ SOLO MOSTRAR LA IMAGEN - SIN POSIBILIDAD DE CAMBIARLA */}
+          <div className="relative">
             <img 
               src={userPhoto} 
               alt="Perfil" 
               className="w-20 h-20 mx-auto rounded-full object-cover mb-2 border-2 border-green-500" 
             />
-            <div className="absolute bottom-2 right-1/2 transform translate-x-12 bg-green-500 rounded-full p-1">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white" className="cursor-pointer">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-            </div>
-            <input 
-              type="file" 
-              accept="image/*" 
-              className="hidden" 
-              onChange={handleFileChange} 
-            />
-          </label>
+           
+          </div>
           <h3 className="font-semibold text-gray-800">
             {informacionAcademica.nombreCompleto ? 
               informacionAcademica.nombreCompleto.split(' ').slice(0, 2).join(' ')
@@ -217,6 +132,15 @@ function SidebarIzquierda({ perfil, cambiarPerfil, datosAcademicos }) {
             }
           </h3>
           <p className="text-gray-500 text-sm">Estudiante URP</p>
+          
+         <div className="text-center mt-2">
+        <button 
+       onClick={handleEditProfile}
+      className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors inline-flex"
+        >
+      Editar perfil
+      </button>
+      </div>
         </div>
 
         <div className="space-y-3 border-t border-gray-100 pt-4">

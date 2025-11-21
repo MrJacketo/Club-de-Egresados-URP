@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { ThumbsUp, MessageCircle, Share, MoreHorizontal, X, Bookmark, Link, Flag, Trash2 } from "lucide-react";
 import fotoPerfil from "../../../assets/foto_perfil_xdefecto.png";
+import { useProfilePhoto, getCurrentUserId } from "../../../Hooks/useProfilePhoto"; 
 
 function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddComment }) {
   const [menuActivo, setMenuActivo] = useState(false);
-  const [userPhoto, setUserPhoto] = useState(fotoPerfil);
   const [currentUser, setCurrentUser] = useState(null);
   const [horaPublicacion, setHoraPublicacion] = useState("");
   const comentariosRapidos = ["¡Qué buena noticia! 🎉", "Felicidades 👏", "Éxitos 💪"];
+  
+  //  Usar el hook personalizado para la foto
+  const { photo: userPhoto } = useProfilePhoto();
 
-  // ✅ Cargar imagen del localStorage y datos del usuario
+  //  Cargar datos del usuario actual
   useEffect(() => {
     const loadUserData = () => {
       try {
-        // Cargar imagen del perfil
-        const imagen = localStorage.getItem('userProfilePhoto');
-        console.log('Buscando foto en localStorage:', imagen ? 'Encontrada' : 'No encontrada');
+        // Cargar información del usuario para identificar al usuario actual
+        const userId = getCurrentUserId();
+        const userAcademicKey = `academicData_${userId}`;
         
-        if (imagen && imagen.startsWith('data:image')) {
-          setUserPhoto(imagen);
+        let academicData = localStorage.getItem(userAcademicKey);
+        if (!academicData) {
+          academicData = localStorage.getItem('academicData');
         }
 
-        // Cargar información del usuario para identificar al usuario actual
-        const academicData = localStorage.getItem('academicData');
         if (academicData) {
           const userData = JSON.parse(academicData);
           setCurrentUser(userData.nombreCompleto || "Usuario");
@@ -52,7 +54,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
     };
   }, []);
 
-  // ✅ Calcular la hora de publicación
+  //  Calcular la hora de publicación
   useEffect(() => {
     const calcularHoraPublicacion = () => {
       if (post.timestamp) {
@@ -98,7 +100,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
   const obtenerImagenPerfil = (autor, perfilImgEspecifico = null) => {
     console.log('Obteniendo imagen para autor:', autor, 'Usuario actual:', currentUser);
     
-    // ✅ Verificar si este autor es el usuario actual
+    //  Verificar si este autor es el usuario actual
     const esUsuarioActual = currentUser && autor === currentUser;
     
     // Si es el usuario actual y tenemos foto, usarla
@@ -119,7 +121,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
       return perfilesUsuarios[autor];
     }
     
-    // ✅ Si no hay ninguna imagen, usar la imagen por defecto
+    //  Si no hay ninguna imagen, usar la imagen por defecto
     console.log('Usando imagen por defecto');
     return fotoPerfil;
   };
@@ -139,14 +141,23 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
     setMenuActivo(false);
   };
 
-  // ✅ Verificar si el post es del usuario actual
+  //  Verificar si el post es del usuario actual
   const esPostDelUsuario = currentUser && post.autor === currentUser;
+
+  //  Función mejorada para eliminar publicación
+  const handleDeletePost = () => {
+    if (window.confirm("¿Estás seguro de que quieres borrar esta publicación?")) {
+      console.log('Eliminando publicación:', post.id);
+      onDelete(post.id);
+    }
+    setMenuActivo(false);
+  };
 
   return (
     <article className="bg-white rounded-2xl p-10 relative shadow-sm">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          {/* ✅ Usar obtenerImagenPerfil que ahora identifica correctamente al usuario */}
+          {/*  Usar obtenerImagenPerfil que ahora identifica correctamente al usuario */}
           <img
             src={obtenerImagenPerfil(post.autor, post.perfilImg)}
             alt="Perfil"
@@ -169,7 +180,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
           </div>
           <div>
             <h4 className="font-semibold text-green-700">{post.autor}</h4>
-            {/* ✅ MOSTRAR SOLO LA HORA - Formato 24 horas */}
+            {/*  MOSTRAR SOLO LA HORA - Formato 24 horas */}
             <time className="text-xs text-gray-400">{horaPublicacion}</time>
           </div>
         </div>
@@ -187,7 +198,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
               <div className="absolute right-0 top-10 bg-white rounded-xl shadow-lg border border-gray-200 py-2 min-w-[180px] z-20">
                 <button
                   onClick={() => manejarMenu("guardar")}
-                  className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm"
+                  className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
                 >
                   <Bookmark size={16} className="text-gray-500" />
                   <span>Guardar publicación</span>
@@ -195,7 +206,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
                 
                 <button
                   onClick={() => manejarMenu("copiar")}
-                  className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm"
+                  className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
                 >
                   <Link size={16} className="text-gray-500" />
                   <span>Copiar enlace</span>
@@ -205,8 +216,8 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
                 
                 {esPostDelUsuario && (
                   <button
-                    onClick={() => manejarMenu("borrar")}
-                    className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
+                    onClick={handleDeletePost}
+                    className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
                   >
                     <Trash2 size={16} />
                     <span>Borrar publicación</span>
@@ -216,7 +227,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
                 {!esPostDelUsuario && (
                   <button
                     onClick={() => manejarMenu("reportar")}
-                    className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
+                    className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
                   >
                     <Flag size={16} />
                     <span>Reportar publicación</span>
@@ -226,12 +237,14 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
             )}
           </div>
           
+          {/*  Botón de eliminar visible solo para el autor */}
           {esPostDelUsuario && (
             <button
-              onClick={() => onDelete(post.id)}
-              className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
+              onClick={handleDeletePost}
+              className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors hover:bg-red-50"
+              title="Eliminar publicación"
             >
-              <X size={16} />
+              <Trash2 size={16} />
             </button>
           )}
         </div>
@@ -257,14 +270,14 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
         <button
           onClick={() => onLike(post.id)}
           className={`flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors ${
-            isLiked ? "text-green-600 font-semibold" : ""
+            isLiked ? "text-green-600 font-semibold bg-green-50" : "bg-white text-black hover:bg-gray-50"
           }`}
         >
-          <ThumbsUp size={16} /> Me gusta ({post.likes})
+          <ThumbsUp size={16} /> Me gusta ({post.likes || 0})
         </button>
 
         <button className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors">
-          <MessageCircle size={16} /> Comentar ({post.comentarios.length})
+          <MessageCircle size={16} /> Comentar ({post.comentarios?.length || 0})
         </button>
 
         <button className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors">
@@ -272,7 +285,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
         </button>
       </footer>
 
-      {post.comentarios.length > 0 && (
+      {post.comentarios && post.comentarios.length > 0 && (
         <div className="mt-4 pt-3 space-y-3 border-t border-gray-100">
           {post.comentarios.map((comentario, i) => (
             <div key={i} className="text-sm text-gray-700 flex items-start gap-3">
@@ -300,7 +313,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
                   <p className="font-medium text-green-700 text-xs">{comentario.autor}</p>
                   <p className="text-gray-800 mt-1">{comentario.texto}</p>
                 </div>
-                {/* ✅ MOSTRAR SOLO LA HORA para comentarios */}
+                {/*  MOSTRAR SOLO LA HORA para comentarios */}
                 <time className="text-xs text-gray-400 mt-1 block pl-1">
                   {formatearHoraComentario(comentario)}
                 </time>
@@ -315,7 +328,7 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
           <button
             key={i}
             onClick={() => onAddComment(post.id, c)}
-            className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors text-xs"
+            className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
           >
             {c}
           </button>

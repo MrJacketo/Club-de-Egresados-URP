@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Globe, Video, Image, Smile } from "lucide-react";
+import { useProfilePhoto, getCurrentUserId } from "../../../Hooks/useProfilePhoto"; // Ruta corregida
 
-function CrearPublicacion({ perfil, agregarPost }) {
+function CrearPublicacion({ agregarPost }) {
   const [nuevoPost, setNuevoPost] = useState("");
   const [archivo, setArchivo] = useState(null);
   const [tipoPublicacion, setTipoPublicacion] = useState("texto");
   const [mostrarEmojis, setMostrarEmojis] = useState(false);
   const [nombreUsuario, setNombreUsuario] = useState("Usuario URP");
+  
+  // ✅ Usar el hook personalizado para la foto
+  const { photo: userPhoto } = useProfilePhoto();
 
   // Obtener ID y datos del usuario específico
   useEffect(() => {
@@ -107,7 +111,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
       comentarios: [],
       imagen: null,
       video: null,
-      perfilImg: perfil || null,
+      perfilImg: userPhoto, // ✅ Usar la foto actualizada del hook
       timestamp: new Date().toISOString()
     };
 
@@ -138,9 +142,10 @@ function CrearPublicacion({ perfil, agregarPost }) {
     <div className="bg-white rounded-2xl p-6 shadow-xl w-full mb-8">
       <div className="flex items-center justify-between mb-6"> 
         <div className="flex items-center gap-4"> 
-          {perfil ? (
+          {/* ✅ Usar userPhoto del hook en lugar de la prop perfil */}
+          {userPhoto ? (
             <img
-              src={perfil}
+              src={userPhoto}
               alt="Perfil"
               className="w-14 h-14 rounded-full object-cover border-2 border-green-200" 
             />
@@ -185,7 +190,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
               <button
                 key={index}
                 onClick={() => agregarEmoji(emoji)}
-                className="flex items-center gap-2 bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors hover:bg-gray-100" 
+                className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors" 
               >
                 {emoji}
               </button>
@@ -200,7 +205,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
             <span className="text-base text-gray-600">📂 {archivo.name}</span> 
             <button
               onClick={() => setArchivo(null)}
-              className="flex items-center gap-2 bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors hover:bg-gray-100" 
+              className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors" 
             >
               ✕ Eliminar
             </button>
