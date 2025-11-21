@@ -8,15 +8,14 @@ import {
 import { userApi } from "../api/userApi";
 import { toast } from "react-hot-toast";
 import { useUser } from "../context/userContext";
+import fotoPerfil from "../assets/foto_perfil_xdefecto.png"; // Asegúrate de importar la imagen por defecto
 
 export default function PerfilEgresadoForm() {
   const navigate = useNavigate();
   const { userName } = useUser();
-  const [photo, setPhoto] = useState("/default-profile.png");
-  const [selectedFile, setSelectedFile] = useState(null); //foto para
+  const [photo, setPhoto] = useState(fotoPerfil); // Usar la imagen importada por defecto
+  const [selectedFile, setSelectedFile] = useState(null);
 
-
-  
   const [userData, setUserData] = useState({
     nombreCompleto: userName || "",
     anioEgreso: "",
@@ -53,6 +52,105 @@ export default function PerfilEgresadoForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
+  // Obtener ID del usuario actual de forma segura
+  const getCurrentUserId = () => {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        const userData = JSON.parse(currentUser);
+        return userData.id || userData._id || 'default-user';
+      }
+      return 'default-user';
+    } catch (error) {
+      console.error('Error obteniendo ID del usuario:', error);
+      return 'default-user';
+    }
+  };
+
+  // Función para convertir file a base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validaciones
+    if (!file.type.startsWith('image/')) {
+      toast.error("Por favor, selecciona un archivo de imagen válido");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("La imagen debe ser menor a 5MB");
+      return;
+    }
+
+    try {
+      // Convertir la imagen a Base64 para guardar en localStorage
+      const base64Image = await fileToBase64(file);
+      const userId = getCurrentUserId();
+      
+      // ✅ GUARDAR FOTO CON CLAVE ESPECÍFICA DEL USUARIO
+      const userPhotoKey = `userProfilePhoto_${userId}`;
+      localStorage.setItem(userPhotoKey, base64Image);
+      
+      // Actualizar el estado para mostrar la imagen inmediatamente
+      setPhoto(base64Image);
+      setSelectedFile(file);
+      
+      toast.success("Foto de perfil guardada correctamente");
+    } catch (error) {
+      console.error("Error procesando la imagen:", error);
+      toast.error("Error al procesar la imagen");
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    const userId = getCurrentUserId();
+    const userPhotoKey = `userProfilePhoto_${userId}`;
+    
+    localStorage.removeItem(userPhotoKey);
+    // También eliminar la clave general por compatibilidad
+    localStorage.removeItem('userProfilePhoto');
+    
+    setPhoto(fotoPerfil);
+    setSelectedFile(null);
+    toast.success("Foto de perfil eliminada");
+  };
+
+  // Función para cargar la foto del usuario
+  const loadUserPhoto = () => {
+    try {
+      const userId = getCurrentUserId();
+      
+      // PRIMERO intentar con clave específica de usuario
+      const userPhotoKey = `userProfilePhoto_${userId}`;
+      let savedPhoto = localStorage.getItem(userPhotoKey);
+      
+      // SI NO HAY foto específica, intentar con la clave general
+      if (!savedPhoto) {
+        savedPhoto = localStorage.getItem('userProfilePhoto');
+      }
+
+      if (savedPhoto) {
+        setPhoto(savedPhoto);
+      } else {
+        setPhoto(fotoPerfil);
+      }
+    } catch (error) {
+      console.error('Error cargando foto:', error);
+      setPhoto(fotoPerfil);
+    }
+  };
+
+  // En el useEffect donde cargas los datos
   useEffect(() => {
     const fetchDataAndOptions = async () => {
       try {
@@ -61,12 +159,27 @@ export default function PerfilEgresadoForm() {
 
         const currentUser = await userApi.getCurrentUser();
         if (currentUser.user) {
-          setUserData({
+          const userDataActualizado = {
             nombreCompleto: currentUser.user.name || userName || "",
             anioEgreso: currentUser.user.anioEgreso || "",
             carrera: currentUser.user.carrera || "",
             gradoAcademico: currentUser.user.gradoAcademico || "",
-          });
+          };
+          
+          setUserData(userDataActualizado);
+          
+          // GUARDAR INMEDIATAMENTE EN LOCALSTORAGE PARA EL SIDEBAR
+          const userId = getCurrentUserId();
+          const datosParaSidebar = {
+            nombreCompleto: userDataActualizado.nombreCompleto,
+            añoEgreso: userDataActualizado.anioEgreso,
+            carrera: userDataActualizado.carrera,
+            gradoAcademico: userDataActualizado.gradoAcademico
+          };
+          
+          // Guardar con clave específica del usuario
+          const userAcademicKey = `academicData_${userId}`;
+          localStorage.setItem(userAcademicKey, JSON.stringify(datosParaSidebar));
         }
 
         const profileResponse = await getGraduateProfileRequest();
@@ -88,9 +201,36 @@ export default function PerfilEgresadoForm() {
                 profileResponse.ubicacion?.disponibilidadViajar || false,
             },
           });
+
+          // Actualizar también con datos del perfil si existen
+          if (profileResponse.nombreCompleto) {
+            const userId = getCurrentUserId();
+            const datosParaSidebar = {
+              nombreCompleto: profileResponse.nombreCompleto,
+              añoEgreso: userData.anioEgreso || "",
+              carrera: userData.carrera || "",
+              gradoAcademico: userData.gradoAcademico || ""
+            };
+            
+            const userAcademicKey = `academicData_${userId}`;
+            localStorage.setItem(userAcademicKey, JSON.stringify(datosParaSidebar));
+          }
+
+          // Cargar foto del perfil si existe
+          if (profileResponse.profilePicture) {
+            const userId = getCurrentUserId();
+            const userPhotoKey = `userProfilePhoto_${userId}`;
+            localStorage.setItem(userPhotoKey, profileResponse.profilePicture);
+            setPhoto(profileResponse.profilePicture);
+          } else {
+            loadUserPhoto();
+          }
+        } else {
+          loadUserPhoto();
         }
       } catch (error) {
         console.error("Error cargando datos:", error);
+        loadUserPhoto(); // Asegurar que se cargue la foto por defecto en caso de error
       } finally {
         setIsInitializing(false);
       }
@@ -98,33 +238,26 @@ export default function PerfilEgresadoForm() {
     fetchDataAndOptions();
   }, [userName]);
 
-const handlePhotoChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append("photo", file);
-
-  try {
-    const response = await api.post("/users/upload-photo", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-   setPhoto(response.data.profilePicture); //try 1
-    // Actualiza la vista con la nueva imagen
-    setProfileData(prev => ({
-      ...prev,
-      profilePicture: response.data.profilePicture
-    }));
-    setSelectedFile(file); //TRY 2
-    toast.success("Foto de perfil actualizada correctamente");
-  } catch (err) {
-    toast.error("Error al subir la foto de perfil");
-  }
-};
-
   const handleUserChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prev) => ({ ...prev, [name]: value }));
+    setUserData((prev) => { 
+      const newUserData = { ...prev, [name]: value };
+      
+      // ACTUALIZAR LOCALSTORAGE CADA VEZ QUE CAMBIE UN DATO
+      const userId = getCurrentUserId();
+      const datosParaSidebar = {
+        nombreCompleto: newUserData.nombreCompleto,
+        añoEgreso: newUserData.anioEgreso,
+        carrera: newUserData.carrera,
+        gradoAcademico: newUserData.gradoAcademico
+      };
+      
+      // Guardar con clave específica del usuario
+      const userAcademicKey = `academicData_${userId}`;
+      localStorage.setItem(userAcademicKey, JSON.stringify(datosParaSidebar));
+      
+      return newUserData;
+    });
   };
 
   const handleNestedChange = (e, parentKey) => {
@@ -160,64 +293,86 @@ const handlePhotoChange = async (e) => {
     });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
+  // En el handleSubmit del PerfilEgresadoForm
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-  try {
-    if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
-    if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
-    if (!userData.carrera) return toast.error("La carrera es requerida");
+    try {
+      if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
+      if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
+      if (!userData.carrera) return toast.error("La carrera es requerida");
 
-    // Actualiza los datos académicos del usuario
-    await userApi.updateAcademicData({
-      anioEgreso: userData.anioEgreso,
-      carrera: userData.carrera,
-      gradoAcademico: userData.gradoAcademico || "Bachiller",
-    });
+      // 1. GUARDAR DATOS ACADÉMICOS EN LOCALSTORAGE PARA EL SIDEBAR
+      const userId = getCurrentUserId();
+      const datosAcademicosParaSidebar = {
+        nombreCompleto: userData.nombreCompleto.trim(),
+        añoEgreso: userData.anioEgreso,
+        carrera: userData.carrera,
+        gradoAcademico: userData.gradoAcademico || "Egresado"
+      };
+      
+      // Guardar con clave específica del usuario
+      const userAcademicKey = `academicData_${userId}`;
+      localStorage.setItem(userAcademicKey, JSON.stringify(datosAcademicosParaSidebar));
 
-    // Define cleanProfile fuera del try interno
-    const cleanProfile = {
-      nombreCompleto: userData.nombreCompleto.trim(),
-      interesesProfesionales: {
-        ...profileData.interesesProfesionales,
-        modalidad: profileData.interesesProfesionales?.modalidad || "Presencial",
-        tipoJornada: profileData.interesesProfesionales?.tipoJornada || "Tiempo completo",
-      },
-      habilidades: {
-        ...profileData.habilidades,
-        idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
-      },
-      ubicacion: {
-        ...profileData.ubicacion,
-        distritoResidencia: profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
-      },
-    };
+      // 2. Actualiza datos académicos en la API
+      await userApi.updateAcademicData({
+        anioEgreso: userData.anioEgreso,
+        carrera: userData.carrera,
+        gradoAcademico: userData.gradoAcademico || "Egresado",
+      });
 
-    // Guarda el perfil de egresado
-    await createOrUpdateGraduateProfileRequest(cleanProfile);
+      // 3. Guardar la foto en el perfil si existe (solo si no es la imagen por defecto)
+      const userPhotoKey = `userProfilePhoto_${userId}`;
+      const savedPhoto = localStorage.getItem(userPhotoKey);
+      
+      const profileWithPhoto = {
+        nombreCompleto: userData.nombreCompleto.trim(),
+        interesesProfesionales: {
+          ...profileData.interesesProfesionales,
+          modalidad: profileData.interesesProfesionales?.modalidad || "Presencial",
+          tipoJornada: profileData.interesesProfesionales?.tipoJornada || "Tiempo completo",
+        },
+        habilidades: {
+          ...profileData.habilidades,
+          idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
+        },
+        ubicacion: {
+          ...profileData.ubicacion,
+          distritoResidencia: profileData.ubicacion?.distritoResidencia || "Cercado de Lima",
+        },
+      };
 
-    // Si hay una foto seleccionada, súbela junto con el perfil
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append("photo", selectedFile);
-      formData.append("data", JSON.stringify(cleanProfile));
+      // Solo agregar profilePicture si existe y no es la imagen por defecto
+      if (savedPhoto && savedPhoto !== fotoPerfil && !savedPhoto.includes("foto_perfil_xdefecto.png")) {
+        profileWithPhoto.profilePicture = savedPhoto;
+      }
 
-      await userApi.uploadProfilePhoto(formData);
-      toast.success("Foto y perfil actualizados correctamente!");
-    } else {
+      // 4. Guarda el perfil completo
+      await createOrUpdateGraduateProfileRequest(profileWithPhoto);
+
       toast.success("Perfil guardado exitosamente!");
+      navigate("/welcome-egresado");
+      
+    } catch (error) {
+      console.error("Error al guardar el perfil:", error);
+      toast.error(error.response?.data?.error || "Error al guardar el perfil");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    navigate("/welcome-egresado");
-  } catch (error) {
-    console.error("Error al guardar el perfil:", error);
-    toast.error(error.response?.data?.error || "Error al guardar foto o perfil");
-  } finally {
-    setIsLoading(false);
+  if (isInitializing) {
+    return (
+      <div className="w-full min-h-screen bg-[#1C1D21] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00BC4F] mx-auto"></div>
+          <p className="mt-4 text-lg">Cargando datos...</p>
+        </div>
+      </div>
+    );
   }
-};
-
 
   return (
     <div className="w-full min-h-screen bg-[#1C1D21] text-white flex flex-col">
@@ -225,7 +380,15 @@ const handleSubmit = async (e) => {
         {/* FOTO */}
         <div className="flex flex-col items-center md:w-1/3">
           <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-[#00BC4F] shadow-lg">
-            <img src={photo} alt="Foto de perfil" className="w-full h-full object-cover" />
+            <img 
+              src={photo} 
+              alt="Foto de perfil" 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Si hay error al cargar la imagen, mostrar la por defecto
+                e.target.src = fotoPerfil;
+              }}
+            />
           </div>
           <label
             htmlFor="photo"
@@ -234,6 +397,17 @@ const handleSubmit = async (e) => {
             Editar foto de perfil
           </label>
           <input type="file" id="photo" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+          
+          {/* Botón para eliminar foto - solo mostrar si no es la imagen por defecto */}
+          {photo !== fotoPerfil && !photo.includes("foto_perfil_xdefecto.png") && (
+            <button
+              type="button"
+              onClick={handleRemovePhoto}
+              className="mt-2 px-4 py-2 bg-red-600 rounded-lg text-white font-semibold hover:bg-red-700 transition"
+            >
+              Eliminar foto
+            </button>
+          )}
         </div>
 
         {/* FORMULARIO */}
@@ -294,7 +468,6 @@ const handleSubmit = async (e) => {
                   <option value="Turismo, Hotelería y Gastronomía">Turismo, Hotelería y Gastronomía</option>
                 </select>
               </div>
-
             </div>
 
             <div>
@@ -539,6 +712,5 @@ const handleSubmit = async (e) => {
           </div>
           </main>
           </div>
-);
+  );
 }
-

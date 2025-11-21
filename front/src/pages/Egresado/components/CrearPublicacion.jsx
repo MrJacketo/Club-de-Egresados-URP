@@ -1,11 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Globe, Video, Image, Smile } from "lucide-react";
 
 function CrearPublicacion({ perfil, agregarPost }) {
   const [nuevoPost, setNuevoPost] = useState("");
   const [archivo, setArchivo] = useState(null);
-  const [tipoPublicacion, setTipoPublicacion] = useState("texto"); // ✅ CORREGIDO
+  const [tipoPublicacion, setTipoPublicacion] = useState("texto");
   const [mostrarEmojis, setMostrarEmojis] = useState(false);
+  const [nombreUsuario, setNombreUsuario] = useState("Usuario URP");
+
+  // Obtener ID y datos del usuario específico
+  useEffect(() => {
+    const cargarDatosUsuario = () => {
+      try {
+        // 1. Obtener el usuario actual del localStorage
+        const currentUser = localStorage.getItem('currentUser');
+        let userIdentifier = 'default-user';
+        let userNameFromAuth = 'Usuario URP';
+
+        if (currentUser) {
+          const userData = JSON.parse(currentUser);
+          userIdentifier = userData.id || userData._id || 'default-user';
+          userNameFromAuth = userData.name || 'Usuario URP';
+        }
+
+        // 2. Cargar datos académicos ESPECÍFICOS del usuario
+        const userAcademicKey = `academicData_${userIdentifier}`;
+        const academicData = localStorage.getItem(userAcademicKey);
+        
+        if (academicData) {
+          const datos = JSON.parse(academicData);
+          if (datos.nombreCompleto && datos.nombreCompleto.trim() !== "") {
+            setNombreUsuario(datos.nombreCompleto);
+            return;
+          }
+        }
+
+        // 3. Si no hay datos académicos, intentar con clave general
+        const generalAcademicData = localStorage.getItem('academicData');
+        if (generalAcademicData) {
+          const datos = JSON.parse(generalAcademicData);
+          if (datos.nombreCompleto && datos.nombreCompleto.trim() !== "") {
+            setNombreUsuario(datos.nombreCompleto);
+            return;
+          }
+        }
+
+        // 4. Si no hay datos académicos, usar nombre del auth
+        if (userNameFromAuth && userNameFromAuth.trim() !== "") {
+          setNombreUsuario(userNameFromAuth);
+          return;
+        }
+
+        // 5. Finalmente, usar valor por defecto
+        setNombreUsuario("Usuario URP");
+
+      } catch (error) {
+        console.error("Error al cargar el nombre del usuario:", error);
+        setNombreUsuario("Usuario URP");
+      }
+    };
+
+    cargarDatosUsuario();
+
+    // Escuchar cambios en el localStorage
+    const handleStorageChange = () => {
+      cargarDatosUsuario();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Verificar cada 2 segundos por cambios
+    const interval = setInterval(cargarDatosUsuario, 2000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   const emojis = [
     "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇",
@@ -16,7 +87,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
   const handleArchivoChange = (e, tipo) => {
     if (e.target.files && e.target.files[0]) {
       setArchivo(e.target.files[0]);
-      setTipoPublicacion(tipo); // ✅ AHORA FUNCIONA
+      setTipoPublicacion(tipo);
     }
   };
 
@@ -30,28 +101,28 @@ function CrearPublicacion({ perfil, agregarPost }) {
 
     let nuevo = {
       id: Date.now(),
-      autor: "Tú",
+      autor: nombreUsuario,
       contenido: nuevoPost,
       likes: 0,
       comentarios: [],
       imagen: null,
       video: null,
       perfilImg: perfil || null,
+      timestamp: new Date().toISOString()
     };
 
     if (archivo) {
       if (archivo.type.startsWith("image/")) {
-        // CONVERTIR IMAGEN A BASE64 para que persista
         const reader = new FileReader();
         reader.onload = (event) => {
-          nuevo.imagen = event.target.result; // Base64
+          nuevo.imagen = event.target.result;
           agregarPost(nuevo);
           setNuevoPost("");
           setArchivo(null);
-          setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
+          setTipoPublicacion("texto");
         };
         reader.readAsDataURL(archivo);
-        return; // Salir aquí porque es asíncrono
+        return;
       } else if (archivo.type.startsWith("video/")) {
         nuevo.video = URL.createObjectURL(archivo);
       }
@@ -60,7 +131,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
     agregarPost(nuevo);
     setNuevoPost("");
     setArchivo(null);
-    setTipoPublicacion("texto"); // ✅ AHORA FUNCIONA
+    setTipoPublicacion("texto");
   };
 
   return (
@@ -75,11 +146,13 @@ function CrearPublicacion({ perfil, agregarPost }) {
             />
           ) : (
             <div className="w-14 h-14 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xl"> 
-              G
+              {nombreUsuario.charAt(0).toUpperCase()}
             </div>
           )}
           <div>
-            <h3 className="font-bold text-gray-800 text-lg">Gonzalo Quineche</h3> 
+            <h3 className="font-bold text-gray-800 text-lg">
+              {nombreUsuario}
+            </h3>
             <div className="flex items-center gap-2 text-sm text-gray-500"> 
               <Globe size={14} /> 
               <span>Publicar para Cualquiera</span>
@@ -112,7 +185,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
               <button
                 key={index}
                 onClick={() => agregarEmoji(emoji)}
-                className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors" 
+                className="flex items-center gap-2 bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors hover:bg-gray-100" 
               >
                 {emoji}
               </button>
@@ -127,7 +200,7 @@ function CrearPublicacion({ perfil, agregarPost }) {
             <span className="text-base text-gray-600">📂 {archivo.name}</span> 
             <button
               onClick={() => setArchivo(null)}
-              className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors" 
+              className="flex items-center gap-2 bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors hover:bg-gray-100" 
             >
               ✕ Eliminar
             </button>

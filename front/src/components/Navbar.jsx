@@ -1,4 +1,3 @@
-//React
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 //Contextos
@@ -22,8 +21,8 @@ import {
   Gift,
 } from "lucide-react";
 import logo from "../assets/logoUrpex2.svg";
-import fotoPerfil from "../assets/foto.jpeg";
-import { useState } from "react";
+import fotoPerfil from "../assets/foto_perfil_xdefecto.png";
+import { useState, useEffect } from "react"; // Agregué useEffect
 
 //Funcion Navbar Principal
 export default function Navbar() {
@@ -32,6 +31,42 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userPhoto, setUserPhoto] = useState(fotoPerfil); // Estado para la foto del usuario
+
+  // Cargar foto del localStorage al iniciar
+  useEffect(() => {
+    const savedPhoto = localStorage.getItem('userProfilePhoto');
+    if (savedPhoto) {
+      setUserPhoto(savedPhoto);
+    }
+  }, []);
+
+  // Escuchar cambios en localStorage (por si se actualiza la foto en otro componente)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedPhoto = localStorage.getItem('userProfilePhoto');
+      if (savedPhoto) {
+        setUserPhoto(savedPhoto);
+      } else {
+        setUserPhoto(fotoPerfil); // Volver a la foto por defecto si se elimina
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // También verificar periódicamente por cambios (para misma pestaña)
+    const interval = setInterval(() => {
+      const savedPhoto = localStorage.getItem('userProfilePhoto');
+      if (savedPhoto && savedPhoto !== userPhoto) {
+        setUserPhoto(savedPhoto);
+      }
+    }, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [userPhoto]);
 
   const handleLogout = async () => {
     try {
@@ -263,7 +298,7 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={fotoPerfil}
+                  src={userPhoto} //  Cambiado: ahora usa la foto del localStorage
                   alt="Foto de perfil"
                   className="w-10 h-10 rounded-full object-cover ring-2"
                   style={{ ringColor: "#5DC554" }}

@@ -1,32 +1,127 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ThumbsUp, MessageCircle, Share, MoreHorizontal, X, Bookmark, Link, Flag, Trash2 } from "lucide-react";
+import fotoPerfil from "../../../assets/foto_perfil_xdefecto.png";
 
 function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddComment }) {
   const [menuActivo, setMenuActivo] = useState(false);
+  const [userPhoto, setUserPhoto] = useState(fotoPerfil);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [horaPublicacion, setHoraPublicacion] = useState("");
   const comentariosRapidos = ["¡Qué buena noticia! 🎉", "Felicidades 👏", "Éxitos 💪"];
 
-  // ✅ SOLO ESTO SE AGREGÓ - Cargar imagen del sidebar
-  const obtenerImagenSidebar = () => {
-    try {
-      const imagen = localStorage.getItem('imagenPerfil');
-      if (imagen && imagen.startsWith('data:image')) {
-        return imagen;
+  // ✅ Cargar imagen del localStorage y datos del usuario
+  useEffect(() => {
+    const loadUserData = () => {
+      try {
+        // Cargar imagen del perfil
+        const imagen = localStorage.getItem('userProfilePhoto');
+        console.log('Buscando foto en localStorage:', imagen ? 'Encontrada' : 'No encontrada');
+        
+        if (imagen && imagen.startsWith('data:image')) {
+          setUserPhoto(imagen);
+        }
+
+        // Cargar información del usuario para identificar al usuario actual
+        const academicData = localStorage.getItem('academicData');
+        if (academicData) {
+          const userData = JSON.parse(academicData);
+          setCurrentUser(userData.nombreCompleto || "Usuario");
+          console.log('Usuario actual identificado:', userData.nombreCompleto);
+        }
+      } catch (error) {
+        console.error('Error cargando datos del usuario:', error);
       }
-      return null;
-    } catch (error) {
-      return null;
+    };
+
+    loadUserData();
+
+    // Escuchar cambios en el localStorage
+    const handleStorageChange = () => {
+      console.log('Cambio detectado en localStorage');
+      loadUserData();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Verificar cambios cada segundo
+    const interval = setInterval(loadUserData, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // ✅ Calcular la hora de publicación
+  useEffect(() => {
+    const calcularHoraPublicacion = () => {
+      if (post.timestamp) {
+        // Si el post ya tiene un timestamp, usarlo
+        const fechaPost = new Date(post.timestamp);
+        setHoraPublicacion(fechaPost.toLocaleTimeString('es-ES', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }));
+      } else {
+        // Si no tiene timestamp, usar la hora actual
+        const ahora = new Date();
+        setHoraPublicacion(ahora.toLocaleTimeString('es-ES', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }));
+      }
+    };
+
+    calcularHoraPublicacion();
+  }, [post.timestamp]);
+
+  // Función para formatear hora de comentarios
+  const formatearHoraComentario = (comentario) => {
+    if (comentario.timestamp) {
+      const fechaComentario = new Date(comentario.timestamp);
+      return fechaComentario.toLocaleTimeString('es-ES', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      });
     }
+    const ahora = new Date();
+    return ahora.toLocaleTimeString('es-ES', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
   };
 
   const obtenerImagenPerfil = (autor, perfilImgEspecifico = null) => {
-    // ✅ SOLO ESTO SE AGREGÓ - Si es el usuario actual, usar imagen del sidebar
-    if (autor === "Tú") {
-      const imagenSidebar = obtenerImagenSidebar();
-      if (imagenSidebar) return imagenSidebar;
+    console.log('Obteniendo imagen para autor:', autor, 'Usuario actual:', currentUser);
+    
+    // ✅ Verificar si este autor es el usuario actual
+    const esUsuarioActual = currentUser && autor === currentUser;
+    
+    // Si es el usuario actual y tenemos foto, usarla
+    if (esUsuarioActual && userPhoto) {
+      console.log('Usando foto del usuario actual');
+      return userPhoto;
     }
     
-    if (perfilImgEspecifico) return perfilImgEspecifico;
-    return perfilesUsuarios[autor] || null;
+    // Si hay una imagen específica para este post/comentario, usarla
+    if (perfilImgEspecifico) {
+      console.log('Usando imagen específica del post');
+      return perfilImgEspecifico;
+    }
+    
+    // Si hay una imagen en perfilesUsuarios para este autor, usarla
+    if (perfilesUsuarios && perfilesUsuarios[autor]) {
+      console.log('Usando imagen de perfilesUsuarios');
+      return perfilesUsuarios[autor];
+    }
+    
+    // ✅ Si no hay ninguna imagen, usar la imagen por defecto
+    console.log('Usando imagen por defecto');
+    return fotoPerfil;
   };
 
   const manejarMenu = (accion) => {
@@ -44,28 +139,38 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
     setMenuActivo(false);
   };
 
+  // ✅ Verificar si el post es del usuario actual
+  const esPostDelUsuario = currentUser && post.autor === currentUser;
+
   return (
     <article className="bg-white rounded-2xl p-10 relative shadow-sm">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          {post.perfilImg ? (
-  <img
-    src={post.perfilImg}
-    alt="Perfil"
-    className="w-11 h-11 rounded-full object-cover"
-    onError={(e) => {
-      console.log('Error cargando imagen de perfil, usando avatar por defecto');
-      e.target.style.display = 'none';
-    }}
-  />
-) : (
-  <div className="w-11 h-11 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
-    {post.autor.charAt(0)}
-  </div>
-)}
+          {/* ✅ Usar obtenerImagenPerfil que ahora identifica correctamente al usuario */}
+          <img
+            src={obtenerImagenPerfil(post.autor, post.perfilImg)}
+            alt="Perfil"
+            className="w-11 h-11 rounded-full object-cover border-2 border-green-500"
+            onError={(e) => {
+              console.log('Error cargando imagen de perfil, usando avatar por defecto');
+              // En caso de error, mostrar el avatar con iniciales
+              e.target.style.display = 'none';
+              const avatar = document.getElementById(`avatar-${post.id}`);
+              if (avatar) avatar.style.display = 'flex';
+            }}
+          />
+          {/* Avatar de respaldo que se muestra si la imagen falla */}
+          <div 
+            className="w-11 h-11 rounded-full bg-green-600 text-white flex items-center justify-center font-bold"
+            style={{ display: 'none' }}
+            id={`avatar-${post.id}`}
+          >
+            {post.autor.charAt(0)}
+          </div>
           <div>
             <h4 className="font-semibold text-green-700">{post.autor}</h4>
-            <time className="text-xs text-gray-400">Hace poco</time>
+            {/* ✅ MOSTRAR SOLO LA HORA - Formato 24 horas */}
+            <time className="text-xs text-gray-400">{horaPublicacion}</time>
           </div>
         </div>
 
@@ -98,27 +203,30 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
                 
                 <div className="border-t border-gray-100 my-1"></div>
                 
-                {/* NUEVO BOTÓN ELIMINAR */}
-                <button
-                  onClick={() => manejarMenu("borrar")}
-                  className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
-                >
-                  <Trash2 size={16} />
-                  <span>Borrar publicación</span>
-                </button>
+                {esPostDelUsuario && (
+                  <button
+                    onClick={() => manejarMenu("borrar")}
+                    className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
+                  >
+                    <Trash2 size={16} />
+                    <span>Borrar publicación</span>
+                  </button>
+                )}
                 
-                <button
-                  onClick={() => manejarMenu("reportar")}
-                  className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
-                >
-                  <Flag size={16} />
-                  <span>Reportar publicación</span>
-                </button>
+                {!esPostDelUsuario && (
+                  <button
+                    onClick={() => manejarMenu("reportar")}
+                    className="flex items-center gap-2 bg-white !bg-white text-red-600 px-3 py-2 rounded-lg shadow-sm transition-colors w-full text-sm hover:bg-red-50"
+                  >
+                    <Flag size={16} />
+                    <span>Reportar publicación</span>
+                  </button>
+                )}
               </div>
             )}
           </div>
           
-          {post.autor === "Tú" && (
+          {esPostDelUsuario && (
             <button
               onClick={() => onDelete(post.id)}
               className="flex items-center gap-2 bg-white !bg-white text-black px-3 py-2 rounded-lg shadow-sm transition-colors"
@@ -145,7 +253,6 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
         </video>
       )}
 
-      {/* Botones principales con mismo estilo */}
       <footer className="mt-4 flex items-center justify-around text-sm">
         <button
           onClick={() => onLike(post.id)}
@@ -169,30 +276,40 @@ function Publicacion({ post, isLiked, perfilesUsuarios, onLike, onDelete, onAddC
         <div className="mt-4 pt-3 space-y-3 border-t border-gray-100">
           {post.comentarios.map((comentario, i) => (
             <div key={i} className="text-sm text-gray-700 flex items-start gap-3">
-              {obtenerImagenPerfil(comentario.autor, comentario.perfilImg) ? (
-                <img
-                  src={obtenerImagenPerfil(comentario.autor, comentario.perfilImg)}
-                  alt="Perfil"
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs text-gray-600 font-medium flex-shrink-0">
-                  {comentario.autor.charAt(0)}
-                </div>
-              )}
+              <img
+                src={obtenerImagenPerfil(comentario.autor, comentario.perfilImg)}
+                alt="Perfil"
+                className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-green-300"
+                onError={(e) => {
+                  console.log('Error cargando imagen de comentario, usando avatar por defecto');
+                  e.target.style.display = 'none';
+                  const avatar = document.getElementById(`avatar-comentario-${post.id}-${i}`);
+                  if (avatar) avatar.style.display = 'flex';
+                }}
+              />
+              {/* Avatar de respaldo para comentarios */}
+              <div 
+                className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs text-gray-600 font-medium flex-shrink-0"
+                style={{ display: 'none' }}
+                id={`avatar-comentario-${post.id}-${i}`}
+              >
+                {comentario.autor.charAt(0)}
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="bg-gray-50 rounded-2xl rounded-tl-none px-3 py-2">
                   <p className="font-medium text-green-700 text-xs">{comentario.autor}</p>
                   <p className="text-gray-800 mt-1">{comentario.texto}</p>
                 </div>
-                <time className="text-xs text-gray-400 mt-1 block pl-1">Hace poco</time>
+                {/* ✅ MOSTRAR SOLO LA HORA para comentarios */}
+                <time className="text-xs text-gray-400 mt-1 block pl-1">
+                  {formatearHoraComentario(comentario)}
+                </time>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Botones de comentarios rápidos */}
       <div className="mt-3 flex gap-2 flex-wrap">
         {comentariosRapidos.map((c, i) => (
           <button
