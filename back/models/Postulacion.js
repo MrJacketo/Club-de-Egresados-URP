@@ -23,6 +23,18 @@ const PostulacionSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
+    cvUrl: {
+        type: String,
+        required: false,
+    },
+    cvFileName: {
+        type: String,
+        required: false,
+    },
+    cvFilePath: {
+        type: String,
+        required: false,
+    },
     fechaPostulacion: {
         type: Date,
         default: Date.now,

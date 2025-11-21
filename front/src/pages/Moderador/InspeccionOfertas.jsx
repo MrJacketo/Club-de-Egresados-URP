@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ModeradorSidebar from '../Egresado/components/moderadorSidebar';
 import { Eye, Search, Users, Briefcase, CheckCircle, XCircle, Mail, Phone, FileText, TrendingUp } from 'lucide-react';
-import { getOfertasRequest, getPostulantesDeOfertaRequest, updateEstadoPostulante } from '../../api/ofertaLaboralApi';
+import { getOfertasRequest, getPostulantesDeOfertaRequest, updateEstadoPostulante, downloadCVRequest } from '../../api/ofertaLaboralApi';
 import { ModeradorSidebarProvider, useModeradorSidebar } from '../../context/moderadorSidebarContext';
 import toast from 'react-hot-toast';
 
@@ -104,6 +104,36 @@ const GestionPostulantesContent = () => {
         } catch (error) {
             console.error('Error al actualizar estado:', error);
             toast.error('Error al actualizar estado del postulante');
+        }
+    };
+
+    const handleDownloadCV = async (postulante) => {
+        try {
+            // Si tiene URL directa de Supabase, úsala
+            if (postulante.cvUrl) {
+                window.open(postulante.cvUrl, '_blank');
+                return;
+            }
+
+            // Si no, usar el endpoint de descarga
+            if (postulante.cvFilePath) {
+                toast.loading('Generando enlace de descarga...');
+                const response = await downloadCVRequest(postulante.idPostulacion);
+                toast.dismiss();
+                
+                if (response.downloadUrl) {
+                    window.open(response.downloadUrl, '_blank');
+                    toast.success('CV descargado exitosamente');
+                } else {
+                    toast.error('Error al generar enlace de descarga');
+                }
+            } else {
+                toast.error('CV no disponible');
+            }
+        } catch (error) {
+            toast.dismiss();
+            console.error('Error al descargar CV:', error);
+            toast.error('Error al descargar el CV');
         }
     };
 
@@ -358,11 +388,13 @@ const GestionPostulantesContent = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-4 text-center">
-                                                        {postulante.cv ? (
+                                                        {(postulante.cv || postulante.cvUrl || postulante.cvFilePath) ? (
                                                             <a
-                                                                href={`/uploads/${postulante.cv}`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
+                                                                href="#"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    handleDownloadCV(postulante);
+                                                                }}
                                                                 className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold text-sm"
                                                             >
                                                                 <FileText size={16} />

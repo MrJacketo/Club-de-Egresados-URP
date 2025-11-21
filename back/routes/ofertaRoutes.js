@@ -11,7 +11,8 @@ const { createOrUpdateOferta,
   getPostulantesDeOferta,
   getOfertasCreadasPorUsuario,
   verificarPostulacion,
-  updateAptoPostulacion } = require("../controllers/ofertaController");
+  updateAptoPostulacion,
+  downloadCV } = require("../controllers/ofertaController");
 const verifyJWTToken = require("../middleware/verifyJWTToken");
 
 
@@ -23,6 +24,9 @@ router.post("/oferta/:id/postular", verifyJWTToken, upload.single("cv"), postula
 router.get('/postulaciones/:uid', verifyJWTToken, verificarPostulacion);
 
 router.patch('/postulacion/:idPostulacion/apto', verifyJWTToken, updateAptoPostulacion);
+
+// Descargar CV de una postulación
+router.get('/postulacion/:postulacionId/cv/download', verifyJWTToken, downloadCV);
 
 //Obtener postulantes de cada oferta
 router.get("/oferta/:idOferta/postulantes", verifyJWTToken, getPostulantesDeOferta);

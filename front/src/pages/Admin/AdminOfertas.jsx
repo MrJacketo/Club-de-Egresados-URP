@@ -32,6 +32,7 @@ import {
   deleteOfertaRequest,
   disableOfertaRequest,
   getPostulantesDeOfertaRequest,
+  downloadCVRequest,
 } from "../../api/ofertaLaboralApi";
 import {
   AREAS_LABORALES,
@@ -883,8 +884,8 @@ const AdminOfertasContent = () => {
                     <div className="flex items-start justify-between flex-wrap gap-4">
                       <div className="flex items-start gap-4 flex-1">
                         <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
-                          {postulante.nombre
-                            ? postulante.nombre
+                          {postulante.nombreCompleto
+                            ? postulante.nombreCompleto
                                 .split(" ")
                                 .map((n) => n[0])
                                 .join("")
@@ -895,7 +896,7 @@ const AdminOfertasContent = () => {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-3">
                             <h3 className="text-lg font-bold text-gray-800">
-                              {postulante.nombre || "Sin nombre"}
+                              {postulante.nombreCompleto || "Sin nombre"}
                             </h3>
                             <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
                               #{index + 1}
@@ -931,13 +932,35 @@ const AdminOfertasContent = () => {
                       </div>
 
                       <div className="flex gap-2">
-                        {postulante.cv && (
+                        {(postulante.cv || postulante.cvUrl || postulante.cvFilePath) && (
                           <button
-                            onClick={() => {
-                              if (postulante.cv) {
-                                window.open(postulante.cv, "_blank");
-                              } else {
-                                toast.error("CV no disponible");
+                            onClick={async () => {
+                              try {
+                                // Si tiene URL directa de Supabase, úsala
+                                if (postulante.cvUrl) {
+                                  window.open(postulante.cvUrl, "_blank");
+                                  return;
+                                }
+
+                                // Si no, usar el endpoint de descarga
+                                if (postulante.cvFilePath) {
+                                  toast.loading('Generando enlace de descarga...');
+                                  const response = await downloadCVRequest(postulante.idPostulacion);
+                                  toast.dismiss();
+                                  
+                                  if (response.downloadUrl) {
+                                    window.open(response.downloadUrl, "_blank");
+                                    toast.success('CV descargado exitosamente');
+                                  } else {
+                                    toast.error('Error al generar enlace de descarga');
+                                  }
+                                } else {
+                                  toast.error('CV no disponible');
+                                }
+                              } catch (error) {
+                                toast.dismiss();
+                                console.error('Error al descargar CV:', error);
+                                toast.error('Error al descargar el CV');
                               }
                             }}
                             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold transition-all duration-300 hover:shadow-lg flex items-center gap-2"

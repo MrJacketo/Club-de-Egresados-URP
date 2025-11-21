@@ -121,6 +121,17 @@ export const getPostulantesDeOfertaRequest = async (idOferta) => {
 };
 
 //Actualizar estado Postulante
+// Función para descargar CV
+export const downloadCVRequest = async (postulacionId) => {
+  try {
+    const response = await apiClient.get(`/api/ofertas/postulacion/${postulacionId}/cv/download`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al descargar CV:', error);
+    throw error;
+  }
+};
+
 export const updateEstadoPostulante = async (idPostulacion, apto) => {
     try {
         const response = await apiClient.patch(`/api/postulacion/${idPostulacion}/apto`, { apto });

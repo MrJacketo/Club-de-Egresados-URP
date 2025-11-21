@@ -4,7 +4,8 @@ const Postulacion = require("../models/Postulacion");
 const PublicacionOfertas = require("../models/PublicacionOfertas");
 const { AREAS_LABORALES, TIPOS_CONTRATO, MODALIDAD, REQUISITOS, ESTADO } = require('../enums/OfertaLaboral.enum');
 const { v4: uuidv4 } = require("uuid");
-// Firebase bucket removed - using local file storage instead
+const { uploadCV, deleteCV, getSignedUrlForCV } = require("../utils/supabaseStorage");
+// Firebase bucket removed - replaced with Supabase Storage
 // const bucket = require("../firebase");
 
 
@@ -176,19 +177,16 @@ const postularOferta = async (req, res) => {
     if (yaPostulo) {
       return res.status(400).json({ error: 'Ya has postulado a esta oferta' });
     }
-    /*
-        // Subir CV a Firebase Storage
-        const nombreArchivo = `cvs/${uuidv4()}_${req.file.originalname}`;
-        const file = bucket.file(nombreArchivo);
-    
-        await file.save(req.file.buffer, {
-          metadata: {
-            contentType: req.file.mimetype,
-          },
-        });
-    
-        const urlCV = `https://storage.googleapis.com/${bucket.name}/${nombreArchivo}`;
-    */
+
+    // Subir CV a Supabase Storage
+    let cvData = null;
+    try {
+      cvData = await uploadCV(req.file, userId);
+      console.log('CV subido exitosamente:', cvData);
+    } catch (uploadError) {
+      console.error('Error al subir CV:', uploadError);
+      return res.status(500).json({ error: 'Error al subir el curriculum vitae' });
+    }
 
     // Crear registro en colección Postulacion
     const nuevaPostulacion = new Postulacion({
@@ -197,6 +195,9 @@ const postularOferta = async (req, res) => {
       correo,
       numero,
       cv: req.file.originalname,
+      cvUrl: cvData.url,
+      cvFileName: cvData.fileName,
+      cvFilePath: cvData.filePath,
     });
 
     await nuevaPostulacion.save();
@@ -254,6 +255,9 @@ const getPostulantesDeOferta = async (req, res) => {
       correo: postulacion.correo,
       numero: postulacion.numero,
       cv: postulacion.cv || null,
+      cvUrl: postulacion.cvUrl || null,
+      cvFileName: postulacion.cvFileName || null,
+      cvFilePath: postulacion.cvFilePath || null,
       apto: postulacion.apto
     }));
 
@@ -321,6 +325,36 @@ const updateAptoPostulacion = async (req, res) => {
   }
 };
 
+// Descargar CV de una postulación
+const downloadCV = async (req, res) => {
+  try {
+    const { postulacionId } = req.params;
+    
+    // Buscar la postulación
+    const postulacion = await Postulacion.findById(postulacionId);
+    if (!postulacion) {
+      return res.status(404).json({ error: 'Postulación no encontrada' });
+    }
+    
+    if (!postulacion.cvFilePath) {
+      return res.status(404).json({ error: 'No hay CV asociado a esta postulación' });
+    }
+    
+    // Generar URL firmada para descarga (válida por 1 hora)
+    const signedUrl = await getSignedUrlForCV(postulacion.cvFilePath, 3600);
+    
+    res.json({ 
+      downloadUrl: signedUrl,
+      fileName: postulacion.cvFileName || postulacion.cv,
+      message: 'URL de descarga generada exitosamente'
+    });
+    
+  } catch (error) {
+    console.error('Error al generar URL de descarga:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 
 
 
@@ -335,5 +369,6 @@ module.exports = {
   verificarPostulacion,
   getPostulantesDeOferta,
   getOfertasCreadasPorUsuario,
-  updateAptoPostulacion // nueva función
+  updateAptoPostulacion, // nueva función
+  downloadCV // nueva función para descargar CVs
 };
