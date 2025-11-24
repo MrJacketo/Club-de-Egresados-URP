@@ -64,6 +64,22 @@ const simulatePagoAprobado = async (req, res) => {
       return res.status(400).json({ error: "Se requiere userId" });
     }
 
+    // Verificar si ya tiene una membresía activa
+    const membresiaExistente = await Membresia.findOne({ userId });
+    
+    if (membresiaExistente && membresiaExistente.estado === "activa") {
+      const fechaVencimiento = new Date(membresiaExistente.fechaVencimiento);
+      const ahora = new Date();
+      
+      // Si la membresía está activa y no ha vencido
+      if (fechaVencimiento > ahora) {
+        return res.status(400).json({ 
+          error: "Ya tienes una membresía activa",
+          membresia: membresiaExistente
+        });
+      }
+    }
+
     const membresia = await Membresia.findOneAndUpdate(
       { userId },
       {
