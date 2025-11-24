@@ -42,7 +42,7 @@ import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.j
 import AdminOfertas from './pages/Admin/AdminOfertas.jsx';
 import InspectorLaboralRoute from './components/InspectorLaboralRoute';
 import InspeccionLaboral from './pages/InspectorLaboral/InspeccionLaboral.jsx';
-import { PagoSuccess, PagoFailure, PagoPending } from './pages/MercadoPago';
+
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -70,11 +70,6 @@ function App() {
           <Route path='/noticias/:id' element={<PrivateRoute><NoticiaDetalle /></PrivateRoute>} />
           <Route path="/postulantes-oferta/:id" element={<PrivateRoute><PostulantesOferta /></PrivateRoute>} />
           <Route path="/MembresiaCompletada" element={<MembresiaSucess />} />
-
-          {/* Rutas de respuesta de Mercado Pago */}
-          <Route path="/pago/success" element={<PagoSuccess />} />
-          <Route path="/pago/failure" element={<PagoFailure />} />
-          <Route path="/pago/pending" element={<PagoPending />} />
 
           {/* RUTA DEL FORO CON ESTILOS ESPECIALES */}
           <Route
