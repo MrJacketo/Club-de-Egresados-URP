@@ -1,0 +1,387 @@
+.pago-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.pago-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 3rem;
+  max-width: 600px;
+  width: 100%;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pago-card .icon {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.pago-card h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.main-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+/* Success Styles */
+.pago-card.success .icon {
+  color: #10b981;
+}
+
+.pago-card.success h1 {
+  color: #10b981;
+}
+
+.success-badge {
+  background: #10b981;
+  color: white;
+  padding: 0.25rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+/* Failure Styles */
+.pago-card.failure .icon {
+  color: #ef4444;
+}
+
+.pago-card.failure h1 {
+  color: #ef4444;
+}
+
+/* Pending Styles */
+.pago-card.pending .icon {
+  color: #f59e0b;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.pago-card.pending h1 {
+  color: #f59e0b;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Loading Styles */
+.pago-card.loading {
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Payment Details */
+.payment-details {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-item .label {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.detail-item .value {
+  color: #111827;
+  font-weight: 500;
+}
+
+.detail-item .value.small {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-family: monospace;
+}
+
+/* Benefits Info */
+.benefits-info {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.benefits-info h3 {
+  color: #667eea;
+  margin-bottom: 1rem;
+}
+
+.benefits-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.benefits-info ul li {
+  padding: 0.5rem 0;
+  color: #4b5563;
+}
+
+/* Error Details / Recommendations */
+.error-details,
+.recommendations,
+.pending-info,
+.time-estimate,
+.payment-methods-info {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.error-details h3,
+.recommendations h3,
+.time-estimate h3,
+.payment-methods-info h3 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.error-details ul,
+.recommendations ul,
+.payment-methods-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.error-details ul li,
+.recommendations ul li,
+.payment-methods-info ul li {
+  padding: 0.5rem 0;
+  color: #6b7280;
+}
+
+/* Timeline */
+.timeline {
+  margin: 2rem 0;
+}
+
+.timeline h3 {
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-item .step {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.timeline-item .content h4 {
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+}
+
+.timeline-item .content p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* Payment Info */
+.payment-info {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.info-box {
+  background: white;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.info-box h3 {
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+.info-box .code {
+  font-family: monospace;
+  background: #f3f4f6;
+  padding: 0.75rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  word-break: break-all;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.small-text {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 150px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-secondary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Support Info */
+.support-info {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+}
+
+.support-info a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.support-info a:hover {
+  text-decoration: underline;
+}
+
+.support-info ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.support-info ul li {
+  padding: 0.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pago-container {
+    padding: 1rem;
+  }
+
+  .pago-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .pago-card h1 {
+    font-size: 1.5rem;
+  }
+
+  .main-message {
+    font-size: 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+}

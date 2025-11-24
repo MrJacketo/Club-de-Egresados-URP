@@ -20,6 +20,7 @@ import { activateMembresiaRequest } from "../../api/membresiaApi";
 import {
   createSubscriptionRequest,
   simulatePagoRequest,
+  checkAndActivateMembershipRequest,
 } from "../../api/pagoApi";
 
 const beneficios = [
@@ -119,8 +120,10 @@ export default function Membresia() {
               try {
                 setLoadingActivation(true);
                 const response = await createSubscriptionRequest();
-                if (response.init_point) {
-                  window.location.href = response.init_point;
+                if (response.init_point || response.sandbox_init_point) {
+                  // Usar sandbox_init_point para testing, init_point para producción
+                  const checkoutUrl = response.sandbox_init_point || response.init_point;
+                  window.open(checkoutUrl, '_blank');
                 } else {
                   toast.error("No se pudo iniciar el proceso de pago");
                 }
@@ -139,8 +142,7 @@ export default function Membresia() {
               ) : (
                 <Sparkles className="w-5 h-5" />
               )}
-              {loadingActivation ? "Procesando..." : "Activar Membresía"}
-              {/*/ MERCADOPAGO NECESITA CUENTAS DE TESTEO /*/}
+              {loadingActivation ? "Redirigiendo a Mercado Pago..." : "Pagar con Mercado Pago"}
             </span>
           </button>
 
