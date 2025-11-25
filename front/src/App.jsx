@@ -40,6 +40,7 @@ import ModeradorRoute from './components/ModeradorRoute';
 import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
 import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
 import AdminOfertas from './pages/Admin/AdminOfertas.jsx';
+import MisOfertas from './pages/Egresado/MisOfertas.jsx';
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -106,6 +107,8 @@ function App() {
           <Route path="/mis-beneficios" element={<PrivateRoute><MisBeneficios /></PrivateRoute>} />
           <Route path="/beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/ver-beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
+          <Route path="/mis-ofertas" element={<PrivateRoute><MisOfertas /></PrivateRoute>} />
+          
 
 
 

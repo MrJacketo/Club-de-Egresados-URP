@@ -2,7 +2,9 @@ import axios from "axios";
 import auth from "../auth";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:8000", // Backend URL
+  baseURL: 
+  //"http://localhost:8000"
+  "https://silver-succotash-g9r9j75rqg626j5-8000.app.github.dev", // Backend URL CodeSpace
 });
 
 apiClient.interceptors.request.use(async (config) => {

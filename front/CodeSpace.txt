@@ -1,0 +1,4 @@
+Archivos a modificar las rutas para COdeSpace y Viecversa:
+- authRoutes.js
+- apiClient.js
+- auth.js

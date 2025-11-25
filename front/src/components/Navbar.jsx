@@ -20,6 +20,8 @@ import {
   Videotape,
   Calendar,
   Gift,
+  BriefcaseBusiness,
+  
 } from "lucide-react";
 import logo from "../assets/logoUrpex2.svg";
 import fotoPerfil from "../assets/foto.jpeg";
@@ -315,13 +317,22 @@ export default function Navbar() {
                     <span>Mi Membresía</span>
                   </Link>
                   <Link
+                    to="/mis-ofertas"
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
+                    style={{ borderColor: "rgba(93, 197, 84, 0.3)" }}
+                  >
+                    <BriefcaseBusiness size={20} style={{ color: "#5DC554" }} />
+                    <span>Mis Ofertas</span>
+                  </Link>
+                  <Link
                     to="/mis-conferencias"
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-3 px-5 py-4 text-white transition-all duration-300 font-medium border-t-2 hover:bg-white hover:bg-opacity-20 hover:text-black"
                     style={{ borderColor: "rgba(93, 197, 84, 0.3)" }}
                   >
                     <Calendar size={20} style={{ color: "#5DC554" }} />
-                    <span>Mis Conferencias</span>
+                    <span>Mis Conferencia</span>
                   </Link>
                   <Link
                     to="/mis-beneficios"

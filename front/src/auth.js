@@ -38,7 +38,10 @@ export const auth = {
 
   // Login function
   login: async (email, password) => {
-    const response = await fetch('http://localhost:8000/auth/login', {
+    const response = await fetch(
+      //'http://localhost:8000/auth/login'
+      'https://silver-succotash-g9r9j75rqg626j5-8000.app.github.dev/auth/login'
+      , {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -61,7 +64,10 @@ export const auth = {
 
   // Register function
   register: async (name, email, password) => {
-    const response = await fetch('http://localhost:8000/auth/register', {
+    const response = await fetch(
+      //'http://localhost:8000/auth/register'
+      'https://silver-succotash-g9r9j75rqg626j5-8000.app.github.dev/auth/register'
+      , {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -103,7 +109,10 @@ export const auth = {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/auth/current-user', {
+      const response = await fetch(
+        //'http://localhost:8000/auth/current-user'
+        'https://silver-succotash-g9r9j75rqg626j5-8000.app.github.dev/auth/current-user'
+        , {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
