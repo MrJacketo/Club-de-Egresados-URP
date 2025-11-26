@@ -172,7 +172,7 @@ export default function PerfilEgresadoForm() {
 
       await createOrUpdateGraduateProfileRequest(cleanProfile);
       toast.success("Perfil guardado exitosamente!");
-      navigate("/welcome-egresado");
+      navigate("/membresia");
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.error || "Error al guardar el perfil");

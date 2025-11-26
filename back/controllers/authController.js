@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Membresia = require('../models/Membresia');
 const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/jwt');
 
 // Helper function to generate JWT token
@@ -35,6 +36,16 @@ const registerUser = async (req, res) => {
         });
 
         await user.save();
+
+        // Create inactive membership for the new user
+        const membresia = new Membresia({
+            userId: user._id,
+            estado: 'inactiva',
+            fechaActivacion: null,
+            fechaVencimiento: null
+        });
+
+        await membresia.save();
 
         // Generate token
         const token = generateToken(user._id);

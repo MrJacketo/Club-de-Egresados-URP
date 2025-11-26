@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 //Contextos
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+import { toast } from "react-hot-toast";
 
 //Logos
 import {
@@ -28,7 +29,7 @@ import { useState } from "react";
 //Funcion Navbar Principal
 export default function Navbar() {
   const location = useLocation();
-  const { user, logout } = useContext(UserContext);
+  const { user, logout, isMembresiaActiva } = useContext(UserContext);
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -53,6 +54,14 @@ export default function Navbar() {
   const handleSearch = (e) => {
     e.preventDefault();
     console.log("Buscando:", searchTerm);
+  };
+
+  // Handler for disabled links
+  const handleDisabledClick = (e) => {
+    e.preventDefault();
+    toast.error("Necesitas una membresía activa para acceder a esta sección", {
+      duration: 3000,
+    });
   };
 
   return (
@@ -100,25 +109,30 @@ export default function Navbar() {
           {user && (
             <>
               <Link
-                to="/gestion-oferta"
+                to={isMembresiaActiva ? "/gestion-oferta" : "#"}
+                onClick={!isMembresiaActiva ? handleDisabledClick : undefined}
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
-                  location.pathname === "/gestion-oferta"
+                  !isMembresiaActiva 
+                    ? "opacity-50 cursor-not-allowed"
+                    : location.pathname === "/gestion-oferta"
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
                 style={
-                  location.pathname === "/gestion-oferta"
+                  !isMembresiaActiva
+                    ? { borderColor: "#5DC554", backgroundColor: "transparent" }
+                    : location.pathname === "/gestion-oferta"
                     ? { backgroundColor: "#119e04", borderColor: "#119e04" }
                     : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
-                  if (location.pathname !== "/gestion-oferta") {
+                  if (isMembresiaActiva && location.pathname !== "/gestion-oferta") {
                     e.target.style.backgroundColor = "#119e04";
                     e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (location.pathname !== "/gestion-oferta") {
+                  if (isMembresiaActiva && location.pathname !== "/gestion-oferta") {
                     e.target.style.backgroundColor = "transparent";
                     e.target.style.borderColor = "#5DC554";
                   }
@@ -129,25 +143,30 @@ export default function Navbar() {
               </Link>
 
               <Link
-                to="/foro-egresados"
+                to={isMembresiaActiva ? "/foro-egresados" : "#"}
+                onClick={!isMembresiaActiva ? handleDisabledClick : undefined}
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
-                  location.pathname === "/foro-egresados"
+                  !isMembresiaActiva
+                    ? "opacity-50 cursor-not-allowed"
+                    : location.pathname === "/foro-egresados"
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
                 style={
-                  location.pathname === "/foro-egresados"
+                  !isMembresiaActiva
+                    ? { borderColor: "#5DC554", backgroundColor: "transparent" }
+                    : location.pathname === "/foro-egresados"
                     ? { backgroundColor: "#119e04", borderColor: "#119e04" }
                     : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
-                  if (location.pathname !== "/foro-egresados") {
+                  if (isMembresiaActiva && location.pathname !== "/foro-egresados") {
                     e.target.style.backgroundColor = "#119e04";
                     e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (location.pathname !== "/foro-egresados") {
+                  if (isMembresiaActiva && location.pathname !== "/foro-egresados") {
                     e.target.style.backgroundColor = "transparent";
                     e.target.style.borderColor = "#5DC554";
                   }
@@ -158,25 +177,30 @@ export default function Navbar() {
               </Link>
 
               <Link
-                to="/noticias"
+                to={isMembresiaActiva ? "/noticias" : "#"}
+                onClick={!isMembresiaActiva ? handleDisabledClick : undefined}
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
-                  location.pathname.startsWith("/noticias")
+                  !isMembresiaActiva
+                    ? "opacity-50 cursor-not-allowed"
+                    : location.pathname.startsWith("/noticias")
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
                 style={
-                  location.pathname.startsWith("/noticias")
+                  !isMembresiaActiva
+                    ? { borderColor: "#5DC554", backgroundColor: "transparent" }
+                    : location.pathname.startsWith("/noticias")
                     ? { backgroundColor: "#119e04", borderColor: "#119e04" }
                     : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
-                  if (!location.pathname.startsWith("/noticias")) {
+                  if (isMembresiaActiva && !location.pathname.startsWith("/noticias")) {
                     e.target.style.backgroundColor = "#119e04";
                     e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!location.pathname.startsWith("/noticias")) {
+                  if (isMembresiaActiva && !location.pathname.startsWith("/noticias")) {
                     e.target.style.backgroundColor = "transparent";
                     e.target.style.borderColor = "#5DC554";
                   }
@@ -187,25 +211,30 @@ export default function Navbar() {
               </Link>
 
               <Link
-                to="/cursos"
+                to={isMembresiaActiva ? "/cursos" : "#"}
+                onClick={!isMembresiaActiva ? handleDisabledClick : undefined}
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
-                  location.pathname.startsWith("/cursos")
+                  !isMembresiaActiva
+                    ? "opacity-50 cursor-not-allowed"
+                    : location.pathname.startsWith("/cursos")
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
                 style={
-                  location.pathname.startsWith("/cursos")
+                  !isMembresiaActiva
+                    ? { borderColor: "#5DC554", backgroundColor: "transparent" }
+                    : location.pathname.startsWith("/cursos")
                     ? { backgroundColor: "#119e04", borderColor: "#119e04" }
                     : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
-                  if (!location.pathname.startsWith("/cursos")) {
+                  if (isMembresiaActiva && !location.pathname.startsWith("/cursos")) {
                     e.target.style.backgroundColor = "#119e04";
                     e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!location.pathname.startsWith("/cursos")) {
+                  if (isMembresiaActiva && !location.pathname.startsWith("/cursos")) {
                     e.target.style.backgroundColor = "transparent";
                     e.target.style.borderColor = "#5DC554";
                   }
@@ -216,25 +245,30 @@ export default function Navbar() {
               </Link>
 
               <Link
-                to="/conferencias"
+                to={isMembresiaActiva ? "/conferencias" : "#"}
+                onClick={!isMembresiaActiva ? handleDisabledClick : undefined}
                 className={`border-2 py-3 px-5 rounded-full flex items-center gap-3 font-bold text-sm transition-all duration-300 ${
-                  location.pathname.startsWith("/conferencias")
+                  !isMembresiaActiva
+                    ? "opacity-50 cursor-not-allowed"
+                    : location.pathname.startsWith("/conferencias")
                     ? "text-white shadow-xl"
                     : "text-white hover:text-white hover:-translate-y-0.5 hover:shadow-lg"
                 }`}
                 style={
-                  location.pathname.startsWith("/conferencias")
+                  !isMembresiaActiva
+                    ? { borderColor: "#5DC554", backgroundColor: "transparent" }
+                    : location.pathname.startsWith("/conferencias")
                     ? { backgroundColor: "#119e04", borderColor: "#119e04" }
                     : { borderColor: "#5DC554", backgroundColor: "transparent" }
                 }
                 onMouseEnter={(e) => {
-                  if (!location.pathname.startsWith("/conferencias")) {
+                  if (isMembresiaActiva && !location.pathname.startsWith("/conferencias")) {
                     e.target.style.backgroundColor = "#119e04";
                     e.target.style.borderColor = "#119e04";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!location.pathname.startsWith("/conferencias")) {
+                  if (isMembresiaActiva && !location.pathname.startsWith("/conferencias")) {
                     e.target.style.backgroundColor = "transparent";
                     e.target.style.borderColor = "#5DC554";
                   }

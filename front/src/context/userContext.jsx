@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import auth from "../auth";
+import { getMembresiaRequest } from "../api/membresiaApi";
 
 export const UserContext = createContext({});
 
@@ -11,7 +12,21 @@ export function UserContextProvider({ children }) {
     const userData = auth.getUser();
     return userData?.name || "";
   });
+  const [membresia, setMembresia] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Function to fetch membership status
+  const fetchMembresia = async () => {
+    try {
+      if (auth.isAuthenticated()) {
+        const membresiaData = await getMembresiaRequest();
+        setMembresia(membresiaData);
+      }
+    } catch (error) {
+      console.error("Error fetching membresia:", error);
+      setMembresia({ estado: "inactiva" });
+    }
+  };
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -23,15 +38,21 @@ export function UserContextProvider({ children }) {
           const currentUser = await auth.getCurrentUserSafe();
           setUser(currentUser);
           setUserName(currentUser.name);
+          
+          // Fetch membership status
+          await fetchMembresia();
         } else {
           // Si no está autenticado, verificar si hay datos locales
           const localUser = auth.getUser();
           if (localUser) {
             setUser(localUser);
             setUserName(localUser.name);
+            // Try to fetch membership even with local user
+            await fetchMembresia();
           } else {
             setUser(null);
             setUserName("");
+            setMembresia(null);
           }
         }
       } catch (error) {
@@ -40,9 +61,12 @@ export function UserContextProvider({ children }) {
         if (localUser) {
           setUser(localUser);
           setUserName(localUser.name);
+          // Try to fetch membership
+          await fetchMembresia();
         } else {
           setUser(null);
           setUserName("");
+          setMembresia(null);
         }
       } finally {
         setLoading(false);
@@ -57,6 +81,10 @@ export function UserContextProvider({ children }) {
       const response = await auth.login(email, password);
       setUser(response.user);
       setUserName(response.user.name);
+      
+      // Fetch membership status after login
+      await fetchMembresia();
+      
       return response;
     } catch (error) {
       console.error("Login error:", error);
@@ -69,6 +97,10 @@ export function UserContextProvider({ children }) {
       const response = await auth.register(name, email, password);
       setUser(response.user);
       setUserName(response.user.name);
+      
+      // Fetch membership status after registration (will be inactive)
+      await fetchMembresia();
+      
       return response;
     } catch (error) {
       console.error("Register error:", error);
@@ -80,6 +112,7 @@ export function UserContextProvider({ children }) {
     auth.logout();
     setUser(null);
     setUserName("");
+    setMembresia(null);
   };
 
   return (
@@ -87,12 +120,15 @@ export function UserContextProvider({ children }) {
       value={{
         user,
         userName,
+        membresia,
         setUser,
         login,
         register,
         logout,
         loading,
+        fetchMembresia,
         isAuthenticated: auth.isAuthenticated(),
+        isMembresiaActiva: membresia?.estado === "activa",
       }}
     >
       {children}

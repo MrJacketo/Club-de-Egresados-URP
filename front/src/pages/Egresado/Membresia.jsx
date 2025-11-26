@@ -67,7 +67,7 @@ export default function Membresia() {
   const [loadingActivation, setLoadingActivation] = useState(false);
   const [loadingSimulation, setLoadingSimulation] = useState(false);
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user, fetchMembresia } = useUser();
 
   return (
     <div className="min-h-screen w-full bg-white text-gray-900 font-sans">
@@ -152,6 +152,8 @@ export default function Membresia() {
                 setLoadingSimulation(true);
                 await simulatePagoRequest();
                 toast.success("¡Pago simulado con éxito!");
+                // Actualizar el estado de membresía en el contexto
+                await fetchMembresia();
                 setTimeout(() => navigate("/MembresiaCompletada"), 1000); //PARA QUE SE VEA EL TOAST :(
               } catch (error) {
                 toast.error(error.message || "Error al simular el pago");
