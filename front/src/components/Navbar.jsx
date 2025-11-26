@@ -29,18 +29,25 @@ export default function Navbar() {
   const location = useLocation();
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userPhoto, setUserPhoto] = useState(fotoPerfil);
 
-  // Obtener ID del usuario actual
+  // Obtener ID del usuario actual de manera más robusta
   const getCurrentUserId = () => {
     try {
+      // Primero intentar desde el contexto
+      if (user && (user.id || user._id)) {
+        return user.id || user._id;
+      }
+      
+      // Luego desde localStorage
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
         const userData = JSON.parse(currentUser);
         return userData.id || userData._id || 'default-user';
       }
+      
       return 'default-user';
     } catch (error) {
       console.error('Error obteniendo ID del usuario:', error);
@@ -48,25 +55,29 @@ export default function Navbar() {
     }
   };
 
-  // Cargar foto del localStorage ESPECÍFICA DEL USUARIO
+  // Cargar foto del localStorage - MEJORADO
   useEffect(() => {
-    const loadPhoto = () => {
+    const loadUserPhoto = () => {
       try {
         const userId = getCurrentUserId();
+        console.log('Cargando foto para usuario ID:', userId);
         
-        // PRIMERO intentar con clave específica de usuario
+        // Buscar foto específica del usuario
         const userPhotoKey = `userProfilePhoto_${userId}`;
         let savedPhoto = localStorage.getItem(userPhotoKey);
         
-        // SI NO HAY foto específica, intentar con la clave general
+        // Si no hay foto específica, usar la general como fallback
         if (!savedPhoto) {
           savedPhoto = localStorage.getItem('userProfilePhoto');
+          console.log('Usando foto general como fallback');
         }
 
         if (savedPhoto) {
           setUserPhoto(savedPhoto);
+          console.log('Foto cargada exitosamente');
         } else {
           setUserPhoto(fotoPerfil);
+          console.log('Usando foto por defecto');
         }
       } catch (error) {
         console.error('Error cargando foto:', error);
@@ -74,45 +85,60 @@ export default function Navbar() {
       }
     };
 
-    loadPhoto();
+    // Cargar foto cuando el componente se monta o cuando el usuario cambia
+    loadUserPhoto();
 
-    // Escuchar cambios en localStorage
-    const handleStorageChange = () => {
-      loadPhoto();
+    // Escuchar cambios en localStorage específicos para fotos de perfil
+    const handleStorageChange = (e) => {
+      if (e.key && (e.key.includes('userProfilePhoto') || e.key === 'currentUser')) {
+        console.log('Cambio detectado en localStorage:', e.key);
+        loadUserPhoto();
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('localStorageChange', handleStorageChange);
     
-    // También verificar periódicamente por cambios
-    const interval = setInterval(loadPhoto, 1000);
+    // Intervalo para detectar cambios (más eficiente)
+    const interval = setInterval(loadUserPhoto, 2000);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('localStorageChange', handleStorageChange);
       clearInterval(interval);
     };
-  }, []);
+  }, [user]); // Dependencia añadida: user
+
+  
 
   const handleLogout = async () => {
     try {
-      // Cerrar dropdown inmediatamente
+      // 1. Guardar la foto actual antes de hacer logout
+      const currentPhoto = userPhoto;
+      const userId = getCurrentUserId();
+      
+      // 2. Cerrar dropdown inmediatamente
       setIsDropdownOpen(false);
 
-      // Ejecutar logout
+      // 3. Ejecutar logout
       await logout();
 
-      // Navegar directamente sin pasar por Home usando replace
+      // 4. Guardar la foto para el próximo inicio de sesión
+      if (currentPhoto && currentPhoto !== fotoPerfil) {
+        const userPhotoKey = `userProfilePhoto_${userId}`;
+        localStorage.setItem(userPhotoKey, currentPhoto);
+        localStorage.setItem('userProfilePhoto', currentPhoto);
+      }
+
+      // 5. Navegar al login
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Error during logout:", error);
-      // En caso de error, aún navegar al login
       navigate("/login", { replace: true });
     }
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Buscando:", searchTerm);
-  };
+  
 
   return (
     <nav

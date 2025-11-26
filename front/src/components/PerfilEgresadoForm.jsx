@@ -14,7 +14,7 @@ export default function PerfilEgresadoForm() {
   const navigate = useNavigate();
   const { userName } = useUser();
   const [photo, setPhoto] = useState(fotoPerfil); // Usar la imagen importada por defecto
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [ setSelectedFile] = useState(null);
 
   const [userData, setUserData] = useState({
     nombreCompleto: userName || "",
@@ -67,6 +67,16 @@ export default function PerfilEgresadoForm() {
     }
   };
 
+  // Función para notificar a otros componentes sobre la actualización
+  const notifyDataUpdate = () => {
+    console.log('📢 Notificando actualización de datos...');
+    
+    // Disparar eventos personalizados
+    window.dispatchEvent(new CustomEvent('academicDataUpdated'));
+    window.dispatchEvent(new CustomEvent('localStorageUpdated'));
+    window.dispatchEvent(new CustomEvent('profileUpdated'));
+  };
+
   // Función para convertir file a base64
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -97,7 +107,7 @@ export default function PerfilEgresadoForm() {
       const base64Image = await fileToBase64(file);
       const userId = getCurrentUserId();
       
-      // ✅ GUARDAR FOTO CON CLAVE ESPECÍFICA DEL USUARIO
+      //  GUARDAR FOTO CON CLAVE ESPECÍFICA DEL USUARIO
       const userPhotoKey = `userProfilePhoto_${userId}`;
       localStorage.setItem(userPhotoKey, base64Image);
       
@@ -180,6 +190,9 @@ export default function PerfilEgresadoForm() {
           // Guardar con clave específica del usuario
           const userAcademicKey = `academicData_${userId}`;
           localStorage.setItem(userAcademicKey, JSON.stringify(datosParaSidebar));
+          
+          // Notificar la actualización
+          notifyDataUpdate();
         }
 
         const profileResponse = await getGraduateProfileRequest();
@@ -214,6 +227,7 @@ export default function PerfilEgresadoForm() {
             
             const userAcademicKey = `academicData_${userId}`;
             localStorage.setItem(userAcademicKey, JSON.stringify(datosParaSidebar));
+            notifyDataUpdate();
           }
 
           // Cargar foto del perfil si existe
@@ -255,6 +269,9 @@ export default function PerfilEgresadoForm() {
       // Guardar con clave específica del usuario
       const userAcademicKey = `academicData_${userId}`;
       localStorage.setItem(userAcademicKey, JSON.stringify(datosParaSidebar));
+      
+      // Notificar la actualización
+      notifyDataUpdate();
       
       return newUserData;
     });
@@ -351,6 +368,9 @@ export default function PerfilEgresadoForm() {
 
       // 4. Guarda el perfil completo
       await createOrUpdateGraduateProfileRequest(profileWithPhoto);
+
+      // Notificar la actualización después de guardar
+      notifyDataUpdate();
 
       toast.success("Perfil guardado exitosamente!");
       navigate("/welcome-egresado");
@@ -710,17 +730,7 @@ export default function PerfilEgresadoForm() {
                 >
                   {isLoading ? "Guardando..." : "Guardar Perfil"}
                 </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className={`px-6 py-2 rounded-lg text-white font-semibold transition ${
-                    isLoading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-[#00BC4F] hover:bg-[#009B42]"
-                  }`}
-                >
-                  {isLoading ? "Vincular Datos Academicos..." : "Vincular Datos Academicos"}
-                </button>
+                
               </div>
               
           </form>

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Globe, Video, Image, Smile } from "lucide-react";
-import { useProfilePhoto, getCurrentUserId } from "../../../Hooks/useProfilePhoto"; // Ruta corregida
+import { useProfilePhoto,  } from "../../../Hooks/useProfilePhoto"; // Ruta corregida
 
 function CrearPublicacion({ agregarPost }) {
   const [nuevoPost, setNuevoPost] = useState("");
   const [archivo, setArchivo] = useState(null);
-  const [tipoPublicacion, setTipoPublicacion] = useState("texto");
+  const [ setTipoPublicacion] = useState("texto");
   const [mostrarEmojis, setMostrarEmojis] = useState(false);
   const [nombreUsuario, setNombreUsuario] = useState("Usuario URP");
   
