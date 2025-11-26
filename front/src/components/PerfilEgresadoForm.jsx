@@ -11,7 +11,7 @@ import { useUser } from "../context/userContext";
 
 export default function PerfilEgresadoForm() {
   const navigate = useNavigate();
-  const { userName } = useUser();
+  const { userName, isMembresiaActiva } = useUser();
   const [photo, setPhoto] = useState("/default-profile.png");
 
   const [userData, setUserData] = useState({
@@ -172,7 +172,14 @@ export default function PerfilEgresadoForm() {
 
       await createOrUpdateGraduateProfileRequest(cleanProfile);
       toast.success("Perfil guardado exitosamente!");
-      navigate("/membresia");
+      
+      // Si tiene membresía activa, vuelve a la página anterior
+      // Si no tiene membresía activa, lo lleva a activar su membresía
+      if (isMembresiaActiva) {
+        navigate(-1); // Vuelve a la página anterior
+      } else {
+        navigate("/membresia"); // Lo lleva a activar su membresía
+      }
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.error || "Error al guardar el perfil");
