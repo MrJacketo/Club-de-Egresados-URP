@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
       {/* Navbar superior como en la imagen de referencia */}
-      <nav className="absolute top-0 left-0 right-0 z-20 bg-transparent">
+      <nav className="fixed top-0 left-0 right-0 z-20 bg-gradient-to-r from-green-600 to-teal-600 backdrop-blur-sm shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             {/* Logo URPex */}
