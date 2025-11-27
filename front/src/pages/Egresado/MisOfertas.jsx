@@ -62,7 +62,7 @@ export default function MisPostulaciones() {
         .filter(oferta => oferta !== null)
         .map(oferta => ({
           id: oferta._id,
-          titulo: oferta.titulo || "Sin título",
+          titulo: oferta.cargo || "Sin título",
           empresa: oferta.empresa || "Empresa no especificada",
           fechaOferta: formatearFecha(oferta.fecha_publicacion),
           fechaPostulacion: formatearFecha(oferta.fecha_postulacion || new Date()),

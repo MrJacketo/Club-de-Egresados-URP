@@ -8,8 +8,12 @@ const { test, registerUser, loginUser, getUserName, getCurrentUser, updateUserAc
 router.use(
     cors({
         credentials: true,
-        origin: 'https://silver-succotash-g9r9j75rqg626j5-5173.app.github.dev' //codespace
-        //origin: 'http://localhost:5173',
+        
+        //codespace 
+        // origin: 'https://silver-succotash-g9r9j75rqg626j5-5173.app.github.dev' 
+
+        //local 
+        origin: 'http://localhost:5173',
     })
 );
 
