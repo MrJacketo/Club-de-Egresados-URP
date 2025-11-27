@@ -9,6 +9,8 @@ import {
   Building2,
   ShieldAlert
 } from "lucide-react";
+import InspectorSidebar from '../../components/InspectorSidebar';
+import { InspectorSidebarProvider, useInspectorSidebar } from '../../context/inspectorSidebarContext';
 import { useInspeccionLaboral } from "../../Hooks/useInspeccionLaboral";
 import FiltrosInspeccion from "../../components/inspeccionLaboral/FiltrosInspeccion";
 import FiltrosEmpresas from "../../components/inspeccionLaboral/FiltrosEmpresas";
@@ -16,7 +18,8 @@ import ModalDetalleOferta from "../../components/inspeccionLaboral/ModalDetalleO
 import ModalBloqueoOferta from "../../components/inspeccionLaboral/ModalBloqueoOferta";
 import ModalSuspensionEmpresa from "../../components/inspeccionLaboral/ModalSuspensionEmpresa";
 
-const InspeccionLaboral = () => {
+const InspeccionLaboralContent = () => {
+  const { collapsed } = useInspectorSidebar();
   const {
     ofertas,
     empresas,
@@ -118,8 +121,12 @@ const InspeccionLaboral = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 px-8 py-8" style={{ background: 'linear-gradient(to bottom right, #f9fafb, #ffffff)' }}>
-      {/* Header */}
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-white">
+      <InspectorSidebar />
+      
+      <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
+        <div className="pt-24 px-8 py-8">
+          {/* Header */}
       <div className="mb-8">
         <h1 className="text-5xl! font-bold! mb-2!">
           <span className="bg-gradient-to-r! from-green-500! to-teal-500! bg-clip-text! text-transparent!">
@@ -623,7 +630,17 @@ const InspeccionLaboral = () => {
         onConfirm={handleConfirmarSuspension}
         empresa={empresaSeleccionada}
       />
+        </div>
+      </div>
     </div>
+  );
+};
+
+const InspeccionLaboral = () => {
+  return (
+    <InspectorSidebarProvider>
+      <InspeccionLaboralContent />
+    </InspectorSidebarProvider>
   );
 };
 

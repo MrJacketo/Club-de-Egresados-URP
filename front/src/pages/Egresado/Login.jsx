@@ -47,6 +47,9 @@ export default function Login() {
       } else if (response.user.rol === "moderador") {
         navigate("/moderador");
         toast.success("Bienvenido, Moderador");
+      } else if (response.user.rol === "inspector_laboral") {
+        navigate("/inspector-laboral");
+        toast.success("Bienvenido, Inspector Laboral");
       } else {
         try {
           const profileResponse = await getGraduateProfileRequest();

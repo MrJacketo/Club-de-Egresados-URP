@@ -85,7 +85,7 @@ export default function MisPostulaciones() {
       console.error("Error al cargar postulaciones:", err);
       setError("No se pudieron cargar tus postulaciones. Por favor, intenta nuevamente.");
     } finally {
-      setLoading(false);
+      setLoading(false);  
     }
   };
 

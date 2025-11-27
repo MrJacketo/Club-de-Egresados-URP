@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import ModeradorSidebar from '../Egresado/components/moderadorSidebar';
-import { ModeradorSidebarProvider, useModeradorSidebar } from '../../context/moderadorSidebarContext';
+import InspectorSidebar from '../../components/InspectorSidebar';
+import { InspectorSidebarProvider, useInspectorSidebar } from '../../context/inspectorSidebarContext';
 import { AlertTriangle, CheckCircle, Search, Eye, EyeOff, User, Calendar, Download, FileText, CheckSquare, XCircle, Hourglass, Plus, Filter } from 'lucide-react';
 import IncidentModal from "../../components/IncidentesLaborales/IncidentModal";
 import CreateIncidentModal from "../../components/IncidentesLaborales/CreateIncidentModal";
@@ -9,7 +9,7 @@ import jsPDF from 'jspdf';
 import { getIncidenciasRequest, deleteIncidenciaRequest, updateIncidenciaRequest, createIncidenciaRequest } from '../../api/incidenciasApi';
 
 const IncidentDashboardContent = () => {
-  const { collapsed } = useModeradorSidebar();
+  const { collapsed } = useInspectorSidebar();
   const [searchTerm, setSearchTerm] = useState("");
   const [filtroEstado, setFiltroEstado] = useState('Todos');
   const [filtroTipo, setFiltroTipo] = useState('Todos los tipos');
@@ -219,7 +219,7 @@ const IncidentDashboardContent = () => {
   if (isLoading) {
     return (
       <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-white">
-        <ModeradorSidebar />
+        <InspectorSidebar />
         <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
           <div className="flex items-center justify-center min-h-screen">
             <div className="text-center">
@@ -441,7 +441,7 @@ const IncidentDashboardContent = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-white">
-      <ModeradorSidebar />
+      <InspectorSidebar />
       
       <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
         
@@ -771,9 +771,9 @@ const IncidentDashboardContent = () => {
 
 const IncidentDashboard = () => {
   return (
-    <ModeradorSidebarProvider>
+    <InspectorSidebarProvider>
       <IncidentDashboardContent />
-    </ModeradorSidebarProvider>
+    </InspectorSidebarProvider>
   );
 };
 

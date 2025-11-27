@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import ModeradorSidebar from '../Egresado/components/moderadorSidebar';
+import InspectorSidebar from '../../components/InspectorSidebar';
 import { Eye, Search, Users, Briefcase, CheckCircle, XCircle, Mail, Phone, FileText, TrendingUp } from 'lucide-react';
 import { getOfertasRequest, getPostulantesDeOfertaRequest, updateEstadoPostulante, downloadCVRequest } from '../../api/ofertaLaboralApi';
-import { ModeradorSidebarProvider, useModeradorSidebar } from '../../context/moderadorSidebarContext';
+import { InspectorSidebarProvider, useInspectorSidebar } from '../../context/inspectorSidebarContext';
 import toast from 'react-hot-toast';
 
 const GestionPostulantes = () => {
     return (
-        <ModeradorSidebarProvider>
+        <InspectorSidebarProvider>
             <GestionPostulantesContent />
-        </ModeradorSidebarProvider>
+        </InspectorSidebarProvider>
     );
 };
 
 const GestionPostulantesContent = () => {
-    const { collapsed } = useModeradorSidebar();
+    const { collapsed } = useInspectorSidebar();
     const [ofertas, setOfertas] = useState([]);
     const [filteredOfertas, setFilteredOfertas] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -149,7 +149,7 @@ const GestionPostulantesContent = () => {
     if (loading) {
         return (
             <div className="bg-white">
-                <ModeradorSidebar />
+                <InspectorSidebar />
                 <div className={`transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
                     <div className="pt-20 p-16">
                         <div className="animate-pulse flex flex-col gap-8">
@@ -164,7 +164,7 @@ const GestionPostulantesContent = () => {
 
     return (
         <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, #f0f9ff, #ffffff)' }}>
-            <ModeradorSidebar />
+            <InspectorSidebar />
             <div className={`transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
 
                 {/* Header */}

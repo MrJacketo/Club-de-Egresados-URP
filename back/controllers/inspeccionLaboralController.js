@@ -203,7 +203,8 @@ const getDetalleOferta = async (req, res) => {
 const getEstadisticasInspeccion = async (req, res) => {
   try {
     const totalOfertas = await OfertaLaboral.countDocuments();
-    const ofertasActivas = await OfertaLaboral.countDocuments({ estado: 'Activo' });
+    // Solo contar ofertas activas Y aprobadas (las que realmente se ven en inspección)
+    const ofertasActivas = await OfertaLaboral.countDocuments({ estado: 'Activo', aprobado: true });
     const ofertasBloqueadas = await OfertaLaboral.countDocuments({ estado: 'Bloqueado' });
     const ofertasSuspendidas = await OfertaLaboral.countDocuments({ estado: 'Suspendido' });
 

@@ -44,6 +44,7 @@ import IncidentDashboard from "./pages/InspectorLaboral/IncidentDashboard.jsx";
 import MisOfertas from './pages/Egresado/MisOfertas.jsx';
 import InspectorLaboralRoute from './components/InspectorLaboralRoute';
 import SuspensionEmpresas from './pages/InspectorLaboral/SuspensionEmpresas.jsx';
+import InspectorLaboralDashboard from './pages/InspectorLaboral/InspectorLaboralDashboard.jsx';
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -134,6 +135,7 @@ function App() {
           <Route path="/inspeccion/ofertas" element={<InspeccionLaboral />} />
 
           {/* Rutas de inspector laboral */}
+          <Route path="/inspector-laboral" element={<InspectorLaboralRoute><InspectorLaboralDashboard /></InspectorLaboralRoute>} />
           <Route path="/inspector/ofertas" element={<InspectorLaboralRoute><InspeccionLaboral /></InspectorLaboralRoute>} />
           <Route path="/inspector/incidencias" element={<InspectorLaboralRoute><IncidentDashboard /></InspectorLaboralRoute>} />
           <Route path="/inspector/suspensiones" element={<InspectorLaboralRoute><SuspensionEmpresas /></InspectorLaboralRoute>} />
