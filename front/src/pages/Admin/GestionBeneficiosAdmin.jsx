@@ -24,6 +24,8 @@ const GestionBeneficiosContent = () => {
   const [beneficiosFiltrados, setBeneficiosFiltrados] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [paginaActual, setPaginaActual] = useState(1)
+  const [itemsPorPagina] = useState(10)
   const [filtros, setFiltros] = useState({
     titulo: '',
     tipo_beneficio: '',
@@ -106,6 +108,7 @@ const GestionBeneficiosContent = () => {
     }
 
     setBeneficiosFiltrados(beneficiosFiltrados);
+    setPaginaActual(1); // Resetear a la primera página al filtrar
   };
 
   const limpiarFiltros = () => {
@@ -124,8 +127,16 @@ const GestionBeneficiosContent = () => {
   const beneficiosAcademicos = beneficios.filter(b => b.tipo_beneficio === "academico").length
   const activosRate = totalBeneficios > 0 ? ((beneficiosActivos / totalBeneficios) * 100).toFixed(1) : 0
 
-  // Para mostrar en la tabla, usar beneficios filtrados
-  const beneficiosParaMostrar = beneficiosFiltrados;
+  // Calcular paginación
+  const indexUltimo = paginaActual * itemsPorPagina;
+  const indexPrimero = indexUltimo - itemsPorPagina;
+  const beneficiosParaMostrar = beneficiosFiltrados.slice(indexPrimero, indexUltimo);
+  const totalPaginas = Math.ceil(beneficiosFiltrados.length / itemsPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Manejar creación de nuevo beneficio
   const handleNuevoBeneficio = () => {
@@ -313,88 +324,172 @@ const GestionBeneficiosContent = () => {
             </div>
           )}
 
-          {/* Lista de beneficios */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-800">Lista de Beneficios</h2>
-              <p className="text-gray-600 mt-1">Gestiona todos los beneficios disponibles para los egresados</p>
-            </div>
-            
-            {loading ? (
-              <div className="p-8 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
-                <p className="text-gray-600 mt-4">Cargando beneficios...</p>
-              </div>
-            ) : beneficiosParaMostrar.length === 0 ? (
-              <div className="p-8 text-center">
-                <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">
-                  {beneficios.length === 0 ? "No hay beneficios registrados" : "No se encontraron beneficios con los filtros aplicados"}
-                </p>
-                {beneficios.length === 0 && (
-                  <button
-                    onClick={handleNuevoBeneficio}
-                    className="mt-4 text-green-600 hover:text-green-700 font-medium"
-                  >
-                    Crear el primer beneficio
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-200">
-                {beneficiosParaMostrar.map((beneficio) => (
-                  <div key={beneficio._id} className="p-6 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-800">{beneficio.titulo}</h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            beneficio.estado === 'activo' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {beneficio.estado}
-                          </span>
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          {/* Contador de resultados */}
+          <div className="mb-4">
+            <p className="text-gray-600 font-semibold text-lg">
+              Mostrando {beneficiosParaMostrar.length} de {beneficiosFiltrados.length} beneficios (Página {paginaActual} de {totalPaginas || 1})
+            </p>
+          </div>
+
+          {/* Tabla de beneficios */}
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gradient-to-r from-green-500 to-teal-500 text-white">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-bold">Título</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold">Tipo</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold">Empresa</th>
+                    <th className="px-6 py-4 text-center text-sm font-bold">Estado</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold">Vigencia</th>
+                    <th className="px-6 py-4 text-center text-sm font-bold">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {loading ? (
+                    <tr>
+                      <td colSpan="6" className="px-6 py-12 text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
+                        <p className="text-gray-600 mt-4">Cargando beneficios...</p>
+                      </td>
+                    </tr>
+                  ) : beneficiosParaMostrar.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                        <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        {beneficios.length === 0 ? (
+                          <>
+                            <p>No hay beneficios registrados</p>
+                            <button
+                              onClick={handleNuevoBeneficio}
+                              className="mt-4 text-green-600 hover:text-green-700 font-medium"
+                            >
+                              Crear el primer beneficio
+                            </button>
+                          </>
+                        ) : (
+                          <p>No se encontraron beneficios con los filtros aplicados</p>
+                        )}
+                      </td>
+                    </tr>
+                  ) : (
+                    beneficiosParaMostrar.map((beneficio) => (
+                      <tr key={beneficio._id} className="hover:bg-green-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <p className="font-bold text-gray-900">{beneficio.titulo}</p>
+                          <p className="text-sm text-gray-500 line-clamp-1">{beneficio.descripcion}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
                             {beneficio.tipo_beneficio}
                           </span>
-                        </div>
-                        <p className="text-gray-600 mb-2 line-clamp-2">{beneficio.descripcion}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          {beneficio.empresa_asociada && (
-                            <span>🏢 {beneficio.empresa_asociada}</span>
-                          )}
-                          {beneficio.fecha_inicio && (
-                            <span>📅 {beneficio.fecha_inicio}</span>
-                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="font-semibold text-gray-700">{beneficio.empresa_asociada || 'N/A'}</p>
                           {beneficio.url_detalle && (
-                            <span>🔗 Enlace disponible</span>
+                            <p className="text-xs text-blue-600">🔗 Enlace disponible</p>
                           )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 ml-4">
-                        <button
-                          onClick={() => handleEditarBeneficio(beneficio)}
-                          className="inline-flex! items-center! gap-2! px-4! py-2! rounded-lg! transition-all! duration-300! hover:shadow-md! hover:scale-105!"
-                          style={{ background: '#00C853', border: 'none' }}
-                          title="Editar beneficio"
-                        >
-                          <Edit className="w-4! h-4!" style={{ color: '#fff' }} />
-                          <span className="text-white! text-xs! font-bold!">Editar</span>
-                        </button>
-                        <button
-                          onClick={() => handleEliminarBeneficio(beneficio)}
-                          className="inline-flex! items-center! gap-2! bg-red-500! px-4! py-2! rounded-lg! transition-all! duration-300! hover:bg-red-600! hover:shadow-md! hover:scale-105!"
-                          style={{ border: 'none' }}
-                          title="Eliminar beneficio"
-                        >
-                          <Trash2 className="w-4! h-4!" style={{ color: '#fff' }} />
-                          <span className="text-white! text-xs! font-bold!">Eliminar</span>
-                        </button>
-                      </div>
-                    </div>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            beneficio.estado === 'activo'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-red-100 text-red-700'
+                          }`}>
+                            {beneficio.estado === 'activo' ? 'Activo' : 'Inactivo'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {beneficio.fecha_inicio ? (
+                            <>
+                              <p>📅 {beneficio.fecha_inicio}</p>
+                              {beneficio.fecha_fin && <p>🔚 {beneficio.fecha_fin}</p>}
+                            </>
+                          ) : (
+                            <p className="text-gray-400">Sin fechas</p>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleEditarBeneficio(beneficio)}
+                              className="p-2! bg-blue-100! hover:bg-blue-200! text-blue-600! rounded-lg! transition-colors!"
+                              title="Editar beneficio"
+                            >
+                              <Edit size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleEliminarBeneficio(beneficio)}
+                              className="p-2! bg-red-100! hover:bg-red-200! text-red-600! rounded-lg! transition-colors!"
+                              title="Eliminar beneficio"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Controles de paginación */}
+            {totalPaginas > 1 && (
+              <div className="p-6 border-t border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Mostrando <span className="font-semibold">{indexPrimero + 1}</span> a <span className="font-semibold">{Math.min(indexUltimo, beneficiosFiltrados.length)}</span> de <span className="font-semibold">{beneficiosFiltrados.length}</span> resultados
                   </div>
-                ))}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => cambiarPagina(paginaActual - 1)}
+                      disabled={paginaActual === 1}
+                      className="px-4 py-2 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-white text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300"
+                    >
+                      Anterior
+                    </button>
+                    
+                    {/* Números de página */}
+                    <div className="flex gap-1">
+                      {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((pageNum) => {
+                        if (
+                          pageNum === 1 ||
+                          pageNum === totalPaginas ||
+                          (pageNum >= paginaActual - 1 && pageNum <= paginaActual + 1)
+                        ) {
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => cambiarPagina(pageNum)}
+                              className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                                pageNum === paginaActual
+                                  ? "bg-green-500 text-white"
+                                  : "bg-white text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300"
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        } else if (
+                          pageNum === paginaActual - 2 ||
+                          pageNum === paginaActual + 2
+                        ) {
+                          return <span key={pageNum} className="px-2 py-2 text-gray-500">...</span>;
+                        }
+                        return null;
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => cambiarPagina(paginaActual + 1)}
+                      disabled={paginaActual === totalPaginas}
+                      className="px-4 py-2 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-white text-gray-700 hover:bg-green-50 hover:text-green-600 border border-gray-300"
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

@@ -31,7 +31,7 @@ import Cursos from "./pages/Egresado/Cursos.jsx";
 import Conferencias from "./pages/Egresado/Conferencias.jsx";
 import Footer from "./components/footer.jsx";
 import NoticiaDetalle from "./pages/Egresado/DetalleNoticia.jsx";
-import InspeccionLaboral from './pages/Moderador/InspeccionOfertas.jsx';
+import InspeccionLaboral from './pages/InspectorLaboral/InspeccionOfertas.jsx';
 import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
 import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
@@ -40,7 +40,11 @@ import ModeradorRoute from './components/ModeradorRoute';
 import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
 import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
 import AdminOfertas from './pages/Admin/AdminOfertas.jsx';
+import IncidentDashboard from "./pages/InspectorLaboral/IncidentDashboard.jsx";
 import MisOfertas from './pages/Egresado/MisOfertas.jsx';
+import InspectorLaboralRoute from './components/InspectorLaboralRoute';
+import SuspensionEmpresas from './pages/InspectorLaboral/SuspensionEmpresas.jsx';
+
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -109,6 +113,8 @@ function App() {
           <Route path="/ver-beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/mis-ofertas" element={<PrivateRoute><MisOfertas /></PrivateRoute>} />
           
+          <Route path="/mis-ofertas" element={<PrivateRoute><MisOfertas /></PrivateRoute>} />
+          
 
 
 
@@ -127,6 +133,10 @@ function App() {
           <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
           <Route path="/inspeccion/ofertas" element={<InspeccionLaboral />} />
 
+          {/* Rutas de inspector laboral */}
+          <Route path="/inspector/ofertas" element={<InspectorLaboralRoute><InspeccionLaboral /></InspectorLaboralRoute>} />
+          <Route path="/inspector/incidencias" element={<InspectorLaboralRoute><IncidentDashboard /></InspectorLaboralRoute>} />
+          <Route path="/inspector/suspensiones" element={<InspectorLaboralRoute><SuspensionEmpresas /></InspectorLaboralRoute>} />
 
         </Routes>
         <Footer />

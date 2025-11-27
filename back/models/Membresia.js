@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const membresiaSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true }, // Changed from firebaseUid
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
   estado: {
     type: String,
     enum: ["activa", "inactiva", "vencida", "pendiente"],
@@ -22,6 +22,11 @@ const membresiaSchema = new mongoose.Schema({
       }
       return null;
     },
+  },
+  // ID del pago de Mercado Pago
+  mercadoPagoPaymentId: {
+    type: String,
+    default: null,
   },
   createdAt: {
     type: Date,

@@ -20,6 +20,7 @@ import { activateMembresiaRequest } from "../../api/membresiaApi";
 import {
   createSubscriptionRequest,
   simulatePagoRequest,
+  checkAndActivateMembershipRequest,
 } from "../../api/pagoApi";
 
 const beneficios = [
@@ -66,7 +67,7 @@ export default function Membresia() {
   const [loadingActivation, setLoadingActivation] = useState(false);
   const [loadingSimulation, setLoadingSimulation] = useState(false);
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user, fetchMembresia } = useUser();
 
   return (
     <div className="min-h-screen w-full bg-white text-gray-900 font-sans">
@@ -119,8 +120,10 @@ export default function Membresia() {
               try {
                 setLoadingActivation(true);
                 const response = await createSubscriptionRequest();
-                if (response.init_point) {
-                  window.location.href = response.init_point;
+                if (response.init_point || response.sandbox_init_point) {
+                  // Usar sandbox_init_point para testing, init_point para producción
+                  const checkoutUrl = response.sandbox_init_point || response.init_point;
+                  window.open(checkoutUrl, '_blank');
                 } else {
                   toast.error("No se pudo iniciar el proceso de pago");
                 }
@@ -139,8 +142,7 @@ export default function Membresia() {
               ) : (
                 <Sparkles className="w-5 h-5" />
               )}
-              {loadingActivation ? "Procesando..." : "Activar Membresía"}
-              {/*/ MERCADOPAGO NECESITA CUENTAS DE TESTEO /*/}
+              {loadingActivation ? "Redirigiendo a Mercado Pago..." : "Pagar con Mercado Pago"}
             </span>
           </button>
 
@@ -150,6 +152,8 @@ export default function Membresia() {
                 setLoadingSimulation(true);
                 await simulatePagoRequest();
                 toast.success("¡Pago simulado con éxito!");
+                // Actualizar el estado de membresía en el contexto
+                await fetchMembresia();
                 setTimeout(() => navigate("/MembresiaCompletada"), 1000); //PARA QUE SE VEA EL TOAST :(
               } catch (error) {
                 toast.error(error.message || "Error al simular el pago");
