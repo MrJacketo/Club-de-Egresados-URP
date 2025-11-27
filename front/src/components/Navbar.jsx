@@ -36,10 +36,13 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userPhoto, setUserPhoto] = useState(fotoPerfil);
 
-  // Obtener ID del usuario actual de manera más robusta
+  // Obtener ID del usuario actual de manera más robusta usando email
   const getCurrentUserId = () => {
     try {
       // Primero intentar desde el contexto
+      if (user && user.email) {
+        return user.email.replace('@', '_').replace('.', '_');
+      }
       if (user && (user.id || user._id)) {
         return user.id || user._id;
       }
@@ -48,6 +51,9 @@ export default function Navbar() {
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
         const userData = JSON.parse(currentUser);
+        if (userData.email) {
+          return userData.email.replace('@', '_').replace('.', '_');
+        }
         return userData.id || userData._id || 'default-user';
       }
       
@@ -67,14 +73,9 @@ export default function Navbar() {
       try {
         const userId = getCurrentUserId();
         
-        // Buscar foto específica del usuario
+        // Buscar foto específica del usuario (sin fallback genérico)
         const userPhotoKey = `userProfilePhoto_${userId}`;
         let savedPhoto = localStorage.getItem(userPhotoKey);
-        
-        // Si no hay foto específica, usar la general como fallback
-        if (!savedPhoto) {
-          savedPhoto = localStorage.getItem('userProfilePhoto');
-        }
 
         const newPhotoState = savedPhoto || fotoPerfil;
         
@@ -143,11 +144,11 @@ export default function Navbar() {
       // 3. Ejecutar logout
       await logout();
 
-      // 4. Guardar la foto para el próximo inicio de sesión
+      // 4. Guardar la foto específica del usuario para el próximo inicio de sesión
       if (currentPhoto && currentPhoto !== fotoPerfil) {
         const userPhotoKey = `userProfilePhoto_${userId}`;
         localStorage.setItem(userPhotoKey, currentPhoto);
-        localStorage.setItem('userProfilePhoto', currentPhoto);
+        // Eliminado: No usar clave genérica para mantener fotos específicas por usuario
       }
 
       // 5. Navegar al login

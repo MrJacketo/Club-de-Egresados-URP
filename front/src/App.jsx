@@ -1,4 +1,5 @@
 import './App.css';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from '../src/components/Navbar.jsx';
 import Home from '../src/pages/Egresado/Home.jsx';
@@ -45,11 +46,16 @@ import MisOfertas from './pages/Egresado/MisOfertas.jsx';
 import InspectorLaboralRoute from './components/InspectorLaboralRoute';
 import SuspensionEmpresas from './pages/InspectorLaboral/SuspensionEmpresas.jsx';
 import InspectorLaboralDashboard from './pages/InspectorLaboral/InspectorLaboralDashboard.jsx';
+import { runPhotoMigrationOnce } from './utils/migrateProfilePhotos.js';
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 function App() {
+  // Ejecutar migración de fotos de perfil al iniciar la app
+  React.useEffect(() => {
+    runPhotoMigrationOnce();
+  }, []);
   return (
     <UserContextProvider>
       <Navbar />

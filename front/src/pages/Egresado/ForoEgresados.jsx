@@ -30,13 +30,16 @@ function ForoEgresados() {
 // Cargar imagen de perfil desde localStorage al iniciar
 useEffect(() => {
   try {
-    const imagenGuardada = localStorage.getItem('imagenPerfil');
+    const userId = getCurrentUserId();
+    const userPhotoKey = `userProfilePhoto_${userId}`;
+    const imagenGuardada = localStorage.getItem(userPhotoKey);
+    
     if (imagenGuardada && imagenGuardada.startsWith('data:image')) {
       setPerfil(imagenGuardada);
-      console.log('✅ Imagen de perfil cargada desde localStorage');
+      console.log('✅ Imagen de perfil cargada desde localStorage para usuario:', userId);
     } else if (imagenGuardada) {
       console.log('⚠️ Imagen en formato no válido, limpiando...');
-      localStorage.removeItem('imagenPerfil');
+      localStorage.removeItem(userPhotoKey);
     }
   } catch (error) {
     console.error('❌ Error cargando imagen de perfil:', error);
@@ -46,17 +49,25 @@ useEffect(() => {
 // Y carga desde ambos lugares
 useEffect(() => {
   try {
-    // Intentar cargar desde la clave principal
-    let imagenGuardada = localStorage.getItem('imagenPerfil');
+    const userId = getCurrentUserId();
+    const userPhotoKey = `userProfilePhoto_${userId}`;
     
-    // Si no existe, intentar desde la clave forzada
+    // Intentar cargar desde la clave específica del usuario
+    let imagenGuardada = localStorage.getItem(userPhotoKey);
+    
+    // Si no existe, intentar desde la clave forzada como fallback
     if (!imagenGuardada) {
       imagenGuardada = localStorage.getItem('imagenPerfilForzado');
+      // Si existe en el fallback, migrarla a la clave específica
+      if (imagenGuardada) {
+        localStorage.setItem(userPhotoKey, imagenGuardada);
+        localStorage.removeItem('imagenPerfilForzado');
+      }
     }
     
     if (imagenGuardada && imagenGuardada.startsWith('data:image')) {
       setPerfil(imagenGuardada);
-      console.log('✅ Imagen de perfil cargada exitosamente');
+      console.log('✅ Imagen de perfil cargada exitosamente para usuario:', userId);
     }
   } catch (error) {
     console.error('❌ Error cargando imagen de perfil:', error);
@@ -362,8 +373,10 @@ const agregarComentario = async (id, texto) => {
       return;
     }
 
-    // OBTENER LA IMAGEN DEL SIDEBAR (del estado o localStorage)
-    const imagenPerfilActual = perfil || localStorage.getItem('imagenPerfil');
+    // OBTENER LA IMAGEN DEL SIDEBAR (del estado o localStorage específico del usuario)
+    const userId = getCurrentUserId();
+    const userPhotoKey = `userProfilePhoto_${userId}`;
+    const imagenPerfilActual = perfil || localStorage.getItem(userPhotoKey);
 
     console.log('💬 Enviando comentario con imagen:', {
       tieneImagen: !!imagenPerfilActual,
@@ -410,13 +423,16 @@ const agregarComentario = async (id, texto) => {
   }
 };
  const cambiarPerfil = (nuevaImagen) => {
+  const userId = getCurrentUserId();
+  const userPhotoKey = `userProfilePhoto_${userId}`;
+  
   setPerfil(nuevaImagen);
-  // Guardar en localStorage de forma segura
+  // Guardar en localStorage de forma segura con clave específica del usuario
   if (nuevaImagen) {
-    localStorage.setItem('imagenPerfil', nuevaImagen);
-    console.log('✅ Imagen de perfil guardada en localStorage');
+    localStorage.setItem(userPhotoKey, nuevaImagen);
+    console.log('✅ Imagen de perfil guardada en localStorage para usuario:', userId);
   } else {
-    localStorage.removeItem('imagenPerfil');
+    localStorage.removeItem(userPhotoKey);
   }
 };
 

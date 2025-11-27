@@ -52,12 +52,17 @@ export default function PerfilEgresadoForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  // Obtener ID del usuario actual de forma segura
+  // Obtener ID del usuario actual de forma segura usando email como identificador
   const getCurrentUserId = () => {
     try {
       const currentUser = localStorage.getItem('currentUser');
       if (currentUser) {
         const userData = JSON.parse(currentUser);
+        // Usar email como identificador único
+        if (userData.email) {
+          return userData.email.replace('@', '_').replace('.', '_');
+        }
+        // Fallback al ID
         return userData.id || userData._id || 'default-user';
       }
       return 'default-user';
@@ -127,8 +132,7 @@ export default function PerfilEgresadoForm() {
     const userPhotoKey = `userProfilePhoto_${userId}`;
     
     localStorage.removeItem(userPhotoKey);
-    // También eliminar la clave general por compatibilidad
-    localStorage.removeItem('userProfilePhoto');
+    // Eliminado: No usar clave genérica para mantener fotos específicas por usuario
     
     setPhoto(fotoPerfil);
     setSelectedFile(null);
@@ -140,14 +144,9 @@ export default function PerfilEgresadoForm() {
     try {
       const userId = getCurrentUserId();
       
-      // PRIMERO intentar con clave específica de usuario
+      // Cargar solo la foto específica del usuario (sin fallback genérico)
       const userPhotoKey = `userProfilePhoto_${userId}`;
       let savedPhoto = localStorage.getItem(userPhotoKey);
-      
-      // SI NO HAY foto específica, intentar con la clave general
-      if (!savedPhoto) {
-        savedPhoto = localStorage.getItem('userProfilePhoto');
-      }
 
       if (savedPhoto) {
         setPhoto(savedPhoto);
