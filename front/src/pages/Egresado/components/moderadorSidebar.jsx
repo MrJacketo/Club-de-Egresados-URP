@@ -94,22 +94,6 @@ export default function ModeradorSidebar() {
             </span>
           </Link>
 
-          {/* Incidencias Laborales */}
-          <Link
-            to="/moderador/incidencias"
-            className={`p-3! rounded-xl! flex! items-center! gap-3! transition-all! duration-300! ${
-              location.pathname === "/moderador/incidencias"
-                ? "bg-white! text-green-600! shadow-lg!"
-                : "text-white! hover:bg-white/20!"
-            }`}
-            style={{ border: 'none' }}
-          >
-            <AlertTriangle size={24} />
-            <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-              Incidencias Laborales
-            </span>
-          </Link>
-
           {/* Usuarios */}
           <Link
             to="/moderador/usuarios"
