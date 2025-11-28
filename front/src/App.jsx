@@ -36,7 +36,7 @@ import InspeccionLaboral from './pages/InspectorLaboral/InspeccionOfertas.jsx';
 import MisConferencias from './pages/Egresado/MisConferencias.jsx';
 import MisBeneficios from './pages/Egresado/MisBeneficios.jsx';
 import ModeracionUsuarios from './pages/Moderador/ModeracionUsuarios.jsx';
-import GestionForo from './pages/Admin/GestionForo.jsx';
+import GestionForo from './pages/Moderador/GestionForo.jsx';
 import ModeradorRoute from './components/ModeradorRoute';
 import ModeradorDashboard from './pages/Moderador/ModeradorDashboard.jsx';
 import GestionOfertasModerador from './pages/Moderador/GestionOfertasModerador.jsx';
@@ -138,7 +138,6 @@ function App() {
           <Route path="/moderador" element={<ModeradorRoute><ModeradorDashboard /></ModeradorRoute>} />
           <Route path="/moderador/ofertas" element={<ModeradorRoute><GestionOfertasModerador /></ModeradorRoute>} />
           <Route path="/moderador/foro" element={<ModeradorRoute><GestionForo /></ModeradorRoute>} />
-          <Route path="/inspeccion/ofertas" element={<InspeccionLaboral />} />
 
           {/* Rutas de inspector laboral */}
           <Route path="/inspector-laboral" element={<InspectorLaboralRoute><InspectorLaboralDashboard /></InspectorLaboralRoute>} />

@@ -21,6 +21,8 @@ const ofertaModeradorRoutes = require("./routes/ofertaModeradorRoutes.js");
 const conferenciaRoutes = require("./routes/conferenciaRoutes");
 const incidenciasRoutes = require("./routes/incidenciasRoutes");
 const inspeccionLaboralRoutes = require("./routes/inspeccionLaboralRoutes");
+const reportesRoutes = require("./routes/reportesRoutes");
+const reporteForoRoutes = require("./routes/reporteForoRoutes");
 
 const app = express();
 const path = require('path');
@@ -72,6 +74,8 @@ app.use("/api", publicacionesRoutes);
 app.use("/api/moderador", ofertaModeradorRoutes); // Rutas de moderador
 app.use("/api/incidencias", incidenciasRoutes); // Rutas de incidencias laborales
 app.use("/api/inspeccion-laboral", inspeccionLaboralRoutes); // Rutas de inspección laboral
+app.use("/api/reportes", reportesRoutes); // Rutas de reportes
+app.use("/api/reportes-foro", reporteForoRoutes); // Rutas de reportes del foro
 
 
 app.use(express.json());

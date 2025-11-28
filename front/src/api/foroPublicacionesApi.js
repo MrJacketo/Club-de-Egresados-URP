@@ -219,3 +219,52 @@ export const eliminarPublicacion = async (id) => {
     }
   }
 };
+
+// Ocultar publicación (para moderadores)
+export const ocultarPublicacion = async (id) => {
+  try {
+    const response = await apiClient.put(`/api/publicaciones/${id}/ocultar`);
+    
+    if (response.data.success) {
+      return response.data;
+    } else {
+      throw new Error(response.data.error || "Error al ocultar publicación");
+    }
+  } catch (error) {
+    console.error("Error en ocultarPublicacion:", error);
+    
+    if (error.response) {
+      const errorMessage = error.response.data?.error || `Error ${error.response.status}`;
+      throw new Error(errorMessage);
+    } else if (error.request) {
+      throw new Error("No se pudo conectar con el servidor");
+    } else {
+      throw new Error(error.message || "Error desconocido");
+    }
+  }
+};
+
+// Aprobar publicación (cambiar estado - para moderadores)
+export const aprobarPublicacion = async (id) => {
+  try {
+    // Crear un endpoint específico para aprobar o usar el de actualizar
+    const response = await apiClient.put(`/api/publicaciones/${id}/aprobar`);
+    
+    if (response.data.success) {
+      return response.data;
+    } else {
+      throw new Error(response.data.error || "Error al aprobar publicación");
+    }
+  } catch (error) {
+    console.error("Error en aprobarPublicacion:", error);
+    
+    if (error.response) {
+      const errorMessage = error.response.data?.error || `Error ${error.response.status}`;
+      throw new Error(errorMessage);
+    } else if (error.request) {
+      throw new Error("No se pudo conectar con el servidor");
+    } else {
+      throw new Error(error.message || "Error desconocido");
+    }
+  }
+};

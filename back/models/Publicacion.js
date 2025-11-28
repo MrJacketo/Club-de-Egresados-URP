@@ -65,8 +65,17 @@ const publicacionSchema = new mongoose.Schema({
   },
   estado: {
     type: String,
-    enum: ['activo', 'eliminado'],
+    enum: ['activo', 'aprobado', 'eliminado'],
     default: 'activo'
+  },
+  moderadoPor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  fechaModeracion: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true

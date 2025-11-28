@@ -15,7 +15,7 @@ const obtenerPublicaciones = async (req, res) => {
     
     const publicaciones = await Publicacion.find({ 
       oculto: false, 
-      estado: 'activo',
+      estado: { $in: ['activo', 'aprobado'] }, // Incluir tanto activas como aprobadas
       autor: { $exists: true, $ne: null }
     })
     .populate({
@@ -486,8 +486,11 @@ const ocultarPublicacion = async (req, res) => {
       });
     }
 
-    // Verificar que el usuario es el autor
-    if (publicacion.autor.toString() !== usuarioId.toString()) {
+    // Verificar que el usuario es el autor O es moderador/admin
+    const esAutor = publicacion.autor.toString() === usuarioId.toString();
+    const esModerador = req.user.rol === 'moderador' || req.user.rol === 'admin' || req.user.rol === 'inspector_laboral';
+    
+    if (!esAutor && !esModerador) {
       return res.status(403).json({
         success: false,
         error: 'No tienes permiso para ocultar esta publicación'
@@ -541,8 +544,11 @@ const eliminarPublicacion = async (req, res) => {
       });
     }
 
-    // Verificar que el usuario es el autor
-    if (publicacion.autor.toString() !== usuarioId.toString()) {
+    // Verificar que el usuario es el autor O es moderador/admin
+    const esAutor = publicacion.autor.toString() === usuarioId.toString();
+    const esModerador = req.user.rol === 'moderador' || req.user.rol === 'admin' || req.user.rol === 'inspector_laboral';
+    
+    if (!esAutor && !esModerador) {
       return res.status(403).json({
         success: false,
         error: 'No tienes permiso para eliminar esta publicación'
@@ -566,6 +572,66 @@ const eliminarPublicacion = async (req, res) => {
   }
 };
 
+// Aprobar publicación - SOLO MODERADORES/ADMINS
+const aprobarPublicacion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Validaciones
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        error: 'Usuario no autenticado'
+      });
+    }
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'ID de publicación inválido'
+      });
+    }
+
+    // Verificar que el usuario es moderador/admin
+    const esModerador = req.user.rol === 'moderador' || req.user.rol === 'admin' || req.user.rol === 'inspector_laboral';
+    
+    if (!esModerador) {
+      return res.status(403).json({
+        success: false,
+        error: 'No tienes permisos de moderador para aprobar publicaciones'
+      });
+    }
+
+    const publicacion = await Publicacion.findById(id);
+
+    if (!publicacion) {
+      return res.status(404).json({
+        success: false,
+        error: 'Publicación no encontrada'
+      });
+    }
+
+    // Marcar como aprobada y activa
+    publicacion.estado = 'aprobado';
+    publicacion.moderadoPor = req.user.id;
+    publicacion.fechaModeracion = new Date();
+    
+    await publicacion.save();
+
+    res.json({
+      success: true,
+      message: 'Publicación aprobada correctamente',
+      data: publicacion
+    });
+  } catch (error) {
+    console.error('Error al aprobar publicación:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al aprobar publicación: ' + error.message
+    });
+  }
+};
+
 // ✅ EXPORTAR TODAS LAS FUNCIONES CORRECTAMENTE
 module.exports = {
   obtenerPublicaciones,
@@ -576,5 +642,6 @@ module.exports = {
   obtenerPublicacionPorId,
   obtenerPublicacionesPopulares,
   ocultarPublicacion,
+  aprobarPublicacion,
   eliminarPublicacion
 };

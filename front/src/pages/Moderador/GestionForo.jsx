@@ -1,5 +1,5 @@
 // src/pages/Admin/GestionForo.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ModeradorSidebar from '../Egresado/components/moderadorSidebar';
 import { ModeradorSidebarProvider, useModeradorSidebar } from '../../context/moderadorSidebarContext';
 import ModalRevisarPost from "../../components/ModeracionForo/ModalRevisarPost";
@@ -23,90 +23,13 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-// Datos de ejemplo incluidos en el mismo archivo
-const datosPosts = [
-  {
-    id: 1,
-    titulo: "Busco un nuevo libro de Sci-fi",
-    autor: "Juan Pérez",
-    fecha: "Hace 2h",
-    tipo: "Pregunta",
-    contenido: "Hola comunidad, estoy buscando recomendaciones de libros de ciencia ficción recientes. ¿Alguien tiene alguna sugerencia? Me gustan autores como Isaac Asimov y Philip K. Dick.",
-    reportes: 0,
-    comentarios: 3,
-    oculto: false
-  },
-  {
-    id: 2,
-    titulo: "OFERTA IMBATIBLE!!",
-    autor: "Diana Perez",
-    fecha: "Hace 1h",
-    tipo: "Anuncio",
-    contenido: "¡COMPRA YA! Productos increíbles a precios insuperables. No pierdas esta oportunidad única. Contacta ahora mismo!!!",
-    reportes: 5,
-    comentarios: 0,
-    oculto: false
-  },
-  {
-    id: 3,
-    titulo: "¿Alguien quiere comprar productos?",
-    autor: "Mauricio Perez",
-    fecha: "Hace 3h",
-    tipo: "Comercial",
-    contenido: "Hola, tengo algunos productos para vender. ¿Están interesados? Pueden contactarme por mensaje privado para más información.",
-    reportes: 1,
-    comentarios: 2,
-    oculto: false
-  }
-];
-
-const datosReportes = [
-  {
-    id: 7821,
-    titulo: "Spam Comercial",
-    autor: "Piero Gomez",
-    fecha: "Hace 2h",
-    tipo: "Anuncio",
-    contenido: "¡Gran oportunidad de inversión! ¡Hazte rico rápidamente con las criptomonedas! No te pierdas esta oportunidad única. Visita mi sitio para más detalles: www.super-crypto-profits.scam",
-    reportes: 3,
-    comentarios: 0,
-    tipoViolacion: "Spam",
-    reportadoPor: "Mauricio Aliaga",
-    fechaReporte: "15 de Octubre, 2023, 10:45 AM",
-    razon: "Este usuario está publicando repetidamente enlaces a sitios externos no relacionados con el tema de la conversación. Parece un bot.",
-    oculto: false
-  },
-  {
-    id: 9512,
-    titulo: "Contenido Inapropiado",
-    autor: "Diana Gomez",
-    fecha: "Hace 15min",
-    tipo: "Discusión",
-    contenido: "Contenido ofensivo y lenguaje inapropiado en este post...",
-    reportes: 1,
-    comentarios: 5,
-    tipoViolacion: "Contenido Inapropiado",
-    reportadoPor: "Pepe Gonzalez",
-    fechaReporte: "15 de Octubre, 2023, 11:20 AM",
-    razon: "Lenguaje ofensivo y comentarios inapropiados hacia otros usuarios.",
-    oculto: false
-  },
-  {
-    id: 6734,
-    titulo: "Información Falsa",
-    autor: "Luis Diaz",
-    fecha: "Hace 45min",
-    tipo: "Información",
-    contenido: "Información incorrecta sobre temas importantes...",
-    reportes: 2,
-    comentarios: 8,
-    tipoViolacion: "Información Falsa",
-    reportadoPor: "Luisa Ramirez",
-    fechaReporte: "15 de Octubre, 2023, 10:15 AM",
-    razon: "Difusión de información médica falsa y potencialmente peligrosa.",
-    oculto: false
-  }
-];
+// APIs
+import { 
+  obtenerPublicaciones, 
+  eliminarPublicacion,
+  ocultarPublicacion,
+  aprobarPublicacion
+} from '../../api/foroPublicacionesApi';
 
 // Componente interno que usa el contexto
 const GestionForoContent = () => {
@@ -122,16 +45,140 @@ const GestionForoContent = () => {
   const [filtroEstado, setFiltroEstado] = useState('pendiente');
   const [filtroTipo, setFiltroTipo] = useState('');
   const [ordenarPor, setOrdenarPor] = useState('recent');
-  const [postsPendientes, setPostsPendientes] = useState(datosPosts);
-  const [reportesActivos, setReportesActivos] = useState(datosReportes);
+  
+  // Estados para datos reales
+  const [postsPendientes, setPostsPendientes] = useState([]);
+  const [reportesActivos, setReportesActivos] = useState([]);
+  const [estadisticas, setEstadisticas] = useState({
+    totalReportes: 0,
+    reportesPendientes: 0,
+    reportesResueltos: 0
+  });
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
+  // Cargar datos reales del backend
+  const cargarDatos = async () => {
+    try {
+      setCargando(true);
+      setError(null);
+
+      console.log('🔍 Iniciando carga de datos del foro...');
+
+      // Probar conexión básica primero
+      try {
+        console.log('📡 Intentando obtener publicaciones...');
+        const resPublicaciones = await obtenerPublicaciones();
+        console.log('✅ Respuesta completa de publicaciones:', resPublicaciones);
+
+        // Verificar el formato exacto de la respuesta
+        if (resPublicaciones && resPublicaciones.success) {
+          console.log('✅ Respuesta exitosa, procesando datos...');
+          
+          let publicaciones = [];
+          
+          // Intentar diferentes formatos de respuesta
+          if (resPublicaciones.publicaciones) {
+            publicaciones = resPublicaciones.publicaciones;
+          } else if (resPublicaciones.data && resPublicaciones.data.publicaciones) {
+            publicaciones = resPublicaciones.data.publicaciones;
+          } else if (Array.isArray(resPublicaciones.data)) {
+            publicaciones = resPublicaciones.data;
+          }
+
+          console.log('📋 Publicaciones encontradas:', publicaciones?.length || 0);
+
+          if (publicaciones && publicaciones.length > 0) {
+            // Filtrar publicaciones que no están aprobadas para moderación
+            const publicacionesPendientes = publicaciones.filter(pub => 
+              pub.estado !== 'aprobado' && pub.estado !== 'eliminado'
+            );
+            
+            const publicacionesFormateadas = publicacionesPendientes.map((pub, index) => ({
+              id: pub._id || pub.id || index,
+              titulo: pub.titulo || 'Sin título',
+              autor: pub.autor?.name || pub.autor?.nombre || pub.autor || 'Usuario desconocido',
+              fecha: `Hace ${calcularTiempoTranscurrido(pub.createdAt || pub.fechaCreacion || new Date())}`,
+              tipo: pub.categoria || pub.tipo || "Discusión",
+              contenido: pub.contenido || 'Sin contenido',
+              reportes: 0,
+              comentarios: pub.comentarios?.length || 0,
+              oculto: pub.oculto || false
+            }));
+            
+            setPostsPendientes(publicacionesFormateadas);
+            console.log('✅ Publicaciones pendientes formateadas:', publicacionesFormateadas.length);
+          } else {
+            console.log('⚠️ No hay publicaciones disponibles');
+            setPostsPendientes([]);
+          }
+        } else {
+          console.log('❌ Respuesta sin success flag o formato inesperado');
+          setPostsPendientes([]);
+        }
+      } catch (errorPubs) {
+        console.error('❌ Error específico al cargar publicaciones:', errorPubs);
+        setPostsPendientes([]);
+      }
+
+      // Datos mock para reportes por ahora
+      setReportesActivos([]);
+      setEstadisticas({
+        totalReportes: 0,
+        reportesPendientes: 0,
+        reportesResueltos: 0
+      });
+
+      console.log('✅ Carga de datos completada');
+
+    } catch (error) {
+      console.error('❌ Error general al cargar datos:', error);
+      setError(`Error al cargar datos: ${error.message || error}`);
+      mostrarAlerta(`Error: ${error.message || error}`, 'error');
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  // Función auxiliar para calcular tiempo transcurrido
+  const calcularTiempoTranscurrido = (fecha) => {
+    const ahora = new Date();
+    const fechaPublicacion = new Date(fecha);
+    const diferencia = ahora - fechaPublicacion;
+    
+    const minutos = Math.floor(diferencia / (1000 * 60));
+    const horas = Math.floor(diferencia / (1000 * 60 * 60));
+    const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+    
+    if (minutos < 60) return `${minutos}min`;
+    if (horas < 24) return `${horas}h`;
+    return `${dias}d`;
+  };
+
+  // Función auxiliar para formatear fechas
+  const formatearFecha = (fecha) => {
+    return new Date(fecha).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   // Funciones de filtrado
-  const limpiarFiltros = () => {
+  const limpiarFiltros = async () => {
     setFiltroBusqueda('');
     setFiltroEstado('pendiente');
     setFiltroTipo('');
     setOrdenarPor('recent');
-    mostrarAlerta('Filtros limpiados', 'success');
+    await cargarDatos(); // Recargar datos con filtros limpiados
+    mostrarAlerta('Filtros limpiados y datos recargados', 'success');
   };
 
   // Funciones para manejar modales
@@ -155,65 +202,180 @@ const GestionForoContent = () => {
     setReporteSeleccionado(null);
   };
 
-  // Handlers para acciones
-  const manejarAprobar = (postId, comentario) => {
-    setPostsPendientes(posts => posts.filter(post => post.id !== postId));
-    mostrarAlerta(`Post aprobado correctamente`, 'success');
-    cerrarModalPost();
+  // Handlers para acciones con APIs reales
+  const manejarAprobar = async (postId, comentario) => {
+    try {
+      // Mostrar confirmación antes de aprobar
+      const confirmacion = window.confirm(
+        '¿Estás seguro de que quieres aprobar esta publicación?\n\n' +
+        'La publicación será marcada como aprobada y no aparecerá en la lista de moderación.'
+      );
+      
+      if (!confirmacion) {
+        return; // Usuario canceló la acción
+      }
+      
+      console.log('🔄 Aprobando publicación:', postId);
+      
+      const resultado = await aprobarPublicacion(postId);
+      console.log('📊 Resultado de aprobar:', resultado);
+      
+      // Remover de la lista de posts pendientes (ya que está aprobado)
+      setPostsPendientes(posts => posts.filter(post => post.id !== postId));
+      
+      mostrarAlerta(`Post aprobado correctamente`, 'success');
+      cerrarModalPost();
+      
+      console.log('✅ Publicación aprobada exitosamente');
+      
+      // Recargar datos para reflejar cambios
+      setTimeout(() => cargarDatos(), 500);
+    } catch (error) {
+      console.error('❌ Error al aprobar post:', error);
+      mostrarAlerta(`Error al aprobar: ${error.message}`, 'error');
+    }
   };
 
-  const manejarOcultar = (postId, comentario) => {
-    setPostsPendientes(posts => 
-      posts.map(post => 
-        post.id === postId ? { ...post, oculto: true } : post
-      )
-    );
-    mostrarAlerta(`Post ocultado correctamente`, 'warning');
-    cerrarModalPost();
+  const manejarOcultar = async (postId, comentario) => {
+    try {
+      console.log('🔄 Ocultando publicación:', postId);
+      
+      const resultado = await ocultarPublicacion(postId);
+      console.log('📊 Resultado de ocultar:', resultado);
+      
+      // Marcar como oculto en el estado local inmediatamente
+      setPostsPendientes(posts => 
+        posts.map(post => 
+          post.id === postId ? { ...post, oculto: true } : post
+        )
+      );
+      
+      mostrarAlerta(`Post ocultado correctamente`, 'warning');
+      cerrarModalPost();
+      
+      console.log('✅ Publicación ocultada exitosamente');
+      
+      // Recargar datos para reflejar cambios
+      setTimeout(() => cargarDatos(), 500);
+    } catch (error) {
+      console.error('❌ Error al ocultar post:', error);
+      mostrarAlerta(`Error al ocultar: ${error.message}`, 'error');
+    }
   };
 
-  const manejarEliminar = (postId, comentario) => {
-    setPostsPendientes(posts => posts.filter(post => post.id !== postId));
-    mostrarAlerta(`Post eliminado correctamente`, 'success');
-    cerrarModalPost();
+  const manejarEliminar = async (postId, comentario) => {
+    try {
+      console.log('🔄 Eliminando publicación:', postId);
+      
+      const resultado = await eliminarPublicacion(postId);
+      console.log('📊 Resultado de eliminar:', resultado);
+      
+      // Remover completamente de la lista
+      setPostsPendientes(posts => posts.filter(post => post.id !== postId));
+      
+      mostrarAlerta(`Post eliminado correctamente`, 'success');
+      cerrarModalPost();
+      
+      console.log('✅ Publicación eliminada exitosamente');
+      
+      // Recargar datos para reflejar cambios
+      setTimeout(() => cargarDatos(), 500);
+    } catch (error) {
+      console.error('❌ Error al eliminar post:', error);
+      mostrarAlerta(`Error al eliminar: ${error.message}`, 'error');
+    }
   };
 
-  const manejarResolverReporte = (reporteId, acciones, notas) => {
-    setReportesActivos(reportes => reportes.filter(reporte => reporte.id !== reporteId));
-    const accionesTexto = acciones.length > 0 ? acciones.join(', ') : 'sin acciones específicas';
-    mostrarAlerta(`Reporte resuelto (${accionesTexto})`, 'success');
-    cerrarModalReporte();
+  const manejarResolverReporte = async (reporteId, acciones, notas) => {
+    try {
+      // Mapear acciones del modal a formato del backend
+      let tipoAccion = 'ninguna';
+      if (acciones.includes('eliminarContenido')) tipoAccion = 'eliminacion';
+      else if (acciones.includes('banearUsuario')) tipoAccion = 'ban_temporal';
+      else if (acciones.includes('advertirUsuario')) tipoAccion = 'advertencia';
+
+      await resolverReporte(reporteId, {
+        tipoAccion,
+        motivo: notas,
+        nuevoEstado: 'resuelto'
+      });
+
+      setReportesActivos(reportes => reportes.filter(reporte => reporte.id !== reporteId));
+      const accionesTexto = acciones.length > 0 ? acciones.join(', ') : 'sin acciones específicas';
+      mostrarAlerta(`Reporte resuelto (${accionesTexto})`, 'success');
+      cerrarModalReporte();
+    } catch (error) {
+      console.error('Error al resolver reporte:', error);
+      mostrarAlerta('Error al resolver el reporte', 'error');
+    }
   };
 
-  const manejarIgnorarReporte = (reporteId, notas) => {
-    setReportesActivos(reportes => reportes.filter(reporte => reporte.id !== reporteId));
-    mostrarAlerta(`Reporte ignorado`, 'warning');
-    cerrarModalReporte();
+  const manejarIgnorarReporte = async (reporteId, notas) => {
+    try {
+      await resolverReporte(reporteId, {
+        tipoAccion: 'ninguna',
+        motivo: notas || 'Reporte ignorado por moderador',
+        nuevoEstado: 'ignorado'
+      });
+
+      setReportesActivos(reportes => reportes.filter(reporte => reporte.id !== reporteId));
+      mostrarAlerta(`Reporte ignorado`, 'warning');
+      cerrarModalReporte();
+    } catch (error) {
+      console.error('Error al ignorar reporte:', error);
+      mostrarAlerta('Error al ignorar el reporte', 'error');
+    }
   };
 
-  const ocultarPost = (postId) => {
-    setPostsPendientes(posts => 
-      posts.map(post => 
-        post.id === postId ? { ...post, oculto: true } : post
-      )
-    );
-    mostrarAlerta('Post ocultado correctamente', 'warning');
+  const ocultarPost = async (postId) => {
+    try {
+      console.log('🔄 Ocultando post directo:', postId);
+      
+      const resultado = await ocultarPublicacion(postId);
+      console.log('📊 Resultado de ocultar directo:', resultado);
+      
+      setPostsPendientes(posts => 
+        posts.map(post => 
+          post.id === postId ? { ...post, oculto: true } : post
+        )
+      );
+      
+      mostrarAlerta('Post ocultado correctamente', 'warning');
+      console.log('✅ Post ocultado directamente');
+      
+      // Recargar datos para reflejar cambios
+      setTimeout(() => cargarDatos(), 500);
+    } catch (error) {
+      console.error('❌ Error al ocultar post directo:', error);
+      mostrarAlerta(`Error al ocultar: ${error.message}`, 'error');
+    }
   };
 
-  const ocultarReporte = (reporteId) => {
-    setReportesActivos(reportes => 
-      reportes.map(reporte => 
-        reporte.id === reporteId ? { ...reporte, oculto: true } : reporte
-      )
-    );
-    mostrarAlerta('Reporte ocultado correctamente', 'warning');
+  const ocultarReporte = async (reporteId) => {
+    try {
+      await ocultarReporteForo(reporteId);
+      setReportesActivos(reportes => 
+        reportes.map(reporte => 
+          reporte.id === reporteId ? { ...reporte, oculto: true } : reporte
+        )
+      );
+      mostrarAlerta('Reporte ocultado correctamente', 'warning');
+    } catch (error) {
+      console.error('Error al ocultar reporte:', error);
+      mostrarAlerta('Error al ocultar el reporte', 'error');
+    }
   };
 
-  const restaurarTodo = () => {
-    setPostsPendientes(postsPendientes.map(p => ({ ...p, oculto: false })));
-    setReportesActivos(reportesActivos.map(r => ({ ...r, oculto: false })));
-    setFiltroEstado('pendiente');
-    mostrarAlerta('Todos los elementos restaurados', 'success');
+  const restaurarTodo = async () => {
+    try {
+      // Recargar datos para restaurar vista
+      await cargarDatos();
+      setFiltroEstado('pendiente');
+      mostrarAlerta('Vista restaurada - datos recargados', 'success');
+    } catch (error) {
+      console.error('Error al restaurar datos:', error);
+      mostrarAlerta('Error al restaurar la vista', 'error');
+    }
   };
 
   // Filtrar datos
@@ -235,13 +397,76 @@ const GestionForoContent = () => {
   const postsFiltrados = filtrarDatos(postsPendientes);
   const reportesFiltrados = filtrarDatos(reportesActivos);
 
+  // Usar estadísticas reales del backend
   const totalPosts = postsPendientes.length;
   const postsActivos = postsPendientes.filter(p => !p.oculto).length;
-  const totalReportes = reportesActivos.length;
-  const reportesPendientes = reportesActivos.filter(r => !r.oculto).length;
+  const totalReportes = estadisticas.totalReportes || reportesActivos.length;
+  const reportesPendientesCount = estadisticas.reportesPendientes || reportesActivos.filter(r => !r.oculto).length;
 
   const tasaActividad = totalPosts > 0 ? ((postsActivos / totalPosts) * 100).toFixed(1) : 0;
-  const tasaReportes = totalReportes > 0 ? ((reportesPendientes / totalReportes) * 100).toFixed(1) : 0;
+  const tasaReportes = totalReportes > 0 ? ((reportesPendientesCount / totalReportes) * 100).toFixed(1) : 0;
+
+  // Mostrar indicador de carga
+  if (cargando) {
+    return (
+      <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-white">
+        <ModeradorSidebar />
+        <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
+          <div className="pt-16 p-8 bg-white shadow-md">
+            <div className="max-w-7xl mx-auto">
+              <h1 className="text-5xl text-start font-bold mb-2">
+                <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+                  Moderación del Foro
+                </span>
+              </h1>
+              <p className="text-gray-600 font-medium text-lg mb-6">
+                Gestionar y moderar contenido del foro universitario
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+            <span className="ml-4 text-lg text-gray-600">Cargando datos del foro...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar mensaje de error
+  if (error) {
+    return (
+      <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-white">
+        <ModeradorSidebar />
+        <div className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
+          <div className="pt-16 p-8 bg-white shadow-md">
+            <div className="max-w-7xl mx-auto">
+              <h1 className="text-5xl text-start font-bold mb-2">
+                <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+                  Moderación del Foro
+                </span>
+              </h1>
+              <p className="text-gray-600 font-medium text-lg mb-6">
+                Gestionar y moderar contenido del foro universitario
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center h-64 text-center">
+            <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg">
+              <AlertCircle className="w-6 h-6 mx-auto mb-2" />
+              <p className="font-medium">{error}</p>
+              <button 
+                onClick={cargarDatos}
+                className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getBadgeColor = (tipo) => {
     switch(tipo) {
@@ -287,9 +512,15 @@ const GestionForoContent = () => {
                 Moderación del Foro
               </span>
             </h1>
-            <p className="text-gray-600 font-medium text-lg mb-6">
+            <p className="text-gray-600 font-medium text-lg mb-4">
               Gestionar y moderar contenido del foro universitario
             </p>
+            
+            {/* Indicador de datos reales */}
+            <div className="bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-lg inline-flex items-center gap-2 mb-6">
+              <CheckCircle className="w-5 h-5" />
+              <span className="font-medium">Conectado con datos reales del backend</span>
+            </div>
           </div>
         </div>
 
@@ -336,7 +567,7 @@ const GestionForoContent = () => {
                 </div>
               </div>
               <p className="text-gray-500 text-sm font-medium mb-1">Reportes Activos</p>
-              <p className="text-4xl font-bold text-gray-800">{reportesPendientes}</p>
+              <p className="text-4xl font-bold text-gray-800">{reportesPendientesCount}</p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -429,11 +660,29 @@ const GestionForoContent = () => {
                 )}
                 
                 <button
+                  onClick={cargarDatos}
+                  className="bg-blue-100! hover:bg-blue-200! text-blue-700! px-6! py-4! rounded-xl! font-bold! transition-all! duration-300! hover:shadow-lg! flex! items-center! gap-2! whitespace-nowrap!"
+                  disabled={cargando}
+                >
+                  {cargando ? (
+                    <>
+                      <div className="animate-spin w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                      Cargando...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-5 h-5" />
+                      Recargar
+                    </>
+                  )}
+                </button>
+                
+                <button
                   onClick={restaurarTodo}
                   className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white! px-6! py-4! rounded-xl! font-bold! transition-all! duration-300! hover:shadow-xl! hover:scale-105! flex! items-center! gap-2! whitespace-nowrap!"
                 >
-                  <Download className="w-5 h-5" />
-                  Exportar
+                  <Eye className="w-5 h-5" />
+                  Vista Normal
                 </button>
               </div>
             </div>

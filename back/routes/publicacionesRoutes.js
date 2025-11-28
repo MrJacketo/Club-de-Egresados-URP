@@ -14,6 +14,7 @@ router.post('/publicaciones/:id/comentarios', verifyJWTToken, publicacionesContr
 router.post('/publicaciones/:id/like', verifyJWTToken, publicacionesController.darLikePublicacion);
 router.delete('/publicaciones/:id/like', verifyJWTToken, publicacionesController.quitarLikePublicacion);
 router.put('/publicaciones/:id/ocultar', verifyJWTToken, publicacionesController.ocultarPublicacion);
+router.put('/publicaciones/:id/aprobar', verifyJWTToken, publicacionesController.aprobarPublicacion);
 router.delete('/publicaciones/:id', verifyJWTToken, publicacionesController.eliminarPublicacion);
 
 module.exports = router;
