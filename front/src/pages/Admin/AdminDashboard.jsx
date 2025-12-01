@@ -326,7 +326,7 @@ const AdminDashboardContent = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-blue-600 uppercase tracking-wider">Total Egresados</p>
+                  <p className="text-sm font-medium text-blue-600 uppercase tracking-wider">Total Usuarios</p>
                   <p className="text-5xl font-black text-gray-900">{stats.totalEgresados}</p>
                   <div className="flex items-center gap-2 pt-3">
                     <div className="flex-1 h-2.5 bg-blue-100 rounded-full overflow-hidden">

@@ -17,7 +17,9 @@ import {
 } from "../../context/adminSidebarContext";
 import CardMetric from "../../components/admin/cardMetric";
 import TablaUsuarios from "../../components/admin/tablaUsuarios";
-import { getUsersRequest } from "../../api/userAdminApi";
+import ModalUsuario from "../../components/admin/ModalUsuario";
+import { getUsersRequest, createUserRequest, updateUserRequest } from "../../api/userAdminApi";
+import { toast } from "react-hot-toast";
 
 const AdminUsers = () => {
   return (
@@ -36,27 +38,57 @@ const AdminUsersContent = () => {
   const [filterStatus, setFilterStatus] = useState("");
   const [filterRole, setFilterRole] = useState("");
   const [sortBy, setSortBy] = useState("recent");
+  
+  // Estados para el modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const { collapsed } = useAdminSidebar();
 
-  const handleToggleActive = (updatedUser) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user._id === updatedUser._id ? { ...user, ...updatedUser } : user
-      )
-    );
+  const handleToggleActive = async () => {
+    // Simplemente refrescar la lista completa de usuarios
+    await fetchUsers();
+  };
 
-    setActiveUsers((prevActiveUsers) =>
-      updatedUser.activo ? prevActiveUsers + 1 : prevActiveUsers - 1
-    );
+  // Funciones del modal
+  const handleCreateUser = () => {
+    setSelectedUser(null);
+    setIsEditing(false);
+    setModalOpen(true);
+  };
 
-    setActiveMembers((prevActiveMembers) =>
-      updatedUser.activo && updatedUser.isMember
-        ? prevActiveMembers + 1
-        : !updatedUser.activo && updatedUser.isMember
-        ? prevActiveMembers - 1
-        : prevActiveMembers
-    );
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setIsEditing(true);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedUser(null);
+    setIsEditing(false);
+  };
+
+  const handleSaveUser = async (userData, userId = null) => {
+    try {
+      if (isEditing && userId) {
+        await updateUserRequest(userId, userData);
+        toast.success('Usuario actualizado exitosamente');
+      } else {
+        await createUserRequest(userData);
+        toast.success('Usuario creado exitosamente');
+      }
+      
+      // Refrescar la lista de usuarios sin mostrar notificaciones adicionales
+      await fetchUsers();
+      handleCloseModal();
+      
+    } catch (error) {
+      const message = error.response?.data?.error || error.message || 'Error al guardar usuario';
+      toast.error(message);
+      throw new Error(message);
+    }
   };
 
   const fetchUsers = async () => {
@@ -68,6 +100,7 @@ const AdminUsersContent = () => {
       setActiveMembers(data.activeMembers);
     } catch (error) {
       console.error("Error al obtener usuarios:", error.response?.data || error.message);
+      toast.error("Error al cargar usuarios");
     }
   };
 
@@ -262,6 +295,14 @@ const AdminUsersContent = () => {
               )}
               
               <button
+                onClick={handleCreateUser}
+                className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white px-6 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-2 whitespace-nowrap"
+              >
+                <PersonAdd style={{ fontSize: 20 }} />
+                Crear Usuario
+              </button>
+              
+              <button
                 onClick={exportToCSV}
                 className="bg-gradient-to-r! from-green-500! to-teal-500! hover:from-green-600! hover:to-teal-600! text-white px-6 py-4 rounded-xl font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-2 whitespace-nowrap"
               >
@@ -272,13 +313,20 @@ const AdminUsersContent = () => {
           </div>
         </div>
 
-        
-
         {/* Tabla de usuarios */}
         <TablaUsuarios
           users={sortedUsers}
-          onEdit={(user) => console.log("Editar:", user)}
-          onToggleActive={fetchUsers}
+          onEdit={handleEditUser}
+          onToggleActive={handleToggleActive}
+        />
+
+        {/* Modal para crear/editar usuario */}
+        <ModalUsuario
+          open={modalOpen}
+          onClose={handleCloseModal}
+          onSave={handleSaveUser}
+          user={selectedUser}
+          isEditing={isEditing}
         />
       </div>
     </div>

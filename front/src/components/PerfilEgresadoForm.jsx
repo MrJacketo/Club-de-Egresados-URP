@@ -318,6 +318,7 @@ export default function PerfilEgresadoForm() {
       if (!userData.nombreCompleto.trim()) return toast.error("El nombre completo es requerido");
       if (!userData.anioEgreso) return toast.error("El año de egreso es requerido");
       if (!userData.carrera) return toast.error("La carrera es requerida");
+      if (!profileData.ubicacion?.distritoResidencia) return toast.error("El distrito de residencia es requerido");
 
       // 1. GUARDAR DATOS ACADÉMICOS EN LOCALSTORAGE PARA EL SIDEBAR
       const userId = getCurrentUserId();
@@ -352,7 +353,7 @@ export default function PerfilEgresadoForm() {
         },
         habilidades: {
           ...profileData.habilidades,
-          idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel),
+          idiomas: (profileData.habilidades?.idiomas || []).filter((i) => i.idioma && i.nivel && i.idioma.trim() !== "" && i.nivel.trim() !== ""),
         },
         ubicacion: {
           ...profileData.ubicacion,
@@ -595,20 +596,29 @@ export default function PerfilEgresadoForm() {
               <label className="text-green-600 font-semibold block mb-2">Idiomas:</label>
               {(profileData.habilidades?.idiomas || []).map((idioma, index) => (
                 <div key={index} className="flex items-center gap-2 mb-2">
-                  <input
-                    type="text"
-                    placeholder="Idioma"
-                    value={idioma.idioma}
+                  <select
+                    value={idioma.idioma || ""}
                     onChange={(e) => handleIdiomasChange(index, "idioma", e.target.value)}
                     className="flex-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Nivel"
-                    value={idioma.nivel}
+                  >
+                    <option value="">Selecciona un idioma</option>
+                    {options.idiomas.map((idiomaOpt) => (
+                      <option key={idiomaOpt} value={idiomaOpt}>
+                        {idiomaOpt}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={idioma.nivel || ""}
                     onChange={(e) => handleIdiomasChange(index, "nivel", e.target.value)}
                     className="flex-1 px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  />
+                  >
+                    <option value="">Selecciona un nivel</option>
+                    <option value="Básico">Básico</option>
+                    <option value="Intermedio">Intermedio</option>
+                    <option value="Avanzado">Avanzado</option>
+                    <option value="Nativo">Nativo</option>
+                  </select>
                   <button
                     type="button"
                     onClick={() => removeIdioma(index)}

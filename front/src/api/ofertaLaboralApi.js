@@ -5,19 +5,12 @@ import apiClient from "./apiClient";
 
 export const createOrUpdateOfertaRequest = async (ofertaData) => {
     try {
-
-        const user = JSON.parse(localStorage.getItem('user'));
-        const uid = user?.id;
-
-        // Añadir el UID al objeto enviado
-        const dataConUid = { ofertaData, uid };
-
         let response;
 
         if (ofertaData.id) {
-            response = await apiClient.put(`/api/oferta/${ofertaData.id}`, dataConUid);
+            response = await apiClient.put(`/api/oferta/${ofertaData.id}`, { ofertaData });
         } else {
-            response = await apiClient.post("/api/oferta", dataConUid);
+            response = await apiClient.post("/api/oferta", { ofertaData });
         }
 
         return response.data;

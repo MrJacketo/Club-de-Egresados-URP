@@ -119,10 +119,78 @@ const disableUser = async (req, res) => {
   }
 };
 
+// Crear nuevo usuario (solo admin)
+const createUser = async (req, res) => {
+  try {
+    const userData = req.body;
+
+    // Verificar si el usuario ya existe
+    const existingUser = await User.findOne({ email: userData.email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Ya existe un usuario con este email" });
+    }
+
+    // Crear el nuevo usuario
+    const newUser = new User(userData);
+    await newUser.save();
+
+    // No devolver la contraseña en la respuesta
+    const userResponse = newUser.toObject();
+    delete userResponse.password;
+
+    res.status(201).json({ 
+      message: "Usuario creado exitosamente", 
+      user: userResponse 
+    });
+  } catch (error) {
+    console.error("Error creando usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+// Actualizar usuario existente (solo admin)
+const updateUser = async (req, res) => {
+  const { userId } = req.params;
+  const userData = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Si se incluye email, verificar que no exista otro usuario con ese email
+    if (userData.email && userData.email !== user.email) {
+      const existingUser = await User.findOne({ email: userData.email });
+      if (existingUser) {
+        return res.status(400).json({ error: "Ya existe un usuario con este email" });
+      }
+    }
+
+    // Actualizar datos
+    Object.assign(user, userData);
+    await user.save();
+
+    // No devolver la contraseña en la respuesta
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    res.json({ 
+      message: "Usuario actualizado exitosamente", 
+      user: userResponse 
+    });
+  } catch (error) {
+    console.error("Error actualizando usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
 module.exports = {
   createOrUpdateUserProfile,
   getUserProfile,
   getAllUsers,
   updateUserProfile,
-  disableUser
+  disableUser,
+  createUser,
+  updateUser
 }

@@ -12,14 +12,20 @@ const { uploadCV, deleteCV, getSignedUrlForCV } = require("../utils/supabaseStor
 // Crear o actualizar una oferta laboral
 const createOrUpdateOferta = async (req, res) => {
   const { id } = req.params;
-  const { ofertaData, uid } = req.body;
+  const { ofertaData } = req.body;
 
   try {
+    console.log('=== CREATE OR UPDATE OFERTA ===');
+    console.log('ID:', id);
+    console.log('Request body:', req.body);
+    console.log('Oferta data:', ofertaData);
+    console.log('User from JWT:', req.user ? req.user._id : 'No user');
+
     if (id) {
       const oferta = await OfertaLaboral.findByIdAndUpdate(
         id,
         { ...ofertaData, updatedAt: Date.now() },
-        { new: true }
+        { new: true, runValidators: true }
       );
       if (!oferta) return res.status(404).json({ error: 'Oferta no encontrada' });
 
@@ -27,14 +33,60 @@ const createOrUpdateOferta = async (req, res) => {
     }
 
     // Si no hay id, crear oferta y asociar perfil
-    const perfil = await User.findById(uid);
+    // Usar req.user que viene del middleware JWT
+    const userId = req.user._id;
+    console.log('User ID from JWT:', userId);
+    
+    const perfil = await User.findById(userId);
     if (!perfil) {
-      return res.status(404).json({ error: 'Perfil de egresado no encontrado' });
+      console.error('Perfil no encontrado para userId:', userId);
+      return res.status(404).json({ error: 'Perfil de usuario no encontrado' });
     }
 
+    console.log('Perfil encontrado:', perfil.email);
+
+    // Validar datos antes de crear la oferta
+    if (!ofertaData || !ofertaData.cargo || !ofertaData.empresa || !ofertaData.modalidad) {
+      console.error('Faltan campos obligatorios:', { 
+        cargo: ofertaData?.cargo, 
+        empresa: ofertaData?.empresa, 
+        modalidad: ofertaData?.modalidad 
+      });
+      return res.status(400).json({ 
+        error: 'Faltan campos obligatorios',
+        details: 'Los campos cargo, empresa y modalidad son requeridos'
+      });
+    }
+
+    // Limpiar campos opcionales que vienen vacíos
+    const cleanedOfertaData = { ...ofertaData };
+    
+    // Si requisitos viene vacío, usar el valor por defecto del modelo
+    if (!cleanedOfertaData.requisitos || cleanedOfertaData.requisitos.trim() === '') {
+      console.log('Requisitos vacío, se eliminará para usar valor por defecto');
+      delete cleanedOfertaData.requisitos; // Dejará que el modelo use su valor por defecto
+    }
+    
+    // Si area viene vacío, no incluirlo
+    if (!cleanedOfertaData.area || cleanedOfertaData.area.trim() === '') {
+      console.log('Area vacía, se eliminará');
+      delete cleanedOfertaData.area;
+    }
+
+    // Crear la nueva oferta con valores por defecto si es necesario
+    const nuevaOfertaData = {
+      ...cleanedOfertaData,
+      estado: cleanedOfertaData.estado || 'Pendiente',
+      aprobado: cleanedOfertaData.aprobado || false
+    };
+
+    console.log('Datos finales para crear oferta:', nuevaOfertaData);
+
     //guardo la nueva oferta
-    const nuevaOferta = new OfertaLaboral(ofertaData);
+    const nuevaOferta = new OfertaLaboral(nuevaOfertaData);
     await nuevaOferta.save();
+
+    console.log('Oferta guardada exitosamente:', nuevaOferta._id);
 
     const nuevaPublicacion = new PublicacionOfertas({
       ofertaLaboral: nuevaOferta._id,
@@ -42,10 +94,26 @@ const createOrUpdateOferta = async (req, res) => {
     });
     await nuevaPublicacion.save();
 
-    res.json({ message: 'Oferta laboral creada exitosamente', nuevaOferta });
+    console.log('Publicación creada:', nuevaPublicacion._id);
+
+    res.json({ message: 'Oferta laboral creada exitosamente', oferta: nuevaOferta });
   } catch (error) {
     console.error('Error creando/actualizando oferta laboral:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    
+    // Manejo específico de errores de validación de Mongoose
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      console.error('Errores de validación:', validationErrors);
+      return res.status(400).json({ 
+        error: 'Error de validación', 
+        details: validationErrors.join(', ')
+      });
+    }
+    
+    res.status(500).json({ 
+      error: 'Error interno del servidor', 
+      details: error.message 
+    });
   }
 };
 

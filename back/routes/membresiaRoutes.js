@@ -6,8 +6,8 @@ const membresiaController = require("../controllers/membresiaController")
 // Rutas
 router.get("/", verifyJWTToken, membresiaController.getMembresia);
 router.put("/activate", verifyJWTToken, membresiaController.activateMembresia);
-router.get("/getAll", /*/verifyJWTToken,/*/ membresiaController.getAllMembresias)
-router.put("/updateEstado/:userId", membresiaController.updateMembresiaEstado);
-router.delete("/deleteMembresia/:userId", membresiaController.deleteMembresia); 
+router.get("/getAll", verifyJWTToken, membresiaController.getAllMembresias);
+router.put("/updateEstado/:userId", verifyJWTToken, membresiaController.updateMembresiaEstado);
+router.delete("/deleteMembresia/:userId", verifyJWTToken, membresiaController.deleteMembresia); 
 
 module.exports = router;

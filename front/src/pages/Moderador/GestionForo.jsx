@@ -515,12 +515,6 @@ const GestionForoContent = () => {
             <p className="text-gray-600 font-medium text-lg mb-4">
               Gestionar y moderar contenido del foro universitario
             </p>
-            
-            {/* Indicador de datos reales */}
-            <div className="bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-lg inline-flex items-center gap-2 mb-6">
-              <CheckCircle className="w-5 h-5" />
-              <span className="font-medium">Conectado con datos reales del backend</span>
-            </div>
           </div>
         </div>
 

@@ -35,8 +35,8 @@ const TablaUsuarios = ({ users, onEdit, onToggleActive }) => {
 
   const handleDisable = async () => {
     try {
-      const updatedUser = await disableUserRequest(userActual._id);
-      onToggleActive();
+      await disableUserRequest(userActual._id);
+      await onToggleActive(); // Ahora es async
       setModalMensaje(false);
       toast.success(`Estado actualizado`);
     } catch (error) {

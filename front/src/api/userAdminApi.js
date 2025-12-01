@@ -31,3 +31,25 @@ export const getUserRequest = async (userId) => {
     throw error;
   }
 }
+
+// Crear nuevo usuario
+export const createUserRequest = async (userData) => {
+  try {
+    const response = await apiClient.post('/api/admin/users/', userData);
+    return response.data;
+  } catch (error) {
+    console.error("Error al crear usuario:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Actualizar usuario existente
+export const updateUserRequest = async (userId, userData) => {
+  try {
+    const response = await apiClient.put(`/api/admin/users/${userId}`, userData);
+    return response.data;
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error.response?.data || error.message);
+    throw error;
+  }
+}

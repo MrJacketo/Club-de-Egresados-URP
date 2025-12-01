@@ -56,37 +56,48 @@ const activateMembresia = async (req, res) => {
 // GET ALL MEMBRESIAS (ADMIN)
 const getAllMembresias = async (req, res) => {
   try {
+    console.log('=== GET ALL MEMBRESIAS ===');
+    
     const membresias = await Membresia.find().populate('userId', 'name email').lean();
+    console.log(`Total membresías encontradas: ${membresias.length}`);
 
-    const userIds = membresias.map(m => m.userId);
+    // Filtrar solo las membresías que tienen usuarios válidos
+    const membresiasConUsuarios = membresias.filter(m => m.userId && m.userId._id);
+    console.log(`Membresías con usuarios válidos: ${membresiasConUsuarios.length}`);
+
+    const userIds = membresiasConUsuarios.map(m => m.userId._id);
     const beneficiosRedimidos = await BeneficioRedimido.aggregate([
       { $match: { userId: { $in: userIds } } },
       { $group: { _id: "$userId", cantidad: { $sum: 1 } } }
     ]);
+    
     const beneficiosPorUid = Object.fromEntries(beneficiosRedimidos.map(b => [b._id.toString(), b.cantidad]));
-    const datosFinales = membresias.map(m => {
+    
+    const datosFinales = membresiasConUsuarios.map(m => {
       const usuario = m.userId;
-      const beneficiosUsados = beneficiosPorUid[m.userId.toString()] || 0;
+      const beneficiosUsados = beneficiosPorUid[usuario._id.toString()] || 0;
 
       return {
         id: m._id.toString(),
         usuario: {
-          nombre: usuario?.name || "Desconocido",
-          email: usuario?.email || "",
-          codigo: usuario?._id.toString() || "Sin código",
+          nombre: usuario.name || "Sin nombre",
+          email: usuario.email || "Sin email",
+          codigo: usuario._id.toString(),
         },
         estado: m.estado,
         fechaActivacion: m.fechaActivacion,
         fechaVencimiento: m.fechaVencimiento,
         precio: 150,
         beneficiosUsados,
-        ultimaActividad: m.updatedAt || m.fechaActivacion,
+        totalBeneficios: 5,
+        ultimaActividad: m.updatedAt || m.fechaActivacion || m.createdAt,
       };
     });
 
+    console.log(`Datos finales procesados: ${datosFinales.length}`);
     res.status(200).json(datosFinales);
   } catch (error) {
-    console.error(error);
+    console.error('Error en getAllMembresias:', error);
     res.status(500).json({
       error: "Error del servidor",
       details: error.message,

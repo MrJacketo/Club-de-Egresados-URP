@@ -260,9 +260,17 @@ const AdminOfertasContent = () => {
       
       setShowCreateEditModal(false);
       fetchOfertas();
+      reset(); // Reset form after successful submission
     } catch (error) {
       console.error("Error al guardar oferta:", error);
-      toast.error("Error al guardar la oferta");
+      
+      // Mostrar mensaje de error más específico
+      const errorMessage = error.response?.data?.details || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          "Error al guardar la oferta";
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

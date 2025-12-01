@@ -285,7 +285,11 @@ const GestionMembresiaAdmin = () => {
     const fetchMembresias = async () => {
       setLoadingDatos(true);
       try {
+        console.log('🔄 Obteniendo membresías...');
         const data = await getAllMembresiasRequest();
+        console.log('📊 Datos recibidos:', data);
+        console.log('📊 Longitud del array:', data?.length);
+        
         setMembresias(data);
         setEstadisticas(calcularEstadisticas(data));
       } catch (error) {

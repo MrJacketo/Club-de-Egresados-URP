@@ -204,49 +204,109 @@ export default function Cursos() {
     );
   };
 
-  // Componente para cada sección de carrusel
-  const CarouselSection = ({
-    titulo,
-    beneficios,
-    currentSlide,
-    setCurrentSlide,
-  }) => {
-    const nextSlide = () => {
-      setCurrentSlide(
-        (prev) => (prev + 1) % Math.max(1, beneficios.length - 2)
-      );
+  // Componente para cada sección de carrusel - FUNCIONALIDAD BÁSICA
+  const CarouselSection = ({ titulo, beneficios, currentSlide, setCurrentSlide }) => {
+    const itemsPerView = 3;
+    const maxSlide = Math.max(0, beneficios.length - itemsPerView);
+    const canNavigate = beneficios.length > itemsPerView;
+    
+    // Asegurar que currentSlide esté en rango válido
+    const validCurrentSlide = Math.min(currentSlide, maxSlide);
+    
+    console.log(`=== ${titulo} ===`);
+    console.log('Beneficios:', beneficios.length);
+    console.log('Items per view:', itemsPerView);
+    console.log('Max slide:', maxSlide);
+    console.log('Can navigate:', canNavigate);
+    console.log('Current slide:', validCurrentSlide);
+
+    const handleNext = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (canNavigate && validCurrentSlide < maxSlide) {
+        const newSlide = validCurrentSlide + 1;
+        console.log(`${titulo} NEXT: ${validCurrentSlide} -> ${newSlide}`);
+        setCurrentSlide(newSlide);
+      }
     };
 
-    const prevSlide = () => {
-      setCurrentSlide(
-        (prev) =>
-          (prev - 1 + Math.max(1, beneficios.length - 2)) %
-          Math.max(1, beneficios.length - 2)
-      );
+    const handlePrev = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (canNavigate && validCurrentSlide > 0) {
+        const newSlide = validCurrentSlide - 1;
+        console.log(`${titulo} PREV: ${validCurrentSlide} -> ${newSlide}`);
+        setCurrentSlide(newSlide);
+      }
     };
+
+    if (beneficios.length === 0) {
+      return (
+        <div className="mb-10">
+          <h2 className="text-4xl font-bold text-start mb-6">
+            <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+              {titulo}
+            </span>
+          </h2>
+          <div className="text-center py-12 text-gray-500">
+            No hay beneficios en esta categoría
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="mb-10">
-        <h2 className="text-4xl font-bold text-start mb-6">
-          <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
-            {titulo}
-          </span>
-        </h2>
-        <div className="relative">
-          <button
-            onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl! transition-all duration-300"
-          >
-            <ChevronLeft size={24} />
-          </button>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-4xl font-bold text-start">
+            <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
+              {titulo}
+            </span>
+          </h2>
+          
+          {/* Controles de navegación elegantes */}
+          {canNavigate && (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handlePrev}
+                onMouseDown={(e) => e.preventDefault()}
+                className="group relative bg-white hover:bg-gradient-to-r hover:from-green-500 hover:to-teal-500 text-green-500 hover:text-white p-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 border-2 border-green-500 active:scale-95"
+                title="Anterior"
+              >
+                <ChevronLeft size={24} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                onMouseDown={(e) => e.preventDefault()}
+                className="group relative bg-white hover:bg-gradient-to-r hover:from-green-500 hover:to-teal-500 text-green-500 hover:text-white p-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 border-2 border-green-500 active:scale-95"
+                title="Siguiente"
+              >
+                <ChevronRight size={24} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+              </button>
+            </div>
+          )}
+        </div>
 
-          <div className="overflow-hidden px-2 py-4">
-            <div
-              className="flex transition-transform duration-600 ease-in-out"
-              style={{ transform: `translateX(-${currentSlide * 33.333}%)` }}
+        <div className="relative bg-white rounded-lg p-6">
+          {/* Contenedor del carrusel simple y funcional */}
+          <div className="overflow-hidden rounded-lg p-4">
+            <div 
+              className="flex gap-6 transition-transform duration-800 ease-in-out"
+              style={{
+                transform: `translateX(-${validCurrentSlide * (100 / itemsPerView)}%)`,
+                width: `${(beneficios.length / itemsPerView) * 100}%`
+              }}
             >
-              {beneficios.map((benef) => (
-                <div key={benef._id} className="w-1/3 flex-shrink-0 px-3">
+              {beneficios.map((benef, index) => (
+                <div 
+                  key={benef._id} 
+                  className="flex-shrink-0"
+                  style={{ width: `${100 / beneficios.length}%` }}
+                >
                   <BeneficioCard
                     benef={benef}
                     onReclamar={handleReclamar}
@@ -256,13 +316,6 @@ export default function Cursos() {
               ))}
             </div>
           </div>
-
-          <button
-            onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white p-4 rounded-full! shadow-2xl transition-all duration-300"
-          >
-            <ChevronRight size={24} />
-          </button>
         </div>
       </div>
     );

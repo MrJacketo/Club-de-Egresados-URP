@@ -74,7 +74,7 @@ export default function AdminSidebar() {
           >
             <Users size={24} />
             <span className={`${collapsed ? 'hidden' : ''} text-sm! font-bold!`}>
-              Egresados
+              Usuarios
             </span>
           </Link>
 

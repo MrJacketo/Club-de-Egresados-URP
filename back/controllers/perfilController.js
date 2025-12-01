@@ -20,6 +20,10 @@ const createOrUpdatePerfil = async (req, res) => {
     const userId = req.user._id;
     const data = req.body;
 
+    console.log('=== CREATE/UPDATE PROFILE DEBUG ===');
+    console.log('User ID:', userId);
+    console.log('Raw request body:', JSON.stringify(data, null, 2));
+
     // Profile data only (academic data is now handled by authController)
     const profileData = {};
 
@@ -31,21 +35,35 @@ const createOrUpdatePerfil = async (req, res) => {
       }
     });
 
-    console.log('=== CREATE/UPDATE PROFILE ===');
-    console.log('User ID:', userId);
-    console.log('Profile data to save:', profileData);
+    console.log('Profile data to save (after filtering):', JSON.stringify(profileData, null, 2));
 
     // Check if the profile already exists
     let profile = await PerfilEgresado.findOne({ userId });
 
     if (profile) {
       // Update existing profile
+      console.log('Updating existing profile...');
       Object.assign(profile, profileData);
       await profile.save();
+      console.log('Profile updated successfully');
     } else {
       // Create a new profile
+      console.log('Creating new profile...');
       profile = new PerfilEgresado({ userId, ...profileData });
+      
+      // Validar antes de guardar
+      const validationError = profile.validateSync();
+      if (validationError) {
+        console.log('Validation error:', validationError);
+        return res.status(400).json({ 
+          error: "Error de validación", 
+          details: validationError.message,
+          errors: validationError.errors 
+        });
+      }
+      
       await profile.save();
+      console.log('Profile created successfully');
     }
 
     // Get updated user data to return complete info
@@ -57,7 +75,24 @@ const createOrUpdatePerfil = async (req, res) => {
       user: updatedUser 
     });
   } catch (error) {
-    console.error("Error creando/actualizando perfil:", error);
+    console.error("❌ Error creando/actualizando perfil:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    
+    // Si es un error de validación de Mongoose, mostrar detalles
+    if (error.name === 'ValidationError') {
+      console.error("Validation errors:", error.errors);
+      return res.status(400).json({ 
+        error: "Error de validación", 
+        details: error.message,
+        validationErrors: Object.keys(error.errors).map(key => ({
+          field: key,
+          message: error.errors[key].message
+        }))
+      });
+    }
+    
     res.status(500).json({ error: "Error interno del servidor", details: error.message });
   }
 };

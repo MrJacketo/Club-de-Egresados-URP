@@ -125,6 +125,11 @@ useEffect(() => {
     return usuario ? usuario.id : null;
   };
 
+  // Función adicional para getCurrentUserId (alias de getUsuarioActualId)
+  const getCurrentUserId = () => {
+    return getUsuarioActualId();
+  };
+
   // Función para convertir imagen a Base64
   const convertirImagenABase64 = (file) => {
     return new Promise((resolve, reject) => {

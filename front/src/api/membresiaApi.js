@@ -23,21 +23,21 @@ export const getMembresiaRequest = async () => {
 
 export const getAllMembresiasRequest = async () => {
   try {
-    //await auth.authStateReady(); FALTA USUARIO ADMIN
-    //const user = auth.currentUser;
-
-    //if (!user) {
-      //return []; // No hay usuario → no se puede consultar membresías
-    //}
-
-    //const token = await user.getIdToken();
-    const response = await apiClient.get("/api/membresia/getAll");//, {
-      //headers: { Authorization: `Bearer ${token}` },
-    //});
+    console.log('🌐 Haciendo petición a /api/membresia/getAll');
+    
+    const response = await apiClient.get("/api/membresia/getAll");
+    
+    console.log('📡 Respuesta recibida:', response);
+    console.log('📊 Data en response:', response.data);
+    console.log('📈 Tipo de response.data:', typeof response.data);
+    console.log('📋 Es array:', Array.isArray(response.data));
 
     return response.data || [];
   } catch (error) {
     console.error("Error obteniendo las membresias", error);
+    console.error("Error response:", error.response);
+    console.error("Error status:", error.response?.status);
+    console.error("Error data:", error.response?.data);
     return [];
   }
 };
