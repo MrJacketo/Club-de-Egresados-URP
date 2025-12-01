@@ -18,7 +18,6 @@ import GestionarMembresia from './pages/Egresado/GestionarMembresia';
 import MembresiaSucess from './pages/Egresado/MembresiaSucess.jsx';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
-import VerBeneficios from './pages/Egresado/VerBeneficios.jsx'; // ajusta la ruta
 import Feedback from "./pages/Egresado/feedback.jsx";
 import NoticiasPage from "./pages/Egresado/Noticiaspage.jsx";
 import ForoEgresados from "../src/pages/Egresado/ForoEgresados";
@@ -119,8 +118,7 @@ function App() {
           <Route path="/beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/ver-beneficios" element={<PrivateRoute><Cursos /></PrivateRoute>} />
           <Route path="/mis-ofertas" element={<PrivateRoute><MisOfertas /></PrivateRoute>} />
-          
-          <Route path="/mis-ofertas" element={<PrivateRoute><MisOfertas /></PrivateRoute>} />
+
           
 
 
